@@ -1,4 +1,4 @@
-import { EventPage } from '@/types';
+import { EventAddon, EventPage } from '@/types';
 import { useRef, useState } from 'react';
 
 interface EventPackage {
@@ -200,7 +200,13 @@ const styles = `
   }
 `;
 
-export default function EventsPage({ events }: { events: EventPage[] }) {
+export default function EventsPage({
+    events,
+    eventAddons,
+}: {
+    events: EventPage[];
+    eventAddons: EventAddon[];
+}) {
     const proposalRef = useRef<HTMLElement>(null);
     const [toast, setToast] = useState('');
     const [form, setForm] = useState<ProposalForm>({
@@ -259,11 +265,12 @@ export default function EventsPage({ events }: { events: EventPage[] }) {
                         <span className="badge badge-gold">
                             Corporate • Social • Retreats
                         </span>
-                        <h1 className="h1">Host your event at Tafaria</h1>
+                        <h1 className="h1">
+                            {events[0]?.title || 'Host your event at Tafaria'}
+                        </h1>
                         <p className="p-lg">
-                            A venue that feels like a destination — perfect for
-                            conferences, retreats, celebrations and team
-                            experiences.
+                            {events[0]?.subtitle ||
+                                'Whether you are planning a corporate retreat, a team offsite, a wedding, or a family reunion, Tafaria offers a unique blend of inspiring spaces, delicious food, and memorable experiences to make your event truly special.'}
                         </p>
                     </div>
                 </section>
@@ -272,20 +279,34 @@ export default function EventsPage({ events }: { events: EventPage[] }) {
                     <div className="container">
                         <h2 className="h2">Event packages</h2>
                         <div className="grid-3">
-                            {EVENT_PACKAGES.map((pkg) => (
+                            {events[0]?.items?.map((pkg) => (
                                 <div key={pkg.id} className="card">
                                     <div className="card-media">
                                         <img
                                             src={pkg.image}
-                                            alt={pkg.imageAlt}
+                                            alt={pkg.title}
                                             loading="lazy"
                                         />
                                     </div>
                                     <div className="card-pad">
                                         <span
-                                            className={`badge badge-${pkg.badgeType}`}
+                                            className={`badge badge-${
+                                                pkg.badge_content?.includes(
+                                                    'Day',
+                                                )
+                                                    ? 'olive'
+                                                    : pkg.badge_content?.includes(
+                                                            'Popular',
+                                                        )
+                                                      ? 'gold'
+                                                      : pkg.badge_content?.includes(
+                                                              'Social',
+                                                          )
+                                                        ? 'gold'
+                                                        : 'neutral'
+                                            }`}
                                         >
-                                            {pkg.badge}
+                                            {pkg.badge_content}
                                         </span>
                                         <div className="h3">{pkg.title}</div>
                                         <div
@@ -295,9 +316,12 @@ export default function EventsPage({ events }: { events: EventPage[] }) {
                                             {pkg.subtitle}
                                         </div>
                                         <hr className="hr" />
-                                        <div className="small">
-                                            Includes: {pkg.includes}
-                                        </div>
+                                        <div
+                                            className="small"
+                                            dangerouslySetInnerHTML={{
+                                                __html: pkg.description || '',
+                                            }}
+                                        ></div>
                                         <div style={{ height: 12 }} />
                                         <button
                                             className="btn btn-secondary"
@@ -305,7 +329,8 @@ export default function EventsPage({ events }: { events: EventPage[] }) {
                                                 scrollToProposal(pkg.title)
                                             }
                                         >
-                                            Request Proposal
+                                            {events[0]?.button_message ||
+                                                'Request Proposal'}
                                         </button>
                                     </div>
                                 </div>
@@ -313,58 +338,62 @@ export default function EventsPage({ events }: { events: EventPage[] }) {
                         </div>
                     </div>
                 </section>
-
-                <section className="section" style={{ paddingTop: 0 }}>
-                    <div className="container">
-                        <h2 className="h2">Add-on experiences for groups</h2>
-                        <p className="p">
-                            Make your event unforgettable by adding learning or
-                            recreation activities.
-                        </p>
-                        <div className="grid-4">
-                            {ADD_ONS.map((addon) => (
-                                <div key={addon.id} className="card">
-                                    <div className="card-media">
-                                        <img
-                                            src={addon.image}
-                                            alt={addon.imageAlt}
-                                            loading="lazy"
-                                        />
-                                    </div>
-                                    <div className="card-pad">
-                                        <div
-                                            className="h3"
-                                            style={{
-                                                marginTop: 0,
-                                                marginBottom: 4,
-                                            }}
-                                        >
-                                            {addon.title}
+                {eventAddons.length > 0 &&
+                    eventAddons?.map((eventAddon) => (
+                        <section className="section" style={{ paddingTop: 0 }}>
+                            <div className="container">
+                                <h2 className="h2">{eventAddon.title}</h2>
+                                <p className="p">
+                                    {eventAddon.subtitle ||
+                                        'Enhance your event with unique add-on experiences.'}
+                                </p>
+                                <div className="grid-4">
+                                    {eventAddon?.addons?.map((addon) => (
+                                        <div key={addon.id} className="card">
+                                            <div className="card-media">
+                                                <img
+                                                    src={addon.image}
+                                                    alt={addon.title}
+                                                    loading="lazy"
+                                                />
+                                            </div>
+                                            <div className="card-pad">
+                                                <div
+                                                    className="h3"
+                                                    style={{
+                                                        marginTop: 0,
+                                                        marginBottom: 4,
+                                                    }}
+                                                >
+                                                    {addon.title}
+                                                </div>
+                                                <div className="small">
+                                                    {addon.subtitle}
+                                                </div>
+                                                <div
+                                                    className="row"
+                                                    style={{ marginTop: 12 }}
+                                                >
+                                                    <button
+                                                        className="btn btn-secondary"
+                                                        onClick={() =>
+                                                            scrollToProposal(
+                                                                addon.title,
+                                                            )
+                                                        }
+                                                    >
+                                                        {events[0]
+                                                            ?.button_message ||
+                                                            'Request Proposal'}
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="small">
-                                            {addon.subtitle}
-                                        </div>
-                                        <div
-                                            className="row"
-                                            style={{ marginTop: 12 }}
-                                        >
-                                            <button
-                                                className="btn btn-secondary"
-                                                onClick={() =>
-                                                    scrollToProposal(
-                                                        addon.title,
-                                                    )
-                                                }
-                                            >
-                                                Request Proposal
-                                            </button>
-                                        </div>
-                                    </div>
+                                    ))}
                                 </div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
+                            </div>
+                        </section>
+                    ))}
 
                 <section
                     id="proposal"

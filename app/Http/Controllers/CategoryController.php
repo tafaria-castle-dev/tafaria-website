@@ -27,6 +27,15 @@ class CategoryController extends Controller
         $schoolAdditionalResponse = $httpClient->get('https://website-cms.tafaria.com/api/school-additional');
         $schoolAdditional = $schoolAdditionalResponse->json()['data'] ?? [];
 
+        $aboutUsResponse = $httpClient->get('https://website-cms.tafaria.com/api/about-us');
+        $aboutUs = $aboutUsResponse->json()['data'] ?? [];
+        $tafariaPhilosophyResponse = $httpClient->get('https://website-cms.tafaria.com/api/tafaria-philosophy');
+        $tafariaPhilosophy = $tafariaPhilosophyResponse->json()['data'] ?? [];
+
+
+        $eventAddonsResponse = $httpClient->get('https://website-cms.tafaria.com/api/event-addons');
+        $eventAddons = $eventAddonsResponse->json()['data'] ?? [];
+
 
         $category = collect($categories)->firstWhere('slug', $slug);
 
@@ -49,11 +58,14 @@ class CategoryController extends Controller
             'categories' => $categories,
             'videos' => $filteredVideos,
             'events' => $events,
+            'eventAddons' => $eventAddons,
             'amenities' => $amenities,
             'dining' => $dining,
             'schoolAdditional' => $schoolAdditional,
             'schoolPrograms' => $schoolPrograms,
             'packages' => $packages,
+            'aboutUs' => $aboutUs,
+            'tafariaPhilosophy' => $tafariaPhilosophy,
         ]);
     }
 

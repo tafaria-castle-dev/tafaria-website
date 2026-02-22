@@ -1,5 +1,7 @@
-const WHATSAPP_NUMBER = 'YOURNUMBER';
-const EMAIL = 'hello@tafaria.com';
+import { AboutUs, TafariaPhilosophy } from '@/types';
+
+const WHATSAPP_NUMBER = '+254708877244';
+const EMAIL = 'info@tafaria.com';
 
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
@@ -79,23 +81,13 @@ const styles = `
   .philosophy-card b { font-size: 0.95rem; color: #1a0f06; display: block; margin-bottom: 4px; }
 `;
 
-const PHILOSOPHY = [
-    { title: 'Delight the heart', sub: 'Wonder, beauty, joy' },
-    { title: 'Enrich the mind', sub: 'Learning by experience' },
-    {
-        title: 'Transform the village',
-        sub: 'Arts as a catalyst for prosperity',
-    },
-];
-
-const DIFFERENTIATORS = [
-    'A castle escape with real learning',
-    'Museums, herbarium, Nano Farm',
-    'Art studios and installations',
-    'Recreation that feels like a destination',
-];
-
-export default function AboutTafaria() {
+export default function AboutUsPage({
+    aboutUs,
+    tafariaPhilosophy,
+}: {
+    aboutUs: AboutUs[];
+    tafariaPhilosophy: TafariaPhilosophy[];
+}) {
     return (
         <>
             <style>{styles}</style>
@@ -103,12 +95,15 @@ export default function AboutTafaria() {
                 <section className="section-sm">
                     <div className="container">
                         <span className="badge">Our story</span>
-                        <h1 className="h1">Once Upon a Dream</h1>
-                        <p className="p-lg">
-                            Tafaria exists to delight the heart and enrich the
-                            mind — and to pursue rural transformation through
-                            the arts.
-                        </p>
+                        <h1 className="h1">{aboutUs[0]?.title}</h1>
+                        <p
+                            className="p-lg"
+                            dangerouslySetInnerHTML={{
+                                __html:
+                                    aboutUs[0]?.description ||
+                                    'Tafaria is a castle retreat in Laikipia, Kenya — where hospitality meets learning and creativity. We offer an inspiring escape from the city, with immersive experiences that connect you to nature, culture, and community.',
+                            }}
+                        ></p>
                     </div>
                 </section>
 
@@ -118,7 +113,10 @@ export default function AboutTafaria() {
                             <div className="card">
                                 <div className="card-media">
                                     <img
-                                        src="/assets/castle-front.jpg"
+                                        src={
+                                            aboutUs[0]?.image ||
+                                            '/images/tafaria-castle.jpg'
+                                        }
                                         alt="Tafaria Castle"
                                         loading="lazy"
                                     />
@@ -127,11 +125,14 @@ export default function AboutTafaria() {
 
                             <div>
                                 <h2 className="h2">Why Tafaria</h2>
-                                <p className="p">
-                                    Tafaria blends hospitality, learning, and
-                                    creativity — so visitors leave refreshed and
-                                    inspired.
-                                </p>
+                                <p
+                                    className="p"
+                                    dangerouslySetInnerHTML={{
+                                        __html:
+                                            aboutUs[0]?.why_tafaria ||
+                                            'Tafaria is more than a getaway — it’s a place to grow, create, and connect. We blend the beauty of a castle retreat with the enrichment of museums, art studios, and a Nano Farm. Whether you’re seeking inspiration, learning, or just a magical escape, Tafaria offers an experience that delights the heart and enriches the mind.',
+                                    }}
+                                ></p>
 
                                 <div
                                     className="strip"
@@ -141,10 +142,12 @@ export default function AboutTafaria() {
                                     <div
                                         className="small"
                                         style={{ marginTop: 6 }}
-                                    >
-                                        The pursuit of rural transformation
-                                        through the arts.
-                                    </div>
+                                        dangerouslySetInnerHTML={{
+                                            __html:
+                                                aboutUs[0]?.mission ||
+                                                'To create a unique retreat that combines hospitality, learning, and creativity — enriching the lives of our guests and empowering our local community.',
+                                        }}
+                                    ></div>
                                 </div>
 
                                 <div className="strip">
@@ -152,15 +155,15 @@ export default function AboutTafaria() {
                                         What makes Tafaria different
                                     </b>
                                     <hr className="strip-divider" />
-                                    {DIFFERENTIATORS.map((d) => (
+                                    {aboutUs[0]?.differentiators && (
                                         <div
-                                            key={d}
                                             className="small"
-                                            style={{ marginBottom: 5 }}
-                                        >
-                                            • {d}
-                                        </div>
-                                    ))}
+                                            dangerouslySetInnerHTML={{
+                                                __html: aboutUs[0]
+                                                    .differentiators,
+                                            }}
+                                        />
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -169,16 +172,23 @@ export default function AboutTafaria() {
 
                 <section className="section" style={{ paddingTop: 0 }}>
                     <div className="container">
-                        <h2 className="h2">The Tafaria philosophy</h2>
+                        <h2 className="h2">
+                            {tafariaPhilosophy[0]?.title ||
+                                'The Tafaria philosophy'}
+                        </h2>
                         <div className="grid-3">
-                            {PHILOSOPHY.map(({ title, sub }) => (
-                                <div key={title} className="card">
-                                    <div className="philosophy-card">
-                                        <b>{title}</b>
-                                        <div className="small">{sub}</div>
+                            {tafariaPhilosophy[0]?.philosophies?.map(
+                                ({ title, subtitle }) => (
+                                    <div key={title} className="card">
+                                        <div className="philosophy-card">
+                                            <b>{title}</b>
+                                            <div className="small">
+                                                {subtitle}
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ),
+                            )}
                         </div>
                     </div>
                 </section>
@@ -272,19 +282,25 @@ export default function AboutTafaria() {
                                         surrounding areas.
                                     </div>
 
-                                    <div className="map-placeholder">
-                                        {/* Replace this div with a Google Maps iframe when ready:
-                      <iframe
-                        src="https://www.google.com/maps/embed?pb=..."
-                        width="100%" height="240" style={{ border: 0 }}
-                        allowFullScreen loading="lazy"
-                        referrerPolicy="no-referrer-when-downgrade"
-                      />
-                    */}
-                                        <span>
-                                            📍 Map coming soon — embed Google
-                                            Maps iframe here
-                                        </span>
+                                    <div
+                                        className="card"
+                                        style={{
+                                            overflow: 'hidden',
+                                            width: '100%',
+                                        }}
+                                    >
+                                        <iframe
+                                            title="Map to Tafaria"
+                                            src="https://www.google.com/maps?q=Tafaria%20Castle%20Laikipia&output=embed"
+                                            width="100%"
+                                            height="360"
+                                            style={{
+                                                border: 0,
+                                                display: 'block',
+                                            }}
+                                            loading="lazy"
+                                            referrerPolicy="no-referrer-when-downgrade"
+                                        />
                                     </div>
                                 </div>
                             </div>

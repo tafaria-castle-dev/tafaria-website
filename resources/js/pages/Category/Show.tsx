@@ -2,21 +2,25 @@ import BlogCard from '@/components/blogcard';
 import BlogPostCard from '@/components/blogpostcard';
 import Cart from '@/components/cart/cart';
 import LoadingComponent from '@/components/loader';
+import AboutUsPage from '@/components/new-components/About';
 import ArtsPage from '@/components/new-components/Arts';
 import EventsPage from '@/components/new-components/Events';
 import GoDreamPage from '@/components/new-components/goDream';
 import StayWithUs from '@/components/new-components/StayWithUs';
 import { useInertiaLoading } from '@/hooks/useInertiaLoading';
 import {
+    AboutUs,
     Amenity,
     Category,
     Dining,
+    EventAddon,
     EventPage,
     Metadata,
     Package,
     Schemas,
     SchoolAdditional,
     SchoolProgram,
+    TafariaPhilosophy,
     Video,
 } from '@/types';
 import { router } from '@inertiajs/react';
@@ -45,6 +49,9 @@ interface CategoryProps {
     dining: Dining[];
     amenities: Amenity[];
     schoolAdditional: SchoolAdditional[];
+    eventAddons: EventAddon[];
+    aboutUs: AboutUs[];
+    tafariaPhilosophy: TafariaPhilosophy[];
 }
 
 const useMobileDetect = () => {
@@ -179,6 +186,9 @@ export default function CategoryShow({
     packages,
     dining,
     amenities,
+    eventAddons,
+    aboutUs,
+    tafariaPhilosophy,
 }: CategoryProps) {
     const [collapseAll, setCollapseAll] = useState(false);
     const [hasExpandedPosts, setHasExpandedPosts] = useState(false);
@@ -572,8 +582,18 @@ export default function CategoryShow({
                             />
                         )}
                         {slug.toLowerCase() === 'conference' && (
-                            <EventsPage events={events} />
+                            <>
+                                <EventsPage
+                                    events={events}
+                                    eventAddons={eventAddons}
+                                />
+                                <AboutUsPage
+                                    aboutUs={aboutUs}
+                                    tafariaPhilosophy={tafariaPhilosophy}
+                                />{' '}
+                            </>
                         )}
+
                         {slug.toLowerCase() === 'arts' && <ArtsPage />}
 
                         <div className="container mx-auto overflow-x-auto pb-4">
