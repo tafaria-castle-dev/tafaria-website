@@ -1,0 +1,352 @@
+@import 'tailwindcss';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@source '../views';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+@custom-variant dark (&:is(.dark *));
+
+button,
+[role='button'],
+input[type='submit'],
+input[type='button'],
+input[type='reset'],
+.btn,
+.button {
+    cursor: pointer !important;
+}
+
+button:disabled,
+[role='button']:disabled,
+input:disabled {
+    cursor: not-allowed !important;
+}
+
+button:hover:not(:disabled),
+[role='button']:hover:not(:disabled) {
+    opacity: 0.9;
+    transition: opacity 0.2s ease-in-out;
+}
+.prose img {
+    max-width: 100%;
+    height: auto;
+}
+.container {
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+@font-face {
+    font-family: 'ArialCustom';
+    src: url('/fonts/Arial.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.ReactModal__Content.ReactModal__Content--after-open {
+    inset: 0px !important;
+}
+
+.bartop {
+    background-color: white;
+    transition: top 0.3s ease;
+}
+
+.bartop.closed {
+    top: 14rem;
+}
+
+.bartop.open {
+    top: 29rem;
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+    .bartop.closed {
+        top: 18rem;
+    }
+    .bartop.open {
+        top: 32rem;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .bartop.closed {
+        top: 21rem;
+    }
+    .bartop.open {
+        top: 38rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .bartop.closed {
+        top: 16rem;
+    }
+    .bartop.open {
+        top: 31rem;
+    }
+}
+
+.our-story-background {
+    background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        white 50%
+    ) !important;
+}
+
+.custom-text {
+    font-family: 'ArialCustom', Arial, sans-serif;
+}
+
+.dropd {
+    margin: auto !important;
+}
+
+.video-container {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+}
+
+.video-player {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.play-button-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+}
+
+.play-icon {
+    color: white;
+    font-size: 3rem;
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@media screen and (min-width: 640px) {
+    .masonry-gallery {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .masonry-item:nth-child(6),
+    .masonry-item:nth-child(7) {
+        grid-row: span 2;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .masonry-gallery {
+        grid-template-columns: repeat(5, 1fr);
+    }
+
+    .masonry-item:nth-child(6),
+    .masonry-item:nth-child(7) {
+        grid-row: span 1;
+    }
+}
+
+.masonry {
+    column-count: 3;
+    column-gap: 1rem;
+}
+
+.masonry-item {
+    break-inside: avoid;
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .masonry {
+        column-count: 1;
+    }
+}
+
+@media (max-width: 480px) {
+    .masonry {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .masonry-item {
+        width: 100%;
+    }
+}
+
+.video-containerv {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    padding-top: 56.25%;
+}
+
+.video-containerv iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+@media (max-width: 768px) {
+    .video-containerv {
+        padding-top: 75%;
+    }
+}
+
+@media (max-width: 480px) {
+    .video-containerv {
+        padding-top: 100%;
+    }
+}
+
+.prose p {
+    font-size: 1rem;
+}
+#booknow {
+    color: rgb(37, 37, 37);
+}
+
+#booknow button {
+    background-color: #902729;
+    color: white;
+}
+
+.prose h1 {
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+.prose h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+}
+.prose h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+}
+.prose h4 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+}
+.prose h5 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+}
+.prose h6 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+}
+.prose ol {
+    list-style-type: decimal;
+    list-style-position: inside;
+    margin-bottom: 0.3rem;
+}
+.prose ul {
+    list-style-type: disc;
+    list-style-position: inside;
+    margin-bottom: 0.3rem;
+}
+.prose li {
+    margin-bottom: 0 0.3rem;
+    font-size: 1rem;
+}
+@media (min-width: 640px) {
+    .prose h1 {
+        font-size: 1.5rem;
+    }
+    .prose h2 {
+        font-size: 1.4rem;
+    }
+    .prose h3 {
+        font-size: 1.3rem;
+    }
+    .prose h4 {
+        font-size: 1.2rem;
+    }
+    .prose h5 {
+        font-size: 1.1rem;
+    }
+    .prose h6 {
+        font-size: 1rem;
+    }
+}
+
+.font-parisienne {
+    font-family: 'Parisienne', cursive;
+}
+
+.font-montaga {
+    font-family: 'Montaga', serif;
+    font-weight: 400;
+}
+
+.font-barlow-condensed {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 400;
+}
+
+.desc-wrapper {
+    transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-8px);
+    overflow: hidden;
+}
+.desc-wrapper.show {
+    opacity: 1;
+    max-height: none;
+    transform: translateY(0);
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.3s ease-out;
+}

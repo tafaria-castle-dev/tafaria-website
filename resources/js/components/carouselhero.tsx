@@ -1,0 +1,220 @@
+import { useBooking } from '@/hooks/BookingContext';
+import React, { useEffect, useRef, useState } from 'react';
+import { FaPause, FaPlay } from 'react-icons/fa';
+import { Carousel } from 'react-responsive-carousel';
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
+
+export interface Image {
+    title: string;
+    url: string;
+    link: string;
+}
+
+export interface Video {
+    title: string;
+    url: string;
+    link: string;
+}
+
+export interface VideoLinks {
+    title: string;
+    url: string;
+    link: string;
+}
+
+interface CarouselsProps {
+    images: Image[];
+    videos: Video[];
+    videolinks: VideoLinks[];
+}
+
+const Carousels: React.FC<CarouselsProps> = ({
+    images,
+    videos,
+    videolinks,
+}) => {
+    const combinedUrls = [...images, ...videos];
+    const [activeIndex, setActiveIndex] = useState(0);
+    const [playingIndex, setPlayingIndex] = useState<number | null>(null);
+    const [showControls, setShowControls] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+    const { showBookingModal, setShowBookingModal } = useBooking();
+    const [userPaused, setUserPaused] = useState(false);
+    const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    useEffect(() => {
+        videoRefs.current.forEach((video, index) => {
+            if (video && index === activeIndex && !userPaused) {
+                video
+                    .play()
+                    .catch((error) =>
+                        console.error('Error playing video:', error),
+                    );
+            } else if (video) {
+                video.pause();
+                video.currentTime = 0;
+            }
+        });
+    }, [activeIndex, userPaused]);
+
+    const handleChange = (index: number) => {
+        setActiveIndex(index);
+        setPlayingIndex(null);
+        setShowControls(false);
+        setUserPaused(false);
+    };
+
+    const handleTogglePlayPause = (index: number) => {
+        const video = videoRefs.current[index];
+        if (!video) return;
+
+        if (video.paused) {
+            video
+                .play()
+                .catch((error) => console.error('Error playing video:', error));
+            setPlayingIndex(index);
+            setUserPaused(false);
+        } else {
+            video.pause();
+            setPlayingIndex(null);
+            setUserPaused(true);
+        }
+        showTemporaryControls();
+    };
+
+    const showTemporaryControls = () => {
+        setShowControls(true);
+        setTimeout(() => setShowControls(false), 3000);
+    };
+
+    return (
+        <div className="carousel relative w-56 sm:w-full">
+            {/* {!isMobile && (
+                <div
+                    className="absolute -bottom-5 left-1/2 z-10 w-[1500px] -translate-x-1/2"
+                    style={{
+                        background: 'transparent',
+                        height: 'fit-content',
+                    }}
+                >
+                    <div className="m-0 w-full border-none p-0">
+                        <BookingEngine />
+                    </div>
+                </div>
+            )} */}
+            <Carousel
+                showThumbs={false}
+                infiniteLoop
+                autoPlay={playingIndex === null && !userPaused}
+                showStatus={false}
+                selectedItem={activeIndex}
+                onChange={handleChange}
+                swipeable={playingIndex === null}
+                showIndicators={false}
+            >
+                {combinedUrls.map((media, index) => {
+                    const isVideo = media.url.endsWith('.mp4');
+                    return (
+                        <div key={index} className="relative">
+                            <div
+                                className={`relative w-full ${isVideo ? 'cursor-pointer' : ''}`}
+                                onClick={
+                                    isVideo
+                                        ? () => handleTogglePlayPause(index)
+                                        : undefined
+                                }
+                            >
+                                {isVideo ? (
+                                    <div className="relative">
+                                        <div className="flex w-full items-center justify-center">
+                                            <div
+                                                style={{
+                                                    position: 'relative',
+                                                    cursor: 'pointer',
+                                                }}
+                                                className="w-full"
+                                            >
+                                                <video
+                                                    ref={(el) => {
+                                                        videoRefs.current[
+                                                            index
+                                                        ] = el;
+                                                    }}
+                                                    src={media.url}
+                                                    width="100%"
+                                                    height="100%"
+                                                    autoPlay
+                                                    muted
+                                                    loop
+                                                    playsInline
+                                                    onPlay={() =>
+                                                        setPlayingIndex(index)
+                                                    }
+                                                    onPause={() => {
+                                                        if (
+                                                            playingIndex ===
+                                                            index
+                                                        ) {
+                                                            setPlayingIndex(
+                                                                null,
+                                                            );
+                                                        }
+                                                    }}
+                                                    style={{
+                                                        width: '100%',
+                                                        height: '100%',
+                                                        objectFit: 'cover',
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                        {showControls &&
+                                            index === activeIndex && (
+                                                <div className="absolute inset-0 flex cursor-pointer items-center justify-center">
+                                                    <div className="rounded-full bg-white p-3 shadow-lg">
+                                                        {playingIndex ===
+                                                        index ? (
+                                                            <FaPause className="text-2xl text-[#902729]" />
+                                                        ) : (
+                                                            <FaPlay className="text-2xl text-[#902729]" />
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            )}
+                                    </div>
+                                ) : (
+                                    <img
+                                        src={media.url}
+                                        alt={media.title}
+                                        className="h-full w-full object-cover"
+                                        loading={index === 0 ? 'eager' : 'lazy'}
+                                    />
+                                )}
+                            </div>
+
+                            {/* <div
+                                className={`absolute top-6 right-0 left-0 z-20 flex hidden justify-center md:flex`}
+                            >
+                                <h2 className="flex transform items-center rounded-full border-[3px] border-[#9c7833] bg-[#902729] px-6 py-3 font-bold text-white shadow-md transition-all duration-300 ease-out hover:scale-105 hover:bg-[#a52b2d] hover:shadow-lg active:scale-95">
+                                    When are you coming?{' '}
+                                    <span className="pl-1 text-3xl">📅</span>
+                                </h2>
+                            </div> */}
+                        </div>
+                    );
+                })}
+            </Carousel>
+        </div>
+    );
+};
+
+export default Carousels;
