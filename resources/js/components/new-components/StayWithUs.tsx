@@ -5,7 +5,7 @@ import { SelectionModal } from '@/components/SelectionModal';
 import { useRatesBooking } from '@/hooks/RatesCartContext';
 import { calculateNights, isHoliday } from '@/lib/dateUtils';
 import { getKidsMealCost, getRoomRate, getSupplement } from '@/lib/rateUtils';
-import { Amenity, Dining, Package } from '@/types';
+import { Amenity, DayVisitPackage, Dining, Package } from '@/types';
 import {
     ConferencePackage,
     LeisureExperience,
@@ -236,10 +236,12 @@ export default function StayWithUs({
     packages,
     dining,
     amenities,
+    dayVisitPackages,
 }: {
     packages: Package[];
     dining: Dining[];
     amenities: Amenity[];
+    dayVisitPackages: DayVisitPackage[];
 }) {
     useEffect(() => {
         const savedTab = localStorage.getItem('tafaria-selected-tab');

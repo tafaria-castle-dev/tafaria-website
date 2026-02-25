@@ -17,6 +17,7 @@ import {
     ArtsExperience,
     ArtsPackage,
     Category,
+    DayVisitPackage,
     Dining,
     EventAddon,
     EventPage,
@@ -62,6 +63,7 @@ interface CategoryProps {
     artsExperiences: ArtsExperience[];
     artsEnquiry: ArtsEnquiry[];
     artFacilities: ArtFacility[];
+    dayVisitPackages: DayVisitPackage[];
 }
 
 const useMobileDetect = () => {
@@ -204,6 +206,7 @@ export default function CategoryShow({
     artsExperiences,
     artsEnquiry,
     artFacilities,
+    dayVisitPackages,
 }: CategoryProps) {
     const [collapseAll, setCollapseAll] = useState(false);
     const [hasExpandedPosts, setHasExpandedPosts] = useState(false);
@@ -588,6 +591,7 @@ export default function CategoryShow({
                                 packages={packages}
                                 dining={dining}
                                 amenities={amenities}
+                                dayVisitPackages={dayVisitPackages}
                             />
                         )}
                         {slug.toLowerCase() === 'godream' && (

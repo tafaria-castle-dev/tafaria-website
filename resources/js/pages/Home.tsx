@@ -6,6 +6,7 @@ import {
     About,
     AdditionalDetail,
     Category,
+    DayVisitPackage,
     EventPage,
     HeroSection,
     Image,
@@ -29,6 +30,7 @@ interface HomeProps {
     schemas: Schemas;
     additionalDetails: AdditionalDetail[];
     events: EventPage[];
+    dayVisitPackages: DayVisitPackage[];
 }
 
 const Home: React.FC<HomeProps> = ({
@@ -41,6 +43,7 @@ const Home: React.FC<HomeProps> = ({
     packages,
     offers,
     events,
+    dayVisitPackages,
 }) => {
     const isLoading = useInertiaLoading();
     if (isLoading) {
@@ -55,6 +58,7 @@ const Home: React.FC<HomeProps> = ({
                 schoolPrograms={schoolPrograms}
                 packages={packages}
                 events={events}
+                dayVisitPackages={dayVisitPackages}
             />
             <TabComponent images={images} categories={categories} />
         </>

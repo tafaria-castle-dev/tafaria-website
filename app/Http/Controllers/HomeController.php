@@ -31,6 +31,10 @@ class HomeController extends Controller
         $eventsResponse = $httpClient->get('https://website-cms.tafaria.com/api/events');
         $events = $eventsResponse->json()['data'] ?? [];
 
+        $dayVisitPackagesResponse = $httpClient->get('https://website-cms.tafaria.com/api/day-visit-packages');
+        $dayVisitPackages = $dayVisitPackagesResponse->json()['data'] ?? [];
+
+
         $description = $this->extractFromHtml($abouts[0]['content'] ?? '');
 
         $metadata = [
@@ -201,6 +205,8 @@ class HomeController extends Controller
             'packages' => $packages,
             'events' => $events,
             'heroSection' => $heroSection,
+            'dayVisitPackages' => $dayVisitPackages,
+
             'schemas' => [
                 'organization' => $organizationSchema,
                 'localBusiness' => $localBusinessSchema,

@@ -48,6 +48,8 @@ class CategoryController extends Controller
         $artFacilitiesResponse = $httpClient->get('https://website-cms.tafaria.com/api/art-facilities');
         $artFacilities = $artFacilitiesResponse->json()['data'] ?? [];
 
+        $dayVisitPackagesResponse = $httpClient->get('https://website-cms.tafaria.com/api/day-visit-packages');
+        $dayVisitPackages = $dayVisitPackagesResponse->json()['data'] ?? [];
 
         $category = collect($categories)->firstWhere('slug', $slug);
 
@@ -84,6 +86,8 @@ class CategoryController extends Controller
             'artsExperiences' => $artsExperiences,
             'artsEnquiry' => $artsEnquiry,
             'artFacilities' => $artFacilities,
+
+            'dayVisitPackages' => $dayVisitPackages
         ]);
     }
 

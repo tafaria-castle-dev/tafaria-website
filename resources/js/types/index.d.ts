@@ -446,3 +446,22 @@ export interface ArtsEnquiry extends ApiResource {
     title?: string;
     description?: string;
 }
+export interface DayVisitPackage {
+    id: number;
+    title: string;
+    subtitle: string | null;
+    items: DayVisitPackageItem[];
+}
+
+export interface DayVisitPackageItem {
+    id: number;
+    package_id: number;
+    image: string | null;
+    pax: number | null;
+    price: number | null;
+    price_per_extra_pax: number | null;
+    title: string | null;
+    badge_content: string | null;
+    description: string | null;
+    button_message: string | null;
+}

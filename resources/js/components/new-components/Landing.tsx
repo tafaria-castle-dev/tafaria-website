@@ -1,5 +1,7 @@
 import {
     AdditionalDetail,
+    DayVisitPackage,
+    DayVisitPackageItem,
     EventPage,
     HeroSection,
     Offer,
@@ -263,6 +265,7 @@ interface LandingPageProps {
     schoolPrograms: SchoolProgram[];
     packages: Package[];
     events: EventPage[];
+    dayVisitPackages: DayVisitPackage[];
 }
 function Badge({
     children,
@@ -329,6 +332,10 @@ interface PackagesCardsProps {
     activeTab?: string | null;
     onTabSelect?: (tabKey: string) => void;
     packages?: Package[];
+}
+interface DayVisitCardsProps {
+    onButtonClick?: (tabKey: string) => void;
+    packages?: DayVisitPackageItem[];
 }
 
 export function toTabKey(title: string): string {
@@ -408,6 +415,51 @@ export const PackagesCards = ({
         </div>
     );
 };
+const DayVisitPackageCards = ({
+    onButtonClick,
+    packages,
+}: DayVisitCardsProps) => {
+    const handleCardClick = (pkg: DayVisitPackageItem) => {
+        const key = toTabKey(pkg.title || '');
+        if (onButtonClick) {
+            onButtonClick(key);
+        }
+    };
+    return (
+        <div className="grid-2" style={{ marginTop: 16 }}>
+            {packages?.map((pkg) => {
+                return (
+                    <div className={`package-card`} key={pkg.id}>
+                        <div className="package-header">
+                            <img
+                                src={pkg.image || ''}
+                                alt={pkg.title || ''}
+                                loading="lazy"
+                            />
+                        </div>
+                        <div className="card-pad">
+                            <div className="h3" style={{ marginTop: 10 }}>
+                                {pkg.title}
+                            </div>
+                            <div
+                                className="small"
+                                dangerouslySetInnerHTML={{
+                                    __html: pkg.description || '',
+                                }}
+                            ></div>
+
+                            <div className="row" style={{ marginTop: 16 }}>
+                                <button className="btn btn-secondary">
+                                    {pkg.button_message}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            })}
+        </div>
+    );
+};
 export default function LandingPage({
     heroSection,
     offers,
@@ -415,6 +467,7 @@ export default function LandingPage({
     schoolPrograms,
     packages,
     events,
+    dayVisitPackages,
 }: LandingPageProps) {
     const [_highlightedPackage, setHighlightedPackage] = useState<
         string | null
@@ -458,6 +511,20 @@ export default function LandingPage({
                                 </p>
 
                                 <PackagesCards packages={packages} />
+                            </div>
+                        </section>
+                        <section id="packages" className="section">
+                            <div className="container">
+                                <h2 className="h2">
+                                    {dayVisitPackages[0]?.title}
+                                </h2>
+                                <p className="p">
+                                    {dayVisitPackages[0]?.subtitle}
+                                </p>
+
+                                <DayVisitPackageCards
+                                    packages={dayVisitPackages[0]?.items}
+                                />
                             </div>
                         </section>
                         <div className="hero-media card">
