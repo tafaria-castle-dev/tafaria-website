@@ -11,6 +11,11 @@ import { useInertiaLoading } from '@/hooks/useInertiaLoading';
 import {
     AboutUs,
     Amenity,
+    Art,
+    ArtFacility,
+    ArtsEnquiry,
+    ArtsExperience,
+    ArtsPackage,
     Category,
     Dining,
     EventAddon,
@@ -52,6 +57,11 @@ interface CategoryProps {
     eventAddons: EventAddon[];
     aboutUs: AboutUs[];
     tafariaPhilosophy: TafariaPhilosophy[];
+    arts: Art[];
+    artsPackages: ArtsPackage[];
+    artsExperiences: ArtsExperience[];
+    artsEnquiry: ArtsEnquiry[];
+    artFacilities: ArtFacility[];
 }
 
 const useMobileDetect = () => {
@@ -189,6 +199,11 @@ export default function CategoryShow({
     eventAddons,
     aboutUs,
     tafariaPhilosophy,
+    arts,
+    artsPackages,
+    artsExperiences,
+    artsEnquiry,
+    artFacilities,
 }: CategoryProps) {
     const [collapseAll, setCollapseAll] = useState(false);
     const [hasExpandedPosts, setHasExpandedPosts] = useState(false);
@@ -594,7 +609,15 @@ export default function CategoryShow({
                             </>
                         )}
 
-                        {slug.toLowerCase() === 'arts' && <ArtsPage />}
+                        {slug.toLowerCase() === 'arts' && (
+                            <ArtsPage
+                                arts={arts}
+                                artsPackages={artsPackages}
+                                artsExperiences={artsExperiences}
+                                artsEnquiry={artsEnquiry}
+                                artFacilities={artFacilities}
+                            />
+                        )}
 
                         <div className="container mx-auto overflow-x-auto pb-4">
                             {slug.toLowerCase() !== 'blogs' && (

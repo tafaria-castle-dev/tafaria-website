@@ -1,5 +1,6 @@
 import {
     AdditionalDetail,
+    EventPage,
     HeroSection,
     Offer,
     Package,
@@ -134,14 +135,18 @@ const styles = `
 
   /* Card */
   .card {
-    
-    border: 1px solid rgba(184,146,75,0.18);
-    border-radius: 24px;
-    overflow: hidden;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+     border: 1px solid rgba(184,146,75,0.18);
+    border-radius: 20px; overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
+    width: 100% !important;
   }
-  .card:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.1); }
+  .card-media { height: 180px; overflow: hidden; }
+  .card-media img { width:100%; height:100%; object-fit:cover; display:block; transition: transform 0.3s ease; }
+  .card:hover .card-media img { transform: scale(1.04); }
+  .card-pad { padding: 18px; }
+  .card-pad-lg { padding: 28px; }
 
 
   /* Hero */
@@ -186,19 +191,19 @@ const styles = `
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .grid-4 {
-    display: grid;
-    gap: 10px;
-    grid-template-columns: repeat(4, 1fr);
-    margin-top: 24px;
-  }
+    .grid-4 { display: grid; gap: 20px; grid-template-columns: repeat(4,1fr); }
+  .grid-3 { display: grid; gap: 20px; grid-template-columns: repeat(3,1fr); margin-top: 20px; }
+
+  .grid-2 { display: grid; gap: 24px; grid-template-columns: repeat(2,1fr); }
 
   @media (max-width: 900px) {
-    .grid-2 { grid-template-columns: 1fr; }
-    .grid-4 { grid-template-columns: repeat(2, 1fr); }
-  }
+    .grid-4 { grid-template-columns: repeat(2,1fr); }
+    .grid-3 { grid-template-columns: repeat(2,1fr); }
 
+    .grid-2 { grid-template-columns: 1fr; }
+  }
   @media (max-width: 560px) {
+    .grid-3 { grid-template-columns: 1fr; }
     .grid-4 { grid-template-columns: 1fr; }
   }
 
@@ -257,6 +262,7 @@ interface LandingPageProps {
     additionalDetails?: AdditionalDetail[];
     schoolPrograms: SchoolProgram[];
     packages: Package[];
+    events: EventPage[];
 }
 function Badge({
     children,
@@ -351,6 +357,7 @@ export const PackagesCards = ({
                 return (
                     <div
                         className={`package-card ${activeTab === 'experiences' ? 'active' : ''}`}
+                        key={pkg.id}
                     >
                         <div className="package-header">
                             <img
@@ -407,6 +414,7 @@ export default function LandingPage({
     additionalDetails,
     schoolPrograms,
     packages,
+    events,
 }: LandingPageProps) {
     const [_highlightedPackage, setHighlightedPackage] = useState<
         string | null
@@ -422,197 +430,233 @@ export default function LandingPage({
     return (
         <>
             <style>{styles}</style>
-            <div className="container">
-                <section className="section-sm">
-                    <div className="container">
-                        <div className="hero-grid">
-                            <div>
-                                <h1 className="h1">
-                                    {heroSection[0]?.title ||
-                                        'Welcome to Tafaria Castle'}
-                                </h1>
-                                <p
-                                    className="p-lg"
-                                    dangerouslySetInnerHTML={{
-                                        __html:
-                                            heroSection[0]?.subtitle ||
-                                            'Visit for the day, stay overnight, bring a school, host an event, or apply for an art residency — Tafaria makes learning and leisure feel magical through its two packages below.',
-                                    }}
-                                ></p>
+            <section className="section-sm">
+                <div className="container">
+                    <div className="hero-grid">
+                        <div>
+                            <h1 className="h1">
+                                {heroSection[0]?.title ||
+                                    'Welcome to Tafaria Castle'}
+                            </h1>
+                            <p
+                                className="p-lg"
+                                dangerouslySetInnerHTML={{
+                                    __html:
+                                        heroSection[0]?.subtitle ||
+                                        'Visit for the day, stay overnight, bring a school, host an event, or apply for an art residency — Tafaria makes learning and leisure feel magical through its two packages below.',
+                                }}
+                            ></p>
+                        </div>
+                        <section id="packages" className="section">
+                            <div className="container">
+                                <h2 className="h2">
+                                    Choose your Tafaria Package
+                                </h2>
+                                <p className="p">
+                                    Start with a package, then choose how you
+                                    want to enjoy it.
+                                </p>
+
+                                <PackagesCards packages={packages} />
                             </div>
+                        </section>
+                        <div className="hero-media card">
+                            <Hero heroSection={heroSection} offers={offers} />
 
-                            <div className="hero-media card">
-                                <Hero
-                                    heroSection={heroSection}
-                                    offers={offers}
-                                />
-
-                                <div className="hero-badge">
-                                    <Badge type="gold">Once Upon a Dream</Badge>
-                                </div>
-                            </div>
-
-                            <div className="row" style={{ marginTop: 4 }}>
-                                {packages?.map((pkg) => (
-                                    <button
-                                        key={pkg.title}
-                                        className="btn btn-secondary"
-                                        onClick={() => {
-                                            setHighlightedPackage(
-                                                toTabKey(pkg.title),
-                                            );
-                                            document
-                                                .getElementById('packages')
-                                                ?.scrollIntoView({
-                                                    behavior: 'smooth',
-                                                });
-                                        }}
-                                    >
-                                        {pkg.title}
-                                    </button>
-                                ))}
+                            <div className="hero-badge">
+                                <Badge type="gold">Once Upon a Dream</Badge>
                             </div>
                         </div>
                     </div>
-                </section>
+                </div>
+            </section>
 
-                <section id="packages" className="section">
-                    <div className="container">
-                        <h2 className="h2">Choose your Tafaria Package</h2>
-                        <p className="p">
-                            Start with a package, then choose how you want to
-                            enjoy it.
-                        </p>
+            <section className="section" style={{ paddingTop: 0 }}>
+                <div className="container">
+                    <div className="">
+                        <div className="strip-header">
+                            <div>
+                                <h2 className="h2">
+                                    {schoolPrograms[0]?.title}
+                                </h2>
+                                <p className="p" style={{ marginBottom: 0 }}>
+                                    {schoolPrograms[0]?.subtitle ||
+                                        'School Programs'}
+                                </p>
+                            </div>
+                            <div className="row">
+                                <a className="btn btn-primary" href="#quote">
+                                    Request a school quote
+                                </a>
+                            </div>
+                        </div>
 
-                        <PackagesCards packages={packages} />
+                        <div className="grid-4">
+                            {schoolPrograms[0]?.programs?.map((p) => (
+                                <SchoolCard
+                                    key={p.id}
+                                    program={p}
+                                    button_message={
+                                        schoolPrograms[0]?.button_message
+                                    }
+                                />
+                            ))}
+                        </div>
                     </div>
-                </section>
+                </div>
+            </section>
+            <section className="section-sm">
+                <div className="container">
+                    <h1 className="h1">
+                        {events[0]?.title || 'Host your event at Tafaria'}
+                    </h1>
+                    <p className="p-lg">
+                        {events[0]?.subtitle ||
+                            'Whether you are planning a corporate retreat, a team offsite, a wedding, or a family reunion, Tafaria offers a unique blend of inspiring spaces, delicious food, and memorable experiences to make your event truly special.'}
+                    </p>
+                </div>
+            </section>
 
+            <section id="packages" className="section">
+                <div className="container">
+                    <h2 className="h2">Event packages</h2>
+                    <div className="grid-3">
+                        {events[0]?.items?.map((pkg) => (
+                            <div key={pkg.id} className="card">
+                                <div className="card-media">
+                                    <img
+                                        src={pkg.image}
+                                        alt={pkg.title}
+                                        loading="lazy"
+                                    />
+                                </div>
+                                <div className="card-pad">
+                                    <span
+                                        className={`badge badge-${
+                                            pkg.badge_content?.includes('Day')
+                                                ? 'olive'
+                                                : pkg.badge_content?.includes(
+                                                        'Popular',
+                                                    )
+                                                  ? 'gold'
+                                                  : pkg.badge_content?.includes(
+                                                          'Social',
+                                                      )
+                                                    ? 'gold'
+                                                    : 'neutral'
+                                        }`}
+                                    >
+                                        {pkg.badge_content}
+                                    </span>
+                                    <div className="h3">{pkg.title}</div>
+                                    <div
+                                        className="small"
+                                        style={{ marginTop: 4 }}
+                                    >
+                                        {pkg.subtitle}
+                                    </div>
+                                    <hr className="hr" />
+                                    <div
+                                        className="small"
+                                        dangerouslySetInnerHTML={{
+                                            __html: pkg.description || '',
+                                        }}
+                                    ></div>
+                                    <div style={{ height: 12 }} />
+                                    <button
+                                        className="btn btn-secondary"
+                                        onClick={() => {}}
+                                    >
+                                        {events[0]?.button_message ||
+                                            'Request Proposal'}
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {detail && (
                 <section className="section" style={{ paddingTop: 0 }}>
                     <div className="container">
-                        <div className="strip">
-                            <div className="strip-header">
-                                <div>
-                                    <h2 className="h2">
-                                        {schoolPrograms[0]?.title}
-                                    </h2>
-                                    <p
-                                        className="p"
-                                        style={{ marginBottom: 0 }}
+                        <div className="grid-2">
+                            <div
+                                className="card"
+                                style={{
+                                    overflow: 'hidden',
+                                    width: '100%',
+                                }}
+                            >
+                                <iframe
+                                    title="Map to Tafaria"
+                                    src="https://www.google.com/maps?q=Tafaria%20Castle%20Laikipia&output=embed"
+                                    width="100%"
+                                    height="360"
+                                    style={{ border: 0, display: 'block' }}
+                                    loading="lazy"
+                                    referrerPolicy="no-referrer-when-downgrade"
+                                />
+                            </div>
+                            <div className="strip">
+                                <h2 className="h2" style={{ marginBottom: 6 }}>
+                                    Plan your visit
+                                </h2>
+                                {detail.opening_hours && (
+                                    <div
+                                        className="small"
+                                        style={{ marginBottom: 8 }}
                                     >
-                                        {schoolPrograms[0]?.subtitle ||
-                                            'School Programs'}
-                                    </p>
-                                </div>
+                                        <b>Opening hours:</b>{' '}
+                                        {detail.opening_hours}
+                                    </div>
+                                )}
+                                {detail.how_to_get_here_description && (
+                                    <div
+                                        className="small"
+                                        style={{ marginBottom: 8 }}
+                                    >
+                                        <b>How to get here:</b>{' '}
+                                        <span
+                                            dangerouslySetInnerHTML={{
+                                                __html: detail.how_to_get_here_description,
+                                            }}
+                                        />
+                                    </div>
+                                )}
+                                {detail.what_to_carry && (
+                                    <div
+                                        className="small"
+                                        style={{ marginBottom: 8 }}
+                                    >
+                                        <b>What to carry:</b>{' '}
+                                        {detail.what_to_carry}
+                                    </div>
+                                )}
+                                <div style={{ height: 12 }} />
                                 <div className="row">
                                     <a
-                                        className="btn btn-primary"
-                                        href="schools.html#quote"
+                                        className="btn btn-secondary"
+                                        href="/blogs/tafaria-frequently-asked-questions-faqs"
+                                        target="_blank"
+                                        rel="noreferrer"
                                     >
-                                        Request a school quote
+                                        See visitor FAQs
+                                    </a>
+                                    <a
+                                        className="btn btn-tertiary"
+                                        href="https://wa.me/+254708877244"
+                                        target="_blank"
+                                        rel="noreferrer"
+                                    >
+                                        WhatsApp
                                     </a>
                                 </div>
                             </div>
-
-                            <div className="grid-4">
-                                {schoolPrograms[0]?.programs?.map((p) => (
-                                    <SchoolCard
-                                        key={p.id}
-                                        program={p}
-                                        button_message={
-                                            schoolPrograms[0]?.button_message
-                                        }
-                                    />
-                                ))}
-                            </div>
                         </div>
                     </div>
                 </section>
-
-                {detail && (
-                    <section className="section" style={{ paddingTop: 0 }}>
-                        <div className="container">
-                            <div className="grid-2">
-                                <div
-                                    className="card"
-                                    style={{
-                                        overflow: 'hidden',
-                                        width: '100%',
-                                    }}
-                                >
-                                    <iframe
-                                        title="Map to Tafaria"
-                                        src="https://www.google.com/maps?q=Tafaria%20Castle%20Laikipia&output=embed"
-                                        width="100%"
-                                        height="360"
-                                        style={{ border: 0, display: 'block' }}
-                                        loading="lazy"
-                                        referrerPolicy="no-referrer-when-downgrade"
-                                    />
-                                </div>
-                                <div className="strip">
-                                    <h2
-                                        className="h2"
-                                        style={{ marginBottom: 6 }}
-                                    >
-                                        Plan your visit
-                                    </h2>
-                                    {detail.opening_hours && (
-                                        <div
-                                            className="small"
-                                            style={{ marginBottom: 8 }}
-                                        >
-                                            <b>Opening hours:</b>{' '}
-                                            {detail.opening_hours}
-                                        </div>
-                                    )}
-                                    {detail.how_to_get_here_description && (
-                                        <div
-                                            className="small"
-                                            style={{ marginBottom: 8 }}
-                                        >
-                                            <b>How to get here:</b>{' '}
-                                            <span
-                                                dangerouslySetInnerHTML={{
-                                                    __html: detail.how_to_get_here_description,
-                                                }}
-                                            />
-                                        </div>
-                                    )}
-                                    {detail.what_to_carry && (
-                                        <div
-                                            className="small"
-                                            style={{ marginBottom: 8 }}
-                                        >
-                                            <b>What to carry:</b>{' '}
-                                            {detail.what_to_carry}
-                                        </div>
-                                    )}
-                                    <div style={{ height: 12 }} />
-                                    <div className="row">
-                                        <a
-                                            className="btn btn-secondary"
-                                            href="/blogs/tafaria-frequently-asked-questions-faqs"
-                                            target="_blank"
-                                            rel="noreferrer"
-                                        >
-                                            See visitor FAQs
-                                        </a>
-                                        <a
-                                            className="btn btn-tertiary"
-                                            href="https://wa.me/+254708877244"
-                                            target="_blank"
-                                            rel="noreferrer"
-                                        >
-                                            WhatsApp
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                )}
-            </div>
+            )}
         </>
     );
 }

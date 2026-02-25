@@ -28,7 +28,8 @@ class HomeController extends Controller
         $schoolPrograms = $schoolProgramsResponse->json()['data'] ?? [];
         $packagesResponse = $httpClient->get('https://website-cms.tafaria.com/api/packages');
         $packages = $packagesResponse->json()['data'] ?? [];
-
+        $eventsResponse = $httpClient->get('https://website-cms.tafaria.com/api/events');
+        $events = $eventsResponse->json()['data'] ?? [];
 
         $description = $this->extractFromHtml($abouts[0]['content'] ?? '');
 
@@ -198,6 +199,7 @@ class HomeController extends Controller
             'additionalDetails' => $additionalDetails,
             'schoolPrograms' => $schoolPrograms,
             'packages' => $packages,
+            'events' => $events,
             'heroSection' => $heroSection,
             'schemas' => [
                 'organization' => $organizationSchema,

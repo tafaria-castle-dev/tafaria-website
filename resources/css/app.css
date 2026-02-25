@@ -350,3 +350,23 @@ button:hover:not(:disabled),
 .animate-fadeIn {
     animation: fadeIn 0.3s ease-out;
 }
+ol {
+    list-style: none;
+    padding-left: 0;
+    margin: 8px 0;
+}
+li[data-list='bullet'] {
+    display: list-item;
+    list-style-type: disc;
+    margin-left: 20px;
+    margin-bottom: 4px;
+}
+li[data-list='ordered'] {
+    display: list-item;
+    list-style-type: decimal;
+    margin-left: 20px;
+    margin-bottom: 4px;
+}
+.ql-ui {
+    display: none;
+}

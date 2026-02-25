@@ -1,3 +1,10 @@
+import {
+    Art,
+    ArtFacility,
+    ArtsEnquiry,
+    ArtsExperience,
+    ArtsPackage,
+} from '@/types';
 import { useRef, useState } from 'react';
 
 const WHATSAPP_NUMBER = 'YOURNUMBER';
@@ -191,7 +198,19 @@ const styles = `
   }
 `;
 
-export default function ArtsPage() {
+export default function ArtsPage({
+    arts,
+    artsPackages,
+    artsExperiences,
+    artsEnquiry,
+    artFacilities,
+}: {
+    arts: Art[];
+    artsPackages: ArtsPackage[];
+    artsExperiences: ArtsExperience[];
+    artsEnquiry: ArtsEnquiry[];
+    artFacilities: ArtFacility[];
+}) {
     const inquiryRef = useRef<HTMLElement>(null);
     const [toast, setToast] = useState('');
     const [form, setForm] = useState<ArtsEnquiryForm>({
@@ -251,12 +270,11 @@ export default function ArtsPage() {
                             Center for the Arts
                         </span>
                         <h1 className="h1">
-                            The arts are the heart of Tafaria
+                            {arts[0]?.title || 'Arts & Studios'}
                         </h1>
                         <p className="p-lg">
-                            Explore studios, galleries and creative spaces —
-                            meet makers, see work in progress, or book an arts
-                            experience for your group.
+                            {arts[0]?.description ||
+                                'A vibrant ecosystem of studios, galleries, and creative experiences.'}
                         </p>
                         <div className="row">
                             <a className="btn btn-primary" href="#experiences">
@@ -269,7 +287,6 @@ export default function ArtsPage() {
                     </div>
                 </section>
 
-                {/* Paths */}
                 <section className="section">
                     <div className="container">
                         <h2 className="h2">Choose your arts path</h2>

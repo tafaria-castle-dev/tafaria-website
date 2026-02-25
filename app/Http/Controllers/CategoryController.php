@@ -37,6 +37,18 @@ class CategoryController extends Controller
         $eventAddons = $eventAddonsResponse->json()['data'] ?? [];
 
 
+        $artsResponse = $httpClient->get('https://website-cms.tafaria.com/api/arts');
+        $arts = $artsResponse->json()['data'] ?? [];
+        $artsPackagesResponse = $httpClient->get('https://website-cms.tafaria.com/api/arts-packages');
+        $artsPackages = $artsPackagesResponse->json()['data'] ?? [];
+        $artsExperiencesResponse = $httpClient->get('https://website-cms.tafaria.com/api/arts-experiences');
+        $artsExperiences = $artsExperiencesResponse->json()['data'] ?? [];
+        $artsEnquiryResponse = $httpClient->get('https://website-cms.tafaria.com/api/arts-enquiry');
+        $artsEnquiry = $artsEnquiryResponse->json()['data'] ?? [];
+        $artFacilitiesResponse = $httpClient->get('https://website-cms.tafaria.com/api/art-facilities');
+        $artFacilities = $artFacilitiesResponse->json()['data'] ?? [];
+
+
         $category = collect($categories)->firstWhere('slug', $slug);
 
         if (!$category) {
@@ -66,6 +78,12 @@ class CategoryController extends Controller
             'packages' => $packages,
             'aboutUs' => $aboutUs,
             'tafariaPhilosophy' => $tafariaPhilosophy,
+
+            'arts' => $arts,
+            'artsPackages' => $artsPackages,
+            'artsExperiences' => $artsExperiences,
+            'artsEnquiry' => $artsEnquiry,
+            'artFacilities' => $artFacilities,
         ]);
     }
 
