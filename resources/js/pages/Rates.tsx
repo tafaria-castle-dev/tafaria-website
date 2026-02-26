@@ -134,6 +134,7 @@ export default function RackRates() {
 
     const closeModal = () => {
         setShowBookingModal(false);
+        setShowDatePicker(false);
         setSelectedRoom(null);
         setSelectedLeisureRoom(null);
         setSelectedConference(null);
@@ -581,11 +582,17 @@ export default function RackRates() {
                     }}
                 />
                 {introductionDescription?.description && (
-                    <div className="mx-3">
-                        <div className="container mx-auto mt-6 mb-1 flex flex-col items-center justify-center rounded-2xl border border-[#93723c]/60 bg-white/80 p-4 sm:p-6">
-                            <p className="text-base text-gray-800 sm:text-lg">
-                                {introductionDescription?.description}
-                            </p>
+                    <div className="mx-3 mt-8">
+                        <div className="container mx-auto mb-1 flex flex-col items-start justify-center rounded-2xl border border-[#93723c]/60 bg-white/80 p-4 sm:p-6">
+                            <p
+                                className="text-lg md:text-2xl"
+                                style={{ marginBottom: 16 }}
+                                dangerouslySetInnerHTML={{
+                                    __html:
+                                        introductionDescription.description ||
+                                        '',
+                                }}
+                            />
                             <div className="mt-2 flex w-full flex-wrap justify-center gap-4">
                                 <button
                                     className={`flex-1 rounded-xl px-6 py-3 text-base font-semibold transition-all sm:text-lg ${activeTab === 'experiences' ? 'bg-[#902729] text-white' : 'bg-gray-200 text-gray-800 hover:bg-[#9c7833]/60'}`}

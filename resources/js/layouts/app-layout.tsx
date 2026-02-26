@@ -2,6 +2,7 @@ import BookingEngine from '@/components/booking';
 import Footer from '@/components/footer';
 import Header from '@/components/header';
 import HeaderAndStories from '@/components/HeaderAndStories';
+import SelectedPackageModal from '@/components/new-components/SelectedPackageModal';
 import RatesCart from '@/components/RatesCart';
 import Stories from '@/components/stories';
 import TableOfContents from '@/components/tableOfContents';
@@ -11,6 +12,10 @@ import { CartProvider } from '@/hooks/CartContext';
 import { DropdownProvider } from '@/hooks/DropdownContext';
 import { NavigationProvider } from '@/hooks/NavigationContext';
 import { BookingCartProvider, useRatesBooking } from '@/hooks/RatesCartContext';
+import {
+    SelectedPackageProvider,
+    useSelectedPackage,
+} from '@/hooks/SelectedPackageContext';
 import { ToCProvider } from '@/hooks/ToCContext';
 import { Category, Metadata, Schemas } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
@@ -33,6 +38,7 @@ const AppLayoutContent: React.FC<AppLayoutProps> = ({
     const { showBookingModal, setShowBookingModal } = useBooking();
     const finalMetadata = metadata;
     const { showCart, setShowCart, cart } = useRatesBooking();
+    const { showSelectedPackageModal } = useSelectedPackage();
     const { component } = usePage();
     const isRestaurantMenu = component === 'restaurant-menu';
     return (
@@ -165,6 +171,7 @@ const AppLayoutContent: React.FC<AppLayoutProps> = ({
                     </div>
                 </div>
             )}
+            {showSelectedPackageModal && <SelectedPackageModal />}
 
             {showCart && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -183,7 +190,9 @@ const AppLayout: React.FC<AppLayoutProps> = (props) => {
     return (
         <BookingProvider>
             <BookingCartProvider>
-                <AppLayoutContent {...props} />
+                <SelectedPackageProvider>
+                    <AppLayoutContent {...props} />
+                </SelectedPackageProvider>
             </BookingCartProvider>
         </BookingProvider>
     );

@@ -64,15 +64,15 @@ const styles = `
     color: #7a5520;
   }
 
-.grid {
+.gallery-grid {
   margin-top: 24px;
   display: grid;
   gap: 24px 16px;                   
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   justify-content: center;           
 }
-  @media (max-width: 980px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+  @media (max-width: 980px) { .gallery-grid  { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .gallery-grid  { grid-template-columns: 1fr; } }
 
 .card {
   
@@ -510,15 +510,15 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
         <>
             <style>{styles}</style>
             <div className="container">
-                <section className="section-sm">
+                <section className="py-0">
                     <div className="container">
                         <h1 className="h1">Gallery</h1>
-                        <p className="p-lg">
-                            A visual tour of Tafaria Castle. Use filters to
-                            focus.
+                        <p className="p-lg m-0">
+                            A visual tour of Tafaria Castle & Center for the
+                            Arts
                         </p>
 
-                        <div className="filters" aria-label="Gallery filters">
+                        {/* <div className="filters" aria-label="Gallery filters">
                             {FILTERS.map((f) => (
                                 <button
                                     key={f.value}
@@ -529,18 +529,18 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
                                     {f.label}
                                 </button>
                             ))}
-                        </div>
+                        </div> */}
                     </div>
                 </section>
 
-                <section className="section" style={{ paddingTop: 0 }}>
+                <section className="section-sm" style={{ paddingTop: 0 }}>
                     <div className="container">
                         {filtered.length === 0 ? (
                             <p className="small" style={{ padding: '40px 0' }}>
                                 No items found for this filter.
                             </p>
                         ) : (
-                            <div className="grid">
+                            <div className="gallery-grid">
                                 {displayed.map((img, i) => (
                                     <MediaCard
                                         key={img.id}

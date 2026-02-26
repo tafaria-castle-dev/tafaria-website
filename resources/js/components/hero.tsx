@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-import React from 'react'; // Add useState and useEffect
+import React from 'react';
 
 import { HeroSection as HeroSectionType, Offer, Video } from '@/types';
 import CarouselHero from './carouselhero';
@@ -35,6 +35,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroSection, offers }) => {
                             url: videolink?.video_path || '',
                         })) || []
                     }
+                    heroTitle={heroSection[0]?.title}
+                    heroSubtitle={heroSection[0]?.subtitle}
                 />
             </div>
         </div>

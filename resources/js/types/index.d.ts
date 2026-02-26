@@ -266,6 +266,7 @@ export interface HeroSection {
     title: string;
     name: string;
     subtitle: string;
+    title: string;
     priority?: number | null;
     images?: Image[] | null;
     videos?: Video[] | null;

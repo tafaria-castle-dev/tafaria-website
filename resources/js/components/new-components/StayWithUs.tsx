@@ -1,8 +1,7 @@
 import { DatePickerModal } from '@/components/DatePickerModal';
-import { ExperiencesTab } from '@/components/ExperiencesTab';
-import { RecreationTab } from '@/components/RecreationTab';
 import { SelectionModal } from '@/components/SelectionModal';
 import { useRatesBooking } from '@/hooks/RatesCartContext';
+import { useSelectedPackage } from '@/hooks/SelectedPackageContext';
 import { calculateNights, isHoliday } from '@/lib/dateUtils';
 import { getKidsMealCost, getRoomRate, getSupplement } from '@/lib/rateUtils';
 import { Amenity, DayVisitPackage, Dining, Package } from '@/types';
@@ -18,104 +17,10 @@ import {
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
-import { PackagesCards, toTabKey } from './Landing';
-
-interface ExperienceCard {
-    image: string;
-    alt: string;
-    title: string;
-    meta: string;
-}
-
-interface RecreationCard {
-    image: string;
-    alt: string;
-    title: string;
-    meta: string;
-}
-
-const EXPERIENCE_CARDS: ExperienceCard[] = [
-    {
-        image: '/assets/museum.jpeg',
-        alt: 'Tafaria Museum interior',
-        title: 'Museum Tour',
-        meta: '60–90 min • Great for rainy days',
-    },
-    {
-        image: '/assets/herbarium.jpeg',
-        alt: 'Tafaria Herbarium interior',
-        title: 'Herbarium Tour',
-        meta: '45–60 min • Nature lessons',
-    },
-    {
-        image: '/assets/nano farm.jpeg',
-        alt: 'Tafaria Nano Farm',
-        title: 'Nano Farm Learning Tour',
-        meta: '60 min • Families & students',
-    },
-    {
-        image: '/assets/art-studios.png',
-        alt: 'Tafaria Art Studios',
-        title: 'Art Studios & Installations',
-        meta: '45–75 min • Inspiring',
-    },
-    {
-        image: '/assets/castle-front.jpg',
-        alt: 'Tafaria Story Walk',
-        title: 'Once Upon a Dream Tour',
-        meta: '30–45 min • Tafaria story',
-    },
-    {
-        image: '/assets/goDreamLifeskills.jpeg',
-        alt: 'Guided Learning Itinerary',
-        title: 'Guided Learning Itinerary',
-        meta: '2–3 hrs • Curated mix',
-    },
-];
-
-const RECREATION_CARDS: RecreationCard[] = [
-    {
-        image: '/assets/horse-riding.png',
-        alt: 'Horse Riding at Tafaria',
-        title: 'Horse Riding',
-        meta: 'Booking recommended',
-    },
-    {
-        image: '/assets/archery.jpeg',
-        alt: 'Archery at Tafaria',
-        title: 'Archery',
-        meta: '30–45 min • Fun & focus',
-    },
-    {
-        image: '/assets/Mini Golf.png',
-        alt: 'Mini Golf at Tafaria',
-        title: 'Mini Golf',
-        meta: '30–45 min • Family-friendly',
-    },
-    {
-        image: '/assets/swimming_pool.jpg',
-        alt: 'Pool & Moat at Tafaria',
-        title: 'Pool & Moat',
-        meta: 'Flexible • Relax',
-    },
-    {
-        image: '/assets/arts.jpg',
-        alt: 'Nature Walks at Tafaria',
-        title: 'Nature Walks',
-        meta: 'Self-guided • Slow down',
-    },
-    {
-        image: '/assets/lords-room.png',
-        alt: 'Family Play Zone at Tafaria',
-        title: 'Family Play Zone',
-        meta: 'Kids & parents',
-    },
-];
+import { PackagesCards } from './Landing';
 
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
-
-  
 
   .h1 { font-family: 'Cinzel', serif; font-size: clamp(2rem,4vw,3rem); font-weight: 700; line-height: 1.2; color: #1a0f06; margin-bottom: 14px; }
   .h2 { font-family: 'Cinzel', serif; font-size: clamp(1.3rem,3vw,1.9rem); font-weight: 600; color: #1a0f06; margin-bottom: 10px; }
@@ -217,19 +122,6 @@ const styles = `
 
   .amenity-card { padding: 20px; }
 
-  .toast {
-    position: fixed; top: 80px; right: 16px; z-index: 9999;
-    background: #902729; color: #fff;
-    border-radius: 16px; padding: 14px 20px;
-    display: flex; align-items: center; gap: 10px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-    animation: slide-in 0.3s ease-out;
-    font-weight: 600;
-  }
-  @keyframes slide-in {
-    from { transform: translateX(100%); opacity: 0; }
-    to   { transform: translateX(0);   opacity: 1; }
-  }
 `;
 
 export default function StayWithUs({
@@ -243,23 +135,17 @@ export default function StayWithUs({
     amenities: Amenity[];
     dayVisitPackages: DayVisitPackage[];
 }) {
-    useEffect(() => {
-        const savedTab = localStorage.getItem('tafaria-selected-tab');
-        if (savedTab) {
-            setActiveTab(savedTab);
-            localStorage.removeItem('tafaria-selected-tab');
-        }
-    }, []);
     const {
         showBookingModal,
         setShowBookingModal,
         cart,
         addToCart,
+        setShowCart,
         boardType,
         setBoardType,
     } = useRatesBooking();
 
-    const [activeTab, setActiveTab] = useState<string>('');
+    const [activeTab, setActiveTab] = useState<Package | null>(null);
     const [residency] = useState<Residency>('East African Resident');
     const [rooms, setRooms] = useState<Room[]>([]);
     const [leisureRooms, setLeisureRooms] = useState<LeisureRoom[]>([]);
@@ -291,6 +177,8 @@ export default function StayWithUs({
     const [showToast, setShowToast] = useState(false);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
     const datePickerTriggerRef = useRef<HTMLDivElement | null>(null);
+    const { setSelectedPackage, setShowSelectedPackageModal } =
+        useSelectedPackage();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -339,25 +227,6 @@ export default function StayWithUs({
             if (timeoutRef.current) clearTimeout(timeoutRef.current);
         };
     }, []);
-
-    useEffect(() => {
-        const handleEsc = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') {
-                if (showDatePicker) setShowDatePicker(false);
-                if (showBookingModal) setShowBookingModal(false);
-            }
-        };
-        document.addEventListener('keydown', handleEsc);
-        return () => document.removeEventListener('keydown', handleEsc);
-    }, [showDatePicker, showBookingModal, setShowBookingModal]);
-
-    useEffect(() => {
-        document.body.style.overflow =
-            showBookingModal || showDatePicker ? 'hidden' : '';
-        return () => {
-            document.body.style.overflow = '';
-        };
-    }, [showBookingModal, showDatePicker]);
 
     const closeModal = () => {
         setShowBookingModal(false);
@@ -678,9 +547,13 @@ export default function StayWithUs({
             ),
         );
 
-    const experienceDescription = findDesc('experience');
     const introductionDescription = findDesc('introduction');
-    const leisureDescription = findDesc('recreation');
+
+    const handlePackageSelect = (pkg: Package) => {
+        setSelectedPackage(pkg);
+
+        setShowSelectedPackageModal(true);
+    };
 
     return (
         <>
@@ -764,206 +637,19 @@ export default function StayWithUs({
                             <p
                                 className="text-lg md:text-2xl"
                                 style={{ marginBottom: 16 }}
-                            >
-                                {introductionDescription.description}
-                            </p>
-
+                                dangerouslySetInnerHTML={{
+                                    __html:
+                                        introductionDescription.description ||
+                                        '',
+                                }}
+                            />
                             <PackagesCards
                                 packages={packages}
                                 activeTab={activeTab}
-                                onTabSelect={(key) => setActiveTab(key)}
+                                onSelectPackage={handlePackageSelect}
                             />
                         </div>
                     </div>
-                )}
-
-                {packages.map((pkg) => {
-                    const key = toTabKey(pkg.title);
-                    if (activeTab !== key) return null;
-                    return (
-                        <section id={key} className="section">
-                            <div className="container">
-                                <div className="package-section">
-                                    <div className="section-header">
-                                        <div>
-                                            <h2 className="h2">{pkg.title}</h2>
-                                            <span className="badge badge-gold">
-                                                {pkg.subtitle}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    {pkg.description && (
-                                        <div className="mb-8">
-                                            <p
-                                                className="mb-4 text-base text-gray-800 sm:text-lg"
-                                                dangerouslySetInnerHTML={{
-                                                    __html: pkg.description,
-                                                }}
-                                            ></p>
-                                        </div>
-                                    )}
-                                    <div className="grid-3">
-                                        {pkg.items?.map((card) => (
-                                            <div
-                                                key={card.title}
-                                                className="card"
-                                            >
-                                                <div className="card-media">
-                                                    <img
-                                                        src={card.image}
-                                                        alt={card.title}
-                                                        loading="lazy"
-                                                    />
-                                                </div>
-                                                <div className="card-pad">
-                                                    <div
-                                                        className="h3"
-                                                        style={{
-                                                            marginBottom: 4,
-                                                        }}
-                                                    >
-                                                        {card.title}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    <div style={{ marginTop: 24 }}>
-                                        <a
-                                            className="btn btn-primary"
-                                            href="book.html?package=immersion"
-                                        >
-                                            Book this Package
-                                        </a>
-                                    </div>
-                                </div>
-
-                                <div className="rates-wrapper">
-                                    <div className="rates-label">
-                                        Rates &amp; Booking
-                                    </div>
-                                    <ExperiencesTab
-                                        description={experienceDescription}
-                                        rooms={rooms}
-                                        meals={meals}
-                                        conferences={conferences}
-                                        hoveredItem={hoveredItem}
-                                        setHoveredItem={setHoveredItem}
-                                        residency={residency}
-                                        boardType={boardType}
-                                        setBoardType={setBoardType}
-                                        isLoading={isLoading}
-                                        getRoomCountInCart={getRoomCountInCart}
-                                        handleAddRoomToCart={
-                                            handleAddRoomToCart
-                                        }
-                                        handleAddConferenceToCart={
-                                            handleAddConferenceToCart
-                                        }
-                                    />
-                                </div>
-                            </div>
-                        </section>
-                    );
-                })}
-
-                {activeTab === 'recreation' && (
-                    <section id="recreation" className="section">
-                        <div className="container">
-                            <div className="package-section">
-                                <div className="section-header">
-                                    <div>
-                                        <h2 className="h2">
-                                            The Tafaria Recreation Package
-                                        </h2>
-                                        <span className="badge badge-olive">
-                                            Unwind &amp; have fun
-                                        </span>
-                                    </div>
-                                    <a
-                                        className="btn btn-primary"
-                                        href="book.html?package=recreation"
-                                    >
-                                        Book this Package
-                                    </a>
-                                </div>
-                                {leisureDescription && (
-                                    <div className="mb-8">
-                                        <p className="mb-4 text-base text-gray-800 sm:text-lg">
-                                            {leisureDescription.description}
-                                        </p>
-                                        {leisureDescription.audio_url && (
-                                            <audio
-                                                controls
-                                                src={
-                                                    leisureDescription.audio_url
-                                                }
-                                                className="w-full"
-                                            />
-                                        )}
-                                    </div>
-                                )}
-                                <div className="grid-3">
-                                    {RECREATION_CARDS.map((card) => (
-                                        <div key={card.title} className="card">
-                                            <div className="card-media">
-                                                <img
-                                                    src={card.image}
-                                                    alt={card.alt}
-                                                    loading="lazy"
-                                                />
-                                            </div>
-                                            <div className="card-pad">
-                                                <div
-                                                    className="h3"
-                                                    style={{ marginBottom: 4 }}
-                                                >
-                                                    {card.title}
-                                                </div>
-                                                <div className="small">
-                                                    {card.meta}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <div style={{ marginTop: 24 }}>
-                                    <a
-                                        className="btn btn-primary"
-                                        href="book.html?package=recreation"
-                                    >
-                                        Book this Package
-                                    </a>
-                                </div>
-                            </div>
-
-                            <div className="rates-wrapper">
-                                <div className="rates-label">
-                                    Rates &amp; Booking
-                                </div>
-                                <RecreationTab
-                                    description={leisureDescription}
-                                    leisureRooms={leisureRooms}
-                                    leisureExperiences={leisureExperiences}
-                                    hoveredItem={hoveredItem}
-                                    setHoveredItem={setHoveredItem}
-                                    residency={residency}
-                                    boardType={boardType}
-                                    setBoardType={setBoardType}
-                                    isLoading={isLoading}
-                                    getRoomCountInCart={getRoomCountInCart}
-                                    handleAddLeisureRoomToCart={
-                                        handleAddLeisureRoomToCart
-                                    }
-                                    handleAddLeisureToCart={
-                                        handleAddLeisureToCart
-                                    }
-                                />
-                            </div>
-                        </div>
-                    </section>
                 )}
 
                 <section
@@ -991,7 +677,7 @@ export default function StayWithUs({
                                             dining[0]?.description ||
                                             'Experience a culinary journey at Tafaria Castle, where our dining offerings are as rich and diverse as our history. From hearty breakfasts to elegant dinners, our menus are crafted to delight every palate. Savor the flavors of locally sourced ingredients, expertly prepared to create memorable meals that complement your stay.',
                                     }}
-                                ></p>
+                                />
                                 <div className="meta-row">
                                     <span className="badge badge-neutral">
                                         Breakfast

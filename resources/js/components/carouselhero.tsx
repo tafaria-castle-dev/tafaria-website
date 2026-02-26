@@ -22,16 +22,36 @@ export interface VideoLinks {
     link: string;
 }
 
+export interface HeroSection {
+    id: string;
+    title: string;
+    name: string;
+    subtitle: string;
+    priority?: number | null;
+    images?: Image[] | null;
+    videos?: Video[] | null;
+    videolinks?: VideoLinks[] | null;
+    created_at?: string | null;
+    updated_at?: string | null;
+    publishedAt?: string | null;
+    status?: 'published' | 'draft' | 'archived' | null;
+    slug: string;
+}
+
 interface CarouselsProps {
     images: Image[];
     videos: Video[];
     videolinks: VideoLinks[];
+    heroTitle?: string;
+    heroSubtitle?: string;
 }
 
 const Carousels: React.FC<CarouselsProps> = ({
     images,
     videos,
     videolinks,
+    heroTitle,
+    heroSubtitle,
 }) => {
     const combinedUrls = [...images, ...videos];
     const [activeIndex, setActiveIndex] = useState(0);
@@ -98,19 +118,6 @@ const Carousels: React.FC<CarouselsProps> = ({
 
     return (
         <div className="carousel relative w-56 sm:w-full">
-            {/* {!isMobile && (
-                <div
-                    className="absolute -bottom-5 left-1/2 z-10 w-[1500px] -translate-x-1/2"
-                    style={{
-                        background: 'transparent',
-                        height: 'fit-content',
-                    }}
-                >
-                    <div className="m-0 w-full border-none p-0">
-                        <BookingEngine />
-                    </div>
-                </div>
-            )} */}
             <Carousel
                 showThumbs={false}
                 infiniteLoop
@@ -201,14 +208,25 @@ const Carousels: React.FC<CarouselsProps> = ({
                                 )}
                             </div>
 
-                            {/* <div
-                                className={`absolute top-6 right-0 left-0 z-20 flex hidden justify-center md:flex`}
-                            >
-                                <h2 className="flex transform items-center rounded-full border-[3px] border-[#9c7833] bg-[#902729] px-6 py-3 font-bold text-white shadow-md transition-all duration-300 ease-out hover:scale-105 hover:bg-[#a52b2d] hover:shadow-lg active:scale-95">
-                                    When are you coming?{' '}
-                                    <span className="pl-1 text-3xl">📅</span>
-                                </h2>
-                            </div> */}
+                            {(heroTitle || heroSubtitle) && (
+                                <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-end justify-end px-4 pb-4 text-center">
+                                    <div className="w-full rounded-2xl bg-black/30 px-6 py-4 backdrop-blur-sm">
+                                        {heroTitle && (
+                                            <h1 className="mb-3 text-3xl font-bold text-white drop-shadow-lg sm:text-5xl">
+                                                {heroTitle}
+                                            </h1>
+                                        )}
+                                        {heroSubtitle && (
+                                            <div
+                                                className="text-base text-white drop-shadow-md sm:text-xl [&_a]:underline [&_em]:italic [&_strong]:font-bold"
+                                                dangerouslySetInnerHTML={{
+                                                    __html: heroSubtitle,
+                                                }}
+                                            />
+                                        )}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     );
                 })}

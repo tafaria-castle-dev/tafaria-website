@@ -1,42 +1,54 @@
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from 'react';
 
 const useScrollDirection = (): boolean => {
-  const [isScrollingUp, setIsScrollingUp] = useState<boolean>(true);
-  const [lastScrollY, setLastScrollY] = useState<number>(0);
+    const [isScrollingUp, setIsScrollingUp] = useState<boolean>(true);
+    const lastScrollY = useRef<number>(0);
+    const scrollUpDistance = useRef<number>(0);
 
-  useEffect(() => {
-    let timeoutId: NodeJS.Timeout | undefined;
+    const NEAR_TOP_THRESHOLD = window?.innerWidth <= 768 ? 300 : 250;
+    const SCROLL_UP_REVEAL_DISTANCE = 1550;
 
-    const handleScroll = (): void => {
-      const currentScrollY: number = window.scrollY;
+    useEffect(() => {
+        let timeoutId: NodeJS.Timeout | undefined;
 
-      const scrollThreshold = window.innerWidth <= 768 ? 300 : 250;
-      const scrollDelta = Math.abs(currentScrollY - lastScrollY);
+        const handleScroll = (): void => {
+            const currentScrollY = window.scrollY;
+            const diff = currentScrollY - lastScrollY.current;
 
-      if (scrollDelta > 10) {
-        if (currentScrollY < scrollThreshold) {
-          setIsScrollingUp(true);
-        } else {
-          setIsScrollingUp(currentScrollY < lastScrollY);
-        }
-        setLastScrollY(currentScrollY);
-      }
-    };
+            if (Math.abs(diff) < 5) return;
 
-    const debouncedHandleScroll = (): void => {
-      if (timeoutId) clearTimeout(timeoutId);
-      timeoutId = setTimeout(handleScroll, 10);
-    };
+            if (currentScrollY < NEAR_TOP_THRESHOLD) {
+                scrollUpDistance.current = 0;
+                setIsScrollingUp(true);
+            } else if (diff < 0) {
+                scrollUpDistance.current += Math.abs(diff);
+                if (scrollUpDistance.current >= SCROLL_UP_REVEAL_DISTANCE) {
+                    setIsScrollingUp(true);
+                }
+            } else {
+                scrollUpDistance.current = 0;
+                setIsScrollingUp(false);
+            }
 
-    window.addEventListener("scroll", debouncedHandleScroll, { passive: true });
+            lastScrollY.current = currentScrollY;
+        };
 
-    return () => {
-      window.removeEventListener("scroll", debouncedHandleScroll);
-      if (timeoutId) clearTimeout(timeoutId);
-    };
-  }, [lastScrollY]);
+        const debouncedHandleScroll = (): void => {
+            if (timeoutId) clearTimeout(timeoutId);
+            timeoutId = setTimeout(handleScroll, 10);
+        };
 
-  return isScrollingUp;
+        window.addEventListener('scroll', debouncedHandleScroll, {
+            passive: true,
+        });
+
+        return () => {
+            window.removeEventListener('scroll', debouncedHandleScroll);
+            if (timeoutId) clearTimeout(timeoutId);
+        };
+    }, []);
+
+    return isScrollingUp;
 };
 
 export default useScrollDirection;

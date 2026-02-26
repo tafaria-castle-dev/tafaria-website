@@ -1,3 +1,4 @@
+import { useSelectedPackage } from '@/hooks/SelectedPackageContext';
 import {
     AdditionalDetail,
     DayVisitPackage,
@@ -9,10 +10,10 @@ import {
     Program,
     SchoolProgram,
 } from '@/types';
-
-import { useState } from 'react';
+import { RatesDescription } from '@/types/types';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import Hero from '../hero';
-
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
 
@@ -256,6 +257,8 @@ const styles = `
     text-decoration: none;
   }
   .micro:hover { text-decoration: underline; }
+
+  
 `;
 
 interface LandingPageProps {
@@ -329,8 +332,8 @@ function SchoolCard({
     );
 }
 interface PackagesCardsProps {
-    activeTab?: string | null;
-    onTabSelect?: (tabKey: string) => void;
+    activeTab?: Package | null;
+    onSelectPackage?: (pkg: Package) => void;
     packages?: Package[];
 }
 interface DayVisitCardsProps {
@@ -343,27 +346,25 @@ export function toTabKey(title: string): string {
 }
 
 export const PackagesCards = ({
-    onTabSelect,
+    onSelectPackage,
     activeTab,
     packages,
 }: PackagesCardsProps) => {
     const handleCardClick = (pkg: Package) => {
-        const key = toTabKey(pkg.title);
-        if (onTabSelect) {
-            onTabSelect(key);
-        } else {
-            localStorage.setItem('tafaria-selected-tab', key);
-            window.location.href = '/accommodation';
+        if (onSelectPackage) {
+            onSelectPackage(pkg);
+            return;
         }
     };
+
     return (
         <div className="grid-2" style={{ marginTop: 16 }}>
             {packages?.map((pkg) => {
                 const key = toTabKey(pkg.title);
-                const isActive = activeTab === key;
+                const isActive = activeTab === pkg;
                 return (
                     <div
-                        className={`package-card ${activeTab === 'experiences' ? 'active' : ''}`}
+                        className={`package-card ${activeTab === pkg ? 'active' : ''}`}
                         key={pkg.id}
                     >
                         <div className="package-header">
@@ -419,17 +420,22 @@ const DayVisitPackageCards = ({
     onButtonClick,
     packages,
 }: DayVisitCardsProps) => {
-    const handleCardClick = (pkg: DayVisitPackageItem) => {
-        const key = toTabKey(pkg.title || '');
-        if (onButtonClick) {
-            onButtonClick(key);
-        }
+    const paxLabel = (pax: number | null): string => {
+        if (!pax) return '';
+        if (pax === 1) return '/ person';
+        return `/ group of ${pax}`;
     };
+
+    const fmtPrice = (v: number | null) =>
+        v != null
+            ? Number(v).toLocaleString('en-KE', { minimumFractionDigits: 0 })
+            : '';
+
     return (
-        <div className="grid-2" style={{ marginTop: 16 }}>
+        <div className="grid-4" style={{ marginTop: 16 }}>
             {packages?.map((pkg) => {
                 return (
-                    <div className={`package-card`} key={pkg.id}>
+                    <div className={`package-card h-fit`} key={pkg.id}>
                         <div className="package-header">
                             <img
                                 src={pkg.image || ''}
@@ -441,6 +447,46 @@ const DayVisitPackageCards = ({
                             <div className="h3" style={{ marginTop: 10 }}>
                                 {pkg.title}
                             </div>
+                            <div
+                                style={{
+                                    marginBottom: 12,
+                                    alignItems: 'center',
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        fontWeight: 600,
+                                        fontSize: 22,
+                                        color: '#1a1a1a',
+                                    }}
+                                >
+                                    KES {fmtPrice(pkg.price)}
+                                </span>
+                                {pkg.pax && (
+                                    <span
+                                        style={{
+                                            color: '#888',
+                                            fontSize: 13,
+                                            marginLeft: 5,
+                                        }}
+                                    >
+                                        {paxLabel(pkg.pax)}
+                                    </span>
+                                )}
+                            </div>
+                            {pkg.price_per_extra_pax && (
+                                <p
+                                    style={{
+                                        fontSize: 13,
+                                        fontStyle: 'italic',
+                                        color: '#555',
+                                        marginBottom: 10,
+                                    }}
+                                >
+                                    + KES {fmtPrice(pkg.price_per_extra_pax)}{' '}
+                                    per extra guest
+                                </p>
+                            )}
                             <div
                                 className="small"
                                 dangerouslySetInnerHTML={{
@@ -473,44 +519,81 @@ export default function LandingPage({
         string | null
     >(null);
     const detail = additionalDetails?.[0];
-    function scrollToPackages(pkg: string) {
-        setHighlightedPackage(pkg);
-        document
-            .getElementById('packages')
-            ?.scrollIntoView({ behavior: 'smooth' });
-    }
 
+    const [ratesDescriptions, setRatesDescriptions] = useState<
+        RatesDescription[]
+    >([]);
+    const TYPE_GROUPS = {
+        introduction: ['introduction', 'two'],
+    } as const;
+    const findDescriptionByGroup = (
+        descriptions: RatesDescription[],
+        typeGroup: keyof typeof TYPE_GROUPS,
+    ): RatesDescription | undefined => {
+        const validTypes = TYPE_GROUPS[typeGroup];
+        return descriptions.find((desc) =>
+            validTypes.some(
+                (type) =>
+                    desc.type.toLowerCase().includes(type.toLowerCase()) ||
+                    desc.description.toLowerCase().includes(type.toLowerCase()),
+            ),
+        );
+    };
+
+    const introductionDescription = findDescriptionByGroup(
+        ratesDescriptions,
+        'introduction',
+    );
+    const [isLoading, setIsLoading] = useState(true);
+    const { setSelectedPackage, setShowSelectedPackageModal } =
+        useSelectedPackage();
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setIsLoading(true);
+                const [descriptionsRes] = await Promise.all([
+                    axios.get(
+                        'https://website-cms.tafaria.com/api/rates-descriptions',
+                    ),
+                ]);
+
+                setRatesDescriptions(descriptionsRes.data || []);
+            } catch (error) {
+                console.error('Failed to fetch data:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
+
+    const handlePackageSelect = (pkg: Package) => {
+        setSelectedPackage(pkg);
+
+        setShowSelectedPackageModal(true);
+    };
     return (
         <>
             <style>{styles}</style>
             <section className="section-sm">
                 <div className="container">
+                    <div className="hero-media card">
+                        <Hero heroSection={heroSection} offers={offers} />
+                    </div>
                     <div className="hero-grid">
-                        <div>
-                            <h1 className="h1">
-                                {heroSection[0]?.title ||
-                                    'Welcome to Tafaria Castle'}
-                            </h1>
-                            <p
-                                className="p-lg"
-                                dangerouslySetInnerHTML={{
-                                    __html:
-                                        heroSection[0]?.subtitle ||
-                                        'Visit for the day, stay overnight, bring a school, host an event, or apply for an art residency — Tafaria makes learning and leisure feel magical through its two packages below.',
-                                }}
-                            ></p>
-                        </div>
                         <section id="packages" className="section">
                             <div className="container">
-                                <h2 className="h2">
-                                    Choose your Tafaria Package
-                                </h2>
-                                <p className="p">
-                                    Start with a package, then choose how you
-                                    want to enjoy it.
-                                </p>
-
-                                <PackagesCards packages={packages} />
+                                <div
+                                    dangerouslySetInnerHTML={{
+                                        __html:
+                                            introductionDescription?.description ||
+                                            'Visit for the day, stay overnight, bring a school, host an event, or apply for an art residency — Tafaria makes learning and leisure feel magical through its two packages below.',
+                                    }}
+                                ></div>
+                                <PackagesCards
+                                    packages={packages}
+                                    onSelectPackage={handlePackageSelect}
+                                />
                             </div>
                         </section>
                         <section id="packages" className="section">
@@ -518,22 +601,18 @@ export default function LandingPage({
                                 <h2 className="h2">
                                     {dayVisitPackages[0]?.title}
                                 </h2>
-                                <p className="p">
-                                    {dayVisitPackages[0]?.subtitle}
-                                </p>
-
+                                <p
+                                    className="p"
+                                    dangerouslySetInnerHTML={{
+                                        __html:
+                                            dayVisitPackages[0]?.subtitle || '',
+                                    }}
+                                ></p>
                                 <DayVisitPackageCards
                                     packages={dayVisitPackages[0]?.items}
                                 />
                             </div>
                         </section>
-                        <div className="hero-media card">
-                            <Hero heroSection={heroSection} offers={offers} />
-
-                            <div className="hero-badge">
-                                <Badge type="gold">Once Upon a Dream</Badge>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </section>

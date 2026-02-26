@@ -480,11 +480,9 @@ a {
 }
 
 .hero-media {
-    border-radius: var(--r-xl);
     overflow: hidden;
     position: relative;
     min-height: 360px;
-    border: 1px solid var(--border);
     box-shadow: var(--sh);
     background:
         linear-gradient(135deg, rgba(31, 35, 40, 0.55), rgba(31, 35, 40, 0.2)),

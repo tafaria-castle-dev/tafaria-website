@@ -305,41 +305,7 @@ export const RecreationTab: React.FC<RecreationTabProps> = ({
                 </div>
             )}
 
-            <section aria-labelledby="leisure-activities">
-                <h2
-                    id="leisure-activities"
-                    className="mb-1 text-center text-lg font-bold tracking-tight text-[#902729] sm:text-xl md:text-2xl lg:text-3xl"
-                >
-                    Recreation Activities
-                </h2>
-                <h2 className="text-md mb-6 text-center font-bold tracking-tight text-black sm:text-xl md:text-2xl lg:text-3xl">
-                    Price is per session
-                </h2>
-                {isLoading ? (
-                    <LoadingComponent />
-                ) : (
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                        {leisureExperiences.map((activity) => (
-                            <LeisureExperienceCard
-                                key={activity.id}
-                                activity={activity}
-                                residency={residency}
-                                handleAddLeisureToCart={handleAddLeisureToCart}
-                                hoveredItem={hoveredItem}
-                                setHoveredItem={setHoveredItem}
-                            />
-                        ))}
-                    </div>
-                )}
-            </section>
-
             <section aria-labelledby="leisure-room-rates">
-                <h2
-                    id="leisure-room-rates"
-                    className="mb-6 text-center text-lg font-bold tracking-tight text-[#902729] sm:text-xl md:text-2xl lg:text-3xl"
-                >
-                    Rates
-                </h2>
                 <div className="mb-4 flex space-x-2">
                     {['FB', 'HB', 'BB'].map((type) => (
                         <button
@@ -358,7 +324,7 @@ export const RecreationTab: React.FC<RecreationTabProps> = ({
                 {isLoading ? (
                     <LoadingComponent />
                 ) : (
-                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                         {leisureRooms.map((room) => (
                             <LeisureRoomCard
                                 key={room.id}

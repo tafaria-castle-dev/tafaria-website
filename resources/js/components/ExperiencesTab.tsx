@@ -386,12 +386,6 @@ export const ExperiencesTab: React.FC<ExperiencesTabProps> = ({
     return (
         <div className="space-y-6">
             <section aria-labelledby="room-rates">
-                <h2
-                    id="room-rates"
-                    className="mb-6 text-center text-lg font-bold tracking-tight text-[#902729] sm:text-xl md:text-2xl lg:text-3xl"
-                >
-                    Rates
-                </h2>
                 <div className="mb-4 flex space-x-2">
                     {['FB', 'HB', 'BB'].map((type) => (
                         <button
@@ -410,7 +404,7 @@ export const ExperiencesTab: React.FC<ExperiencesTabProps> = ({
                 {isLoading ? (
                     <LoadingComponent />
                 ) : (
-                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                         {rooms.map((room) => (
                             <RoomCard
                                 key={room.id}
@@ -439,23 +433,6 @@ export const ExperiencesTab: React.FC<ExperiencesTabProps> = ({
                         <ChildPolicyCard key={index} policy={policy} />
                     ))}
                 </div>
-            </section>
-
-            <section aria-labelledby="holiday-supplements">
-                <h2
-                    id="holiday-supplements"
-                    className="mb-8 text-center text-lg font-bold tracking-tight text-[#902729] sm:text-xl md:text-2xl lg:text-3xl"
-                >
-                    Holiday Supplements
-                </h2>
-                <p className="rounded-xl border border-[#9c7833]/20 bg-white/80 p-4 text-[#000]">
-                    Holiday supplements apply during Christmas (Dec 24-25-26)
-                    and Easter (Good Friday, Easter Saturday, Easter Sunday,
-                    Easter Monday). Adults are charged KES 4,000 per night,
-                    children (ages 4-11) KES 2,000 per night,while children 0-3
-                    stay free; minimum 2-night stay. East African Residents
-                    receive a premium brunch and activity vouchers.
-                </p>
             </section>
 
             <section aria-labelledby="buffet-meals">
