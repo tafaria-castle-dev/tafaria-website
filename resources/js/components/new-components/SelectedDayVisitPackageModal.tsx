@@ -17,7 +17,16 @@ import {
 } from '@/types/types';
 import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Minus, Plus, ShoppingCart, Sparkles, Users, X } from 'lucide-react';
+import {
+    Calendar,
+    Minus,
+    Plus,
+    ShoppingCart,
+    Sparkles,
+    Tag,
+    Users,
+    X,
+} from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { RecreationTab } from '../RecreationTab';
@@ -69,7 +78,6 @@ const styles = `
     .grid-4 { grid-template-columns: 1fr; }
   }
 
-  /* Tab switcher */
   .tabs { display:flex; gap:0; background:rgba(184,146,75,0.1); border:1px solid rgba(184,146,75,0.25); border-radius:16px; padding:4px; margin-bottom:32px; }
   .tab {
     flex:1; padding:12px 20px; border-radius:12px; border:none;
@@ -77,7 +85,7 @@ const styles = `
     color:#5a3e2b; background:transparent;
     transition: background 0.2s ease, color 0.2s ease;
   }
-  .tab.active {  color:#7a5520; box-shadow:0 2px 10px rgba(0,0,0,0.08); }
+  .tab.active { color:#7a5520; box-shadow:0 2px 10px rgba(0,0,0,0.08); }
 
   .section-header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px; margin-bottom:20px; }
 
@@ -114,7 +122,7 @@ const styles = `
   .toast {
     position: fixed; top: 40px; right: 16px; z-index: 9999;
     background: #902729; color: #fff;
-    border-radius: 16px; padding: 14px 20px; 
+    border-radius: 16px; padding: 14px 20px;
     display: flex; align-items: center; gap: 10px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.2);
     animation: slide-in 0.3s ease-out;
@@ -125,7 +133,6 @@ const styles = `
     to   { transform: translateX(0);   opacity: 1; }
   }
 
-  /* ─── Package Modal ─── */
   .pkg-modal-overlay {
     position: fixed; inset: 0; z-index: 35;
     background: rgba(26,15,6,0.55);
@@ -172,7 +179,6 @@ const styles = `
 
   .pkg-modal-body { padding:15px 32px; flex: 1; overflow-y: auto; }
 
-  /* Step indicator */
   .step-indicator {
     display: flex; align-items: center; gap: 8px;
     margin-bottom: 28px;
@@ -190,7 +196,6 @@ const styles = `
   .step-line.done { background: rgba(184,146,75,0.5); }
   .step-label { font-size: 0.78rem; font-weight: 600; color: #8a6830; }
 
-  /* Date selection cards */
   .date-prompt { font-family: 'Cinzel', serif; font-size: 1.35rem; font-weight: 600; color: #1a0f06; margin-bottom: 8px; }
   .date-subtext { font-size: 0.95rem; color: #7a5a3a; margin-bottom: 28px; }
 
@@ -226,7 +231,6 @@ const styles = `
     position: sticky; bottom: 0; background: #fffdf9; z-index: 2;
   }
 
-  /* Guest counter */
   .guest-section {
     background: rgba(255,251,240,0.8);
     border: 1px solid rgba(184,146,75,0.25);
@@ -260,7 +264,6 @@ const styles = `
   .counter-btn:disabled { opacity: 0.35; cursor: not-allowed; }
   .counter-value { font-size: 1rem; font-weight: 700; color: #1a0f06; min-width: 20px; text-align: center; }
 
-  /* Upsell modal */
   .upsell-overlay {
     position: fixed; inset: 0; z-index: 60;
     background: rgba(26,15,6,0.6);
@@ -327,9 +330,102 @@ const styles = `
     font-family: inherit; transition: background 0.15s ease;
   }
   .upsell-decline:hover { background: rgba(90,62,43,0.05); }
+
+  .dv-modal-overlay {
+    position: fixed; inset: 0; z-index: 45;
+    background: rgba(26,15,6,0.55);
+    backdrop-filter: blur(4px);
+    display: flex; align-items: flex-end;
+  }
+  @media (min-width: 700px) {
+    .dv-modal-overlay { align-items: center; justify-content: center; }
+  }
+  .dv-modal {
+    background: #fffdf9;
+    border-radius: 28px 28px 0 0;
+    width: 96vw;
+    max-height: 96vh;
+    overflow-y: auto;
+    box-shadow: 0 -8px 48px rgba(0,0,0,0.18);
+    display: flex; flex-direction: column;
+  }
+  @media (min-width: 700px) {
+    .dv-modal { border-radius: 28px; width: min(680px, 94vw); max-height: 96vh; }
+  }
+  .dv-modal-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    padding: 20px 28px 16px;
+    border-bottom: 1px solid rgba(184,146,75,0.18);
+    position: sticky; top: 0;
+    background: #fffdf9; z-index: 2;
+    border-radius: 28px 28px 0 0;
+  }
+  .dv-modal-body { padding: 24px 28px; flex: 1; overflow-y: auto; }
+  .dv-modal-footer {
+    padding: 16px 28px;
+    border-top: 1px solid rgba(184,146,75,0.15);
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    position: sticky; bottom: 0; background: #fffdf9; z-index: 2;
+  }
+
+  .dv-price-breakdown {
+    background: linear-gradient(135deg, rgba(184,146,75,0.08), rgba(184,146,75,0.04));
+    border: 1px solid rgba(184,146,75,0.25);
+    border-radius: 20px;
+    padding: 20px 24px;
+    margin-top: 24px;
+  }
+  .dv-price-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem; font-weight: 600; color: #8a6830;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(184,146,75,0.2);
+  }
+  .dv-price-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 6px 0; font-size: 0.88rem; color: #5a3e2b;
+  }
+  .dv-price-row.total {
+    font-size: 1.05rem; font-weight: 700; color: #1a0f06;
+    margin-top: 10px; padding-top: 12px;
+    border-top: 1px solid rgba(184,146,75,0.25);
+  }
+  .dv-price-row.extra { color: #8a6830; font-size: 0.82rem; }
+  .dv-price-amount { font-weight: 600; }
+  .dv-price-row.total .dv-price-amount { color: #7a5520; font-size: 1.15rem; }
+
+  .dv-single-date-field {
+    display: flex; flex-direction: column; gap: 4px;
+    padding: 14px 20px; border-radius: 16px;
+    border: 1.5px solid rgba(184,146,75,0.3);
+    background: #fff; cursor: pointer;
+    text-align: left; font-family: inherit; width: 100%;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    margin-bottom: 20px;
+  }
+  .dv-single-date-field:hover { border-color: rgba(184,146,75,0.6); box-shadow: 0 2px 12px rgba(184,146,75,0.15); }
+  .dv-single-date-field.has-value { border-color: rgba(184,146,75,0.55); background: rgba(255,251,240,0.8); }
+
+  .dv-package-info {
+    border: 1px solid rgba(184,146,75,0.22);
+    border-radius: 16px; overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .dv-package-img { height: 160px; overflow: hidden; }
+  .dv-package-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .dv-package-meta { padding: 16px 20px; }
+  .dv-package-name { font-family: 'Cinzel', serif; font-size: 1.05rem; font-weight: 600; color: #1a0f06; margin-bottom: 4px; }
+  .dv-package-base-price {
+    display: flex; align-items: baseline; gap: 6px;
+    margin-top: 8px;
+  }
+  .dv-package-price-val { font-size: 1.3rem; font-weight: 800; color: #8a6830; }
+  .dv-package-price-per { font-size: 0.8rem; color: #9a7d5a; }
 `;
 
-export default function SelectedPackageModal() {
+export default function SelectedDayVisitPackageModal() {
     const {
         showBookingModal,
         setShowBookingModal,
@@ -381,11 +477,21 @@ export default function SelectedPackageModal() {
 
     const [showUpsellModal, setShowUpsellModal] = useState(false);
 
+    const [visitDate, setVisitDate] = useState('');
+    const [showVisitDatePicker, setShowVisitDatePicker] = useState(false);
+    const [dvNumAdults, setDvNumAdults] = useState(1);
+    const [dvNumKids, setDvNumKids] = useState(0);
+
     const {
         selectedPackage,
         showSelectedPackageModal,
         setShowSelectedPackageModal,
+        selectedDayVisitPackageItem,
+        setSelectedDayVisitPackageItem,
+        showDayVisitModal,
+        setShowDayVisitModal,
     } = useSelectedPackage();
+
     const [packageStep, setPackageStep] = useState<'dates' | 'rates'>('dates');
     const pkgDateTriggerRef = useRef<HTMLDivElement | null>(null);
 
@@ -449,6 +555,14 @@ export default function SelectedPackageModal() {
                     setShowUpsellModal(false);
                     return;
                 }
+                if (showVisitDatePicker) {
+                    setShowVisitDatePicker(false);
+                    return;
+                }
+                if (showDayVisitModal) {
+                    closeDayVisitModal();
+                    return;
+                }
                 if (showDatePicker) {
                     setShowDatePicker(false);
                     return;
@@ -467,6 +581,8 @@ export default function SelectedPackageModal() {
         showBookingModal,
         showSelectedPackageModal,
         showUpsellModal,
+        showDayVisitModal,
+        showVisitDatePicker,
         setShowBookingModal,
     ]);
 
@@ -475,7 +591,8 @@ export default function SelectedPackageModal() {
             showBookingModal ||
             showDatePicker ||
             showSelectedPackageModal ||
-            showUpsellModal
+            showUpsellModal ||
+            showDayVisitModal
                 ? 'hidden'
                 : '';
         return () => {
@@ -486,6 +603,7 @@ export default function SelectedPackageModal() {
         showDatePicker,
         showSelectedPackageModal,
         showUpsellModal,
+        showDayVisitModal,
     ]);
 
     const closeModal = () => {
@@ -497,6 +615,45 @@ export default function SelectedPackageModal() {
         setSelectedLeisure(null);
         setSelectedOccupancy(null);
         setNumRooms(1);
+    };
+
+    const closeDayVisitModal = () => {
+        setShowDayVisitModal(false);
+        setSelectedDayVisitPackageItem(null);
+        setVisitDate('');
+        setShowVisitDatePicker(false);
+        setDvNumAdults(1);
+        setDvNumKids(0);
+    };
+
+    const calcDayVisitTotal = (
+        item: DayVisitPackageItem,
+        adults: number,
+        kids: number,
+    ): number => {
+        const totalGuests = adults + kids;
+        const basePrice = item.price ?? 0;
+        const pax = item.pax ?? 1;
+        const extraPaxPrice = item.price_per_extra_pax ?? 0;
+
+        if (pax <= 1) {
+            return basePrice * totalGuests;
+        }
+
+        if (totalGuests <= pax) {
+            return basePrice;
+        }
+
+        return basePrice + (totalGuests - pax) * extraPaxPrice;
+    };
+
+    const fmtPrice = (v: number) =>
+        Number(v).toLocaleString('en-KE', { minimumFractionDigits: 0 });
+
+    const paxLabel = (pax: number | null): string => {
+        if (!pax) return '/ person';
+        if (pax === 1) return '/ person';
+        return `/ group of ${pax}`;
     };
 
     const getRoomCountInCart = (roomId: string) =>
@@ -571,6 +728,53 @@ export default function SelectedPackageModal() {
         setToastMessage(message);
         setShowToast(true);
         setTimeout(() => setShowToast(false), 3000);
+    };
+
+    const handleAddDayVisitToCart = () => {
+        if (!selectedDayVisitPackageItem) return;
+        if (!visitDate) {
+            toast.error('Please select a visit date.');
+            return;
+        }
+
+        const totalGuests = dvNumAdults + dvNumKids;
+        if (totalGuests < 1) {
+            toast.error('Please add at least one guest.');
+            return;
+        }
+
+        const totalCost = calcDayVisitTotal(
+            selectedDayVisitPackageItem,
+            dvNumAdults,
+            dvNumKids,
+        );
+        const currency = 'KES';
+
+        const syntheticLeisure: LeisureExperience = {
+            id: selectedDayVisitPackageItem.id ?? -99,
+            title: selectedDayVisitPackageItem.title ?? 'Day Visit',
+            description:
+                stripHtml(selectedDayVisitPackageItem.description || '') ?? '',
+            image_url: selectedDayVisitPackageItem.image ?? null,
+            price_adults: selectedDayVisitPackageItem.price ?? 0,
+            price_kids: selectedDayVisitPackageItem.price ?? 0,
+        };
+
+        addToCart({
+            kind: 'leisure',
+            leisure: syntheticLeisure,
+            numAdults: dvNumAdults,
+            numKids: dvNumKids,
+            totalCost,
+            currency,
+            checkIn: visitDate,
+            checkOut: visitDate,
+            nights: 0,
+        });
+
+        triggerToast(`${selectedDayVisitPackageItem.title} added to cart!`);
+        closeDayVisitModal();
+        setShowCart(true);
     };
 
     const handleConfirmBooking = (bookingData: {
@@ -952,6 +1156,16 @@ export default function SelectedPackageModal() {
               })
             : null;
 
+    const dvTotalGuests = dvNumAdults + dvNumKids;
+    const dvTotal = selectedDayVisitPackageItem
+        ? calcDayVisitTotal(selectedDayVisitPackageItem, dvNumAdults, dvNumKids)
+        : 0;
+    const dvPax = selectedDayVisitPackageItem?.pax ?? 1;
+    const dvIsGroupTicket = dvPax > 1;
+    const dvExtraGuests = dvIsGroupTicket
+        ? Math.max(0, dvTotalGuests - dvPax)
+        : 0;
+
     const GuestCounter = ({
         value,
         onIncrement,
@@ -1137,6 +1351,471 @@ export default function SelectedPackageModal() {
                                         </button>
                                     </div>
                                 </motion.div>
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                <AnimatePresence>
+                    {showDayVisitModal && selectedDayVisitPackageItem && (
+                        <motion.div
+                            className="dv-modal-overlay"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.22 }}
+                            onClick={(e) => {
+                                if (e.target === e.currentTarget)
+                                    closeDayVisitModal();
+                            }}
+                        >
+                            <motion.div
+                                className="dv-modal"
+                                initial={{ opacity: 0, y: 60, scale: 0.97 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                exit={{ opacity: 0, y: 40, scale: 0.97 }}
+                                transition={{
+                                    type: 'spring',
+                                    stiffness: 300,
+                                    damping: 30,
+                                }}
+                            >
+                                <div className="dv-modal-header">
+                                    <div>
+                                        <div
+                                            className="h3"
+                                            style={{ marginBottom: 2 }}
+                                        >
+                                            Book Day Visit
+                                        </div>
+                                        <div
+                                            className="small"
+                                            style={{ color: '#9a7d5a' }}
+                                        >
+                                            Select your date and number of
+                                            guests
+                                        </div>
+                                    </div>
+                                    <button
+                                        className="pkg-modal-close"
+                                        onClick={closeDayVisitModal}
+                                    >
+                                        <X size={16} />
+                                    </button>
+                                </div>
+
+                                <div className="dv-modal-body">
+                                    <div className="dv-package-info">
+                                        {selectedDayVisitPackageItem.image && (
+                                            <div className="dv-package-img">
+                                                <img
+                                                    src={
+                                                        selectedDayVisitPackageItem.image
+                                                    }
+                                                    alt={
+                                                        selectedDayVisitPackageItem.title ??
+                                                        ''
+                                                    }
+                                                    loading="lazy"
+                                                />
+                                            </div>
+                                        )}
+                                        <div className="dv-package-meta">
+                                            <div className="dv-package-name">
+                                                {
+                                                    selectedDayVisitPackageItem.title
+                                                }
+                                            </div>
+                                            <div className="dv-package-base-price">
+                                                <span className="dv-package-price-val">
+                                                    KES{' '}
+                                                    {fmtPrice(
+                                                        selectedDayVisitPackageItem.price ??
+                                                            0,
+                                                    )}
+                                                </span>
+                                                <span className="dv-package-price-per">
+                                                    {paxLabel(
+                                                        selectedDayVisitPackageItem.pax ??
+                                                            1,
+                                                    )}
+                                                </span>
+                                            </div>
+                                            {selectedDayVisitPackageItem.price_per_extra_pax &&
+                                                dvIsGroupTicket && (
+                                                    <div
+                                                        className="small"
+                                                        style={{
+                                                            marginTop: 4,
+                                                            color: '#8a6830',
+                                                        }}
+                                                    >
+                                                        + KES{' '}
+                                                        {fmtPrice(
+                                                            selectedDayVisitPackageItem.price_per_extra_pax,
+                                                        )}{' '}
+                                                        per extra person beyond{' '}
+                                                        {dvPax}
+                                                    </div>
+                                                )}
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        className="date-prompt"
+                                        style={{ fontSize: '1.1rem' }}
+                                    >
+                                        When are you coming?
+                                    </div>
+                                    <div style={{ height: 12 }} />
+
+                                    <motion.button
+                                        className={`dv-single-date-field ${visitDate ? 'has-value' : ''}`}
+                                        onClick={() =>
+                                            setShowVisitDatePicker((v) => !v)
+                                        }
+                                        whileHover={{ scale: 1.01 }}
+                                        whileTap={{ scale: 0.99 }}
+                                    >
+                                        <span className="date-field-label">
+                                            <Calendar
+                                                size={11}
+                                                style={{
+                                                    display: 'inline',
+                                                    marginRight: 4,
+                                                }}
+                                            />
+                                            Visit Date
+                                        </span>
+                                        {visitDate ? (
+                                            <span className="date-field-value">
+                                                {formatDate(visitDate)}
+                                            </span>
+                                        ) : (
+                                            <span className="date-field-placeholder">
+                                                Select a date
+                                            </span>
+                                        )}
+                                    </motion.button>
+
+                                    <AnimatePresence>
+                                        {showVisitDatePicker && (
+                                            <motion.div
+                                                initial={{
+                                                    opacity: 0,
+                                                    height: 0,
+                                                    marginBottom: 0,
+                                                }}
+                                                animate={{
+                                                    opacity: 1,
+                                                    height: 'auto',
+                                                    marginBottom: 20,
+                                                }}
+                                                exit={{
+                                                    opacity: 0,
+                                                    height: 0,
+                                                    marginBottom: 0,
+                                                }}
+                                                transition={{
+                                                    type: 'spring',
+                                                    stiffness: 260,
+                                                    damping: 26,
+                                                }}
+                                                style={{ overflow: 'hidden' }}
+                                            >
+                                                <DatePickerModal
+                                                    checkIn=""
+                                                    checkOut=""
+                                                    setCheckIn={(v) => {
+                                                        setVisitDate(v);
+                                                        setShowVisitDatePicker(
+                                                            false,
+                                                        );
+                                                    }}
+                                                    setCheckOut={() => {}}
+                                                    onClose={() =>
+                                                        setShowVisitDatePicker(
+                                                            false,
+                                                        )
+                                                    }
+                                                    inline
+                                                />
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+
+                                    <motion.div
+                                        className="guest-section"
+                                        initial={{ opacity: 0, y: 12 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.08 }}
+                                    >
+                                        <div className="guest-section-title">
+                                            <Users size={16} color="#8a6830" />
+                                            Who's coming?
+                                        </div>
+
+                                        <div
+                                            style={{
+                                                display: 'flex',
+                                                gap: '16px',
+                                                flexWrap: 'wrap',
+                                            }}
+                                        >
+                                            <div
+                                                className="guest-row"
+                                                style={{
+                                                    flex: 1,
+                                                    minWidth: '140px',
+                                                    paddingRight: '10px',
+                                                    borderRight:
+                                                        '1px solid #e8d9c0',
+                                                }}
+                                            >
+                                                <div className="guest-info">
+                                                    <div className="guest-label">
+                                                        <span
+                                                            style={{
+                                                                marginRight: 6,
+                                                            }}
+                                                        >
+                                                            👤
+                                                        </span>
+                                                        Adults
+                                                    </div>
+                                                    <div className="guest-sublabel">
+                                                        Age 12 and above
+                                                    </div>
+                                                </div>
+                                                <GuestCounter
+                                                    value={dvNumAdults}
+                                                    onIncrement={() =>
+                                                        setDvNumAdults(
+                                                            (n) => n + 1,
+                                                        )
+                                                    }
+                                                    onDecrement={() =>
+                                                        setDvNumAdults((n) =>
+                                                            Math.max(1, n - 1),
+                                                        )
+                                                    }
+                                                    min={1}
+                                                />
+                                            </div>
+
+                                            <div
+                                                className="guest-row"
+                                                style={{
+                                                    flex: 1,
+                                                    minWidth: '140px',
+                                                }}
+                                            >
+                                                <div className="guest-info">
+                                                    <div className="guest-label">
+                                                        <span
+                                                            style={{
+                                                                marginRight: 6,
+                                                            }}
+                                                        >
+                                                            🧒
+                                                        </span>
+                                                        Children
+                                                    </div>
+                                                    <div className="guest-sublabel">
+                                                        Age 4 – 11 years
+                                                    </div>
+                                                </div>
+                                                <GuestCounter
+                                                    value={dvNumKids}
+                                                    onIncrement={() =>
+                                                        setDvNumKids(
+                                                            (n) => n + 1,
+                                                        )
+                                                    }
+                                                    onDecrement={() =>
+                                                        setDvNumKids((n) =>
+                                                            Math.max(0, n - 1),
+                                                        )
+                                                    }
+                                                />
+                                            </div>
+                                        </div>
+                                    </motion.div>
+
+                                    <AnimatePresence>
+                                        {dvTotalGuests > 0 && (
+                                            <motion.div
+                                                className="dv-price-breakdown"
+                                                initial={{ opacity: 0, y: 12 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: 8 }}
+                                                transition={{
+                                                    type: 'spring',
+                                                    stiffness: 320,
+                                                    damping: 28,
+                                                }}
+                                            >
+                                                <div className="dv-price-title">
+                                                    <Tag
+                                                        size={11}
+                                                        style={{
+                                                            display: 'inline',
+                                                            marginRight: 6,
+                                                        }}
+                                                    />
+                                                    Price Breakdown
+                                                </div>
+
+                                                {dvIsGroupTicket ? (
+                                                    <>
+                                                        <div className="dv-price-row">
+                                                            <span>
+                                                                Group ticket
+                                                                (covers up to{' '}
+                                                                {dvPax}{' '}
+                                                                {dvPax === 1
+                                                                    ? 'person'
+                                                                    : 'people'}
+                                                                )
+                                                            </span>
+                                                            <span className="dv-price-amount">
+                                                                KES{' '}
+                                                                {fmtPrice(
+                                                                    selectedDayVisitPackageItem.price ??
+                                                                        0,
+                                                                )}
+                                                            </span>
+                                                        </div>
+                                                        {dvExtraGuests > 0 &&
+                                                            selectedDayVisitPackageItem.price_per_extra_pax && (
+                                                                <div className="dv-price-row extra">
+                                                                    <span>
+                                                                        {
+                                                                            dvExtraGuests
+                                                                        }{' '}
+                                                                        extra
+                                                                        guest
+                                                                        {dvExtraGuests !==
+                                                                        1
+                                                                            ? 's'
+                                                                            : ''}{' '}
+                                                                        × KES{' '}
+                                                                        {fmtPrice(
+                                                                            selectedDayVisitPackageItem.price_per_extra_pax,
+                                                                        )}
+                                                                    </span>
+                                                                    <span className="dv-price-amount">
+                                                                        KES{' '}
+                                                                        {fmtPrice(
+                                                                            dvExtraGuests *
+                                                                                (selectedDayVisitPackageItem.price_per_extra_pax ??
+                                                                                    0),
+                                                                        )}
+                                                                    </span>
+                                                                </div>
+                                                            )}
+                                                        {dvExtraGuests > 0 &&
+                                                            !selectedDayVisitPackageItem.price_per_extra_pax && (
+                                                                <div className="dv-price-row extra">
+                                                                    <span>
+                                                                        {
+                                                                            dvExtraGuests
+                                                                        }{' '}
+                                                                        extra
+                                                                        guest
+                                                                        {dvExtraGuests !==
+                                                                        1
+                                                                            ? 's'
+                                                                            : ''}{' '}
+                                                                        (no
+                                                                        extra
+                                                                        charge
+                                                                        listed)
+                                                                    </span>
+                                                                    <span className="dv-price-amount">
+                                                                        —
+                                                                    </span>
+                                                                </div>
+                                                            )}
+                                                    </>
+                                                ) : (
+                                                    <div className="dv-price-row">
+                                                        <span>
+                                                            {dvTotalGuests}{' '}
+                                                            guest
+                                                            {dvTotalGuests !== 1
+                                                                ? 's'
+                                                                : ''}{' '}
+                                                            × KES{' '}
+                                                            {fmtPrice(
+                                                                selectedDayVisitPackageItem.price ??
+                                                                    0,
+                                                            )}
+                                                        </span>
+                                                        <span className="dv-price-amount">
+                                                            KES{' '}
+                                                            {fmtPrice(dvTotal)}
+                                                        </span>
+                                                    </div>
+                                                )}
+
+                                                <div className="dv-price-row total">
+                                                    <span>Total</span>
+                                                    <motion.span
+                                                        key={dvTotal}
+                                                        className="dv-price-amount"
+                                                        initial={{
+                                                            scale: 1.15,
+                                                            color: '#b8924b',
+                                                        }}
+                                                        animate={{
+                                                            scale: 1,
+                                                            color: '#7a5520',
+                                                        }}
+                                                        transition={{
+                                                            type: 'spring',
+                                                            stiffness: 400,
+                                                            damping: 22,
+                                                        }}
+                                                    >
+                                                        KES {fmtPrice(dvTotal)}
+                                                    </motion.span>
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+
+                                <div className="dv-modal-footer">
+                                    <div
+                                        className="small"
+                                        style={{ color: '#9a7d5a' }}
+                                    >
+                                        {dvTotalGuests} guest
+                                        {dvTotalGuests !== 1 ? 's' : ''} ·{' '}
+                                        {visitDate
+                                            ? formatDate(visitDate)
+                                            : 'No date selected'}
+                                    </div>
+                                    <motion.button
+                                        className="btn btn-primary"
+                                        onClick={handleAddDayVisitToCart}
+                                        whileHover={{ scale: 1.03 }}
+                                        whileTap={{ scale: 0.97 }}
+                                        disabled={
+                                            !visitDate || dvTotalGuests < 1
+                                        }
+                                        style={{
+                                            opacity:
+                                                !visitDate || dvTotalGuests < 1
+                                                    ? 0.5
+                                                    : 1,
+                                        }}
+                                    >
+                                        <ShoppingCart size={15} />
+                                        Add to Cart · KES {fmtPrice(dvTotal)}
+                                    </motion.button>
+                                </div>
                             </motion.div>
                         </motion.div>
                     )}
@@ -1748,9 +2427,7 @@ export default function SelectedPackageModal() {
                                             {cart.length > 0 && (
                                                 <motion.button
                                                     className="btn btn-primary"
-                                                    onClick={() =>
-                                                        setShowCart(true)
-                                                    }
+                                                    onClick={handleViewCart}
                                                     whileHover={{ scale: 1.03 }}
                                                     whileTap={{ scale: 0.97 }}
                                                     style={{
@@ -1758,7 +2435,7 @@ export default function SelectedPackageModal() {
                                                     }}
                                                 >
                                                     <ShoppingCart size={16} />
-                                                    Book Now
+                                                    View Cart
                                                     {cart.length > 0 && (
                                                         <motion.span
                                                             initial={{

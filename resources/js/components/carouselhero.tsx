@@ -209,16 +209,16 @@ const Carousels: React.FC<CarouselsProps> = ({
                             </div>
 
                             {(heroTitle || heroSubtitle) && (
-                                <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-end justify-end px-4 pb-4 text-center">
-                                    <div className="w-full rounded-2xl bg-black/30 px-6 py-4 backdrop-blur-sm">
-                                        {heroTitle && (
+                                <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-end justify-end px-4 pb-8 text-center">
+                                    <div className="w-full">
+                                        {/* {heroTitle && (
                                             <h1 className="mb-3 text-3xl font-bold text-white drop-shadow-lg sm:text-5xl">
                                                 {heroTitle}
                                             </h1>
-                                        )}
+                                        )} */}
                                         {heroSubtitle && (
                                             <div
-                                                className="text-base text-white drop-shadow-md sm:text-xl [&_a]:underline [&_em]:italic [&_strong]:font-bold"
+                                                className="mx-auto max-w-7xl text-2xl text-white drop-shadow-md sm:text-4xl [&_a]:underline [&_em]:italic [&_strong]:font-bold"
                                                 dangerouslySetInnerHTML={{
                                                     __html: heroSubtitle,
                                                 }}

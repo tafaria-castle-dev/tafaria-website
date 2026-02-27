@@ -4,7 +4,7 @@
     --surface: #ffffff; /* Ivory */
     --text: #1f2328; /* Charcoal */
     --muted: #5b5f63; /* Warm Gray */
-    --brand: #5a3e2b; /* Tafaria Umber */
+    --brand: #902729; /* Tafaria Umber */
     --gold: #b8924b; /* Antique Gold */
     --olive: #2f4a3a; /* Deep Olive */
     --border: #e6ded2;
@@ -49,17 +49,6 @@ body {
     color: var(--text);
     background: var(--bg);
     line-height: 1.5;
-}
-
-a {
-    color: var(--olive);
-    text-decoration: none;
-}
-
-@media (max-width: 768px) {
-    .container {
-        padding: 0 16px;
-    }
 }
 
 /* Typography */
@@ -248,12 +237,12 @@ a {
     text-decoration: none;
 }
 .btn-secondary {
-    background: transparent;
-    color: var(--brand);
-    border-color: var(--brand);
+    background: var(--brand);
+    color: var(--color-white) !important;
+    border-color: var(--gold);
 }
 .btn-secondary:hover {
-    background: var(--hover);
+    background: var(--gold) !important;
     text-decoration: none;
 }
 .btn-tertiary {
@@ -347,6 +336,7 @@ a {
         transform 0.15s ease,
         box-shadow 0.15s ease;
     width: 100%;
+    cursor: pointer;
 }
 
 .package-card.active {
@@ -363,6 +353,7 @@ a {
 
 .package-card:hover {
     transform: translateY(-2px);
+    transform: scale(1.05);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 .package-header {
@@ -751,4 +742,12 @@ textarea:focus {
 
 .card-pad-sm {
     padding: 16px;
+}
+.strip-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
 }

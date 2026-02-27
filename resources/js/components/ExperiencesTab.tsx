@@ -6,7 +6,6 @@ import {
     ChildPolicy,
     ConferencePackage,
     Meal,
-    RatesDescription,
     Residency,
     Room,
 } from '@/types/types';
@@ -15,7 +14,7 @@ import { useState } from 'react';
 import { LoadingComponent } from './LoadingComponent';
 
 interface ExperiencesTabProps {
-    description: RatesDescription | undefined;
+    description: string | undefined;
     rooms: Room[];
     meals: Meal[];
     conferences: ConferencePackage[];
@@ -408,16 +407,10 @@ export const ExperiencesTab: React.FC<ExperiencesTabProps> = ({
             <section aria-labelledby="room-rates">
                 {description && (
                     <div className="mb-8 rounded-2xl border border-[#9c7833]/60 bg-white/80 p-6">
-                        <p className="mb-4 text-base text-gray-800 sm:text-lg">
-                            {description.description}
-                        </p>
-                        {description.audio_url && (
-                            <audio
-                                controls
-                                src={description.audio_url}
-                                className="w-full"
-                            />
-                        )}
+                        <p
+                            className="mb-4 text-base text-gray-800 sm:text-lg"
+                            dangerouslySetInnerHTML={{ __html: description }}
+                        ></p>
                     </div>
                 )}
                 <div className="mb-4 flex space-x-2">
@@ -469,7 +462,7 @@ export const ExperiencesTab: React.FC<ExperiencesTabProps> = ({
                 </div>
             </section>
 
-            <section aria-labelledby="buffet-meals">
+            {/* <section aria-labelledby="buffet-meals">
                 <h2
                     id="buffet-meals"
                     className="mb-6 text-center text-lg font-bold tracking-tight text-[#902729] sm:text-xl md:text-2xl lg:text-3xl"
@@ -491,7 +484,7 @@ export const ExperiencesTab: React.FC<ExperiencesTabProps> = ({
                         ))}
                     </div>
                 )}
-            </section>
+            </section> */}
 
             <section aria-labelledby="meeting-packages">
                 <h2

@@ -12,6 +12,7 @@ import {
 } from '@/types';
 import { RatesDescription } from '@/types/types';
 import axios from 'axios';
+import DOMPurify from 'dompurify';
 import { useEffect, useState } from 'react';
 import Hero from '../hero';
 const styles = `
@@ -64,37 +65,6 @@ const styles = `
 
   .line { border: none; border-top: 1px solid rgba(184,146,75,0.2); margin: 0; }
 
-  /* Buttons */
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 12px 22px;
-    border-radius: 999px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    text-decoration: none;
-    border: none;
-    transition: transform 0.1s ease, box-shadow 0.2s ease, background 0.2s ease;
-    white-space: nowrap;
-  }
-  .btn:hover { transform: translateY(-1px); }
-
-  .btn-primary {
-    background: linear-gradient(135deg, #b8924b, #8a6830);
-    color: #fff;
-    box-shadow: 0 4px 14px rgba(184,146,75,0.35);
-  }
-  .btn-primary:hover { box-shadow: 0 6px 20px rgba(184,146,75,0.5); }
-
-  .btn-secondary {
-    
-    color: #5a3e2b;
-    border: 1px solid rgba(90,62,43,0.25);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  }
-  .btn-secondary:hover { background: #fbf7f0; }
 
   .btn-tertiary {
     background: rgba(184,146,75,0.12);
@@ -227,14 +197,7 @@ const styles = `
     padding: 32px;
   }
 
-  .strip-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin-bottom: 24px;
-  }
+
 
   /* School cards */
   
@@ -286,12 +249,14 @@ function Badge({
     return <span className={cls}>{children}</span>;
 }
 
-function SchoolCard({
+export function SchoolCard({
     program,
     button_message,
+    onRequestQuote,
 }: {
     program: Program;
     button_message?: string;
+    onRequestQuote: (program: Program) => void;
 }) {
     return (
         <div className="card">
@@ -303,11 +268,10 @@ function SchoolCard({
                     type={
                         program.badge_content?.includes('Agriculture')
                             ? 'olive'
-                            : program.badge_content?.includes('Skills')
+                            : program.badge_content?.includes('Skills') ||
+                                program.badge_content?.includes('Leadership')
                               ? 'gold'
-                              : program.badge_content?.includes('Leadership')
-                                ? 'gold'
-                                : 'neutral'
+                              : 'neutral'
                     }
                 >
                     {program.badge_content}
@@ -320,12 +284,15 @@ function SchoolCard({
                     dangerouslySetInnerHTML={{
                         __html: program.description || '',
                     }}
-                ></div>
-                <div className="meta-row"></div>
+                />
+                <div className="meta-row" />
                 <div className="row" style={{ marginTop: 14 }}>
-                    <a className="btn btn-secondary" href="#quote">
+                    <button
+                        className="btn btn-secondary"
+                        onClick={() => onRequestQuote(program)}
+                    >
                         {button_message || 'Request Quote'}
-                    </a>
+                    </button>
                 </div>
             </div>
         </div>
@@ -362,10 +329,17 @@ export const PackagesCards = ({
             {packages?.map((pkg) => {
                 const key = toTabKey(pkg.title);
                 const isActive = activeTab === pkg;
+                const title = pkg.title?.toLowerCase() ?? '';
+
+                const isPopular =
+                    title.includes('experience') ||
+                    title.includes('immersion') ||
+                    title.includes('popular');
                 return (
                     <div
-                        className={`package-card ${activeTab === pkg ? 'active' : ''}`}
+                        className={`package-card cursor-pointer ${activeTab === pkg ? 'active' : ''}`}
                         key={pkg.id}
+                        onClick={() => handleCardClick(pkg)}
                     >
                         <div className="package-header">
                             <img
@@ -373,30 +347,39 @@ export const PackagesCards = ({
                                 alt={pkg.title}
                                 loading="lazy"
                             />
-                        </div>
-                        <div className="card-pad">
-                            <div className="h3" style={{ marginTop: 10 }}>
+                            {isPopular && (
+                                <span
+                                    className="rounded-4xl bg-[#902729] px-5 py-2 text-white"
+                                    style={{
+                                        position: 'absolute',
+                                        bottom: 12,
+                                        right: 12,
+                                        zIndex: 2,
+                                    }}
+                                >
+                                    Popular
+                                </span>
+                            )}
+                            <div
+                                className="h3 btn btn-secondary"
+                                style={{
+                                    marginTop: 10,
+                                    position: 'absolute',
+                                    top: 12,
+                                    left: 12,
+                                    zIndex: 2,
+                                }}
+                            >
                                 {pkg.title}
                             </div>
-                            <div className="small">{pkg.subtitle}</div>
-
-                            <div className="bullets">
-                                {pkg.items?.map((packageItem) => (
-                                    <div
-                                        key={packageItem.title}
-                                        className="bullet"
-                                    >
-                                        <div className="b-ic">
-                                            {pkg.title.includes('Recreation')
-                                                ? '➤'
-                                                : '★'}
-                                        </div>
-                                        <div className="small">
-                                            <strong>{packageItem.title}</strong>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+                        </div>
+                        <div className="card-pad">
+                            <div
+                                className="small"
+                                dangerouslySetInnerHTML={{
+                                    __html: pkg.description || '',
+                                }}
+                            ></div>
 
                             <div className="row" style={{ marginTop: 16 }}>
                                 <button
@@ -416,10 +399,7 @@ export const PackagesCards = ({
         </div>
     );
 };
-const DayVisitPackageCards = ({
-    onButtonClick,
-    packages,
-}: DayVisitCardsProps) => {
+const DayVisitPackageCards = ({ packages }: DayVisitCardsProps) => {
     const paxLabel = (pax: number | null): string => {
         if (!pax) return '';
         if (pax === 1) return '/ person';
@@ -430,18 +410,44 @@ const DayVisitPackageCards = ({
         v != null
             ? Number(v).toLocaleString('en-KE', { minimumFractionDigits: 0 })
             : '';
-
+    const { setSelectedDayVisitPackageItem, setShowDayVisitModal } =
+        useSelectedPackage();
     return (
         <div className="grid-4" style={{ marginTop: 16 }}>
             {packages?.map((pkg) => {
+                const title = pkg.title?.toLowerCase() ?? '';
+                const isPopular =
+                    title.includes('experience') ||
+                    title.includes('immersion') ||
+                    title.includes('popular');
                 return (
-                    <div className={`package-card h-fit`} key={pkg.id}>
+                    <div
+                        className={`package-card h-fit`}
+                        key={pkg.id}
+                        onClick={() => {
+                            setSelectedDayVisitPackageItem(pkg);
+                            setShowDayVisitModal(true);
+                        }}
+                    >
                         <div className="package-header">
                             <img
                                 src={pkg.image || ''}
                                 alt={pkg.title || ''}
                                 loading="lazy"
                             />
+                            {isPopular && (
+                                <span
+                                    className="rounded-4xl bg-[#902729] px-5 py-2 text-white"
+                                    style={{
+                                        position: 'absolute',
+                                        top: 12,
+                                        right: 12,
+                                        zIndex: 2,
+                                    }}
+                                >
+                                    Popular
+                                </span>
+                            )}
                         </div>
                         <div className="card-pad">
                             <div className="h3" style={{ marginTop: 10 }}>
@@ -484,7 +490,7 @@ const DayVisitPackageCards = ({
                                     }}
                                 >
                                     + KES {fmtPrice(pkg.price_per_extra_pax)}{' '}
-                                    per extra guest
+                                    per extra person
                                 </p>
                             )}
                             <div
@@ -495,7 +501,13 @@ const DayVisitPackageCards = ({
                             ></div>
 
                             <div className="row" style={{ marginTop: 16 }}>
-                                <button className="btn btn-secondary">
+                                <button
+                                    className="btn btn-secondary"
+                                    onClick={() => {
+                                        setSelectedDayVisitPackageItem(pkg);
+                                        setShowDayVisitModal(true);
+                                    }}
+                                >
                                     {pkg.button_message}
                                 </button>
                             </div>
@@ -545,8 +557,12 @@ export default function LandingPage({
         'introduction',
     );
     const [isLoading, setIsLoading] = useState(true);
-    const { setSelectedPackage, setShowSelectedPackageModal } =
-        useSelectedPackage();
+    const {
+        setSelectedPackage,
+        setShowSelectedPackageModal,
+        setShowSchoolQuoteModal,
+        setQuoteInitialProgram,
+    } = useSelectedPackage();
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -572,24 +588,40 @@ export default function LandingPage({
 
         setShowSelectedPackageModal(true);
     };
+    const rawHtml =
+        introductionDescription?.description ||
+        'Visit for the day, stay overnight, bring a school, host an event, or apply for an art residency — Tafaria makes learning and leisure feel magical through its two packages below.';
+
+    const processedHtml = rawHtml.replace(/<h1([^>]*)>/gi, '<h2 class="h2"$1>');
+    const handleRequestQuote = (program: Program) => {
+        setQuoteInitialProgram(program);
+        setShowSchoolQuoteModal(true);
+    };
+
+    const handleOpenSchoolQuoteAll = () => {
+        setQuoteInitialProgram(null);
+        setShowSchoolQuoteModal(true);
+    };
     return (
         <>
             <style>{styles}</style>
+            <div className="">
+                <Hero heroSection={heroSection} offers={offers} />
+            </div>
             <section className="section-sm">
                 <div className="container">
-                    <div className="hero-media card">
-                        <Hero heroSection={heroSection} offers={offers} />
-                    </div>
                     <div className="hero-grid">
                         <section id="packages" className="section">
                             <div className="container">
-                                <div
-                                    dangerouslySetInnerHTML={{
-                                        __html:
-                                            introductionDescription?.description ||
-                                            'Visit for the day, stay overnight, bring a school, host an event, or apply for an art residency — Tafaria makes learning and leisure feel magical through its two packages below.',
-                                    }}
-                                ></div>
+                                <div className="rich-text-content">
+                                    <div
+                                        dangerouslySetInnerHTML={{
+                                            __html: DOMPurify.sanitize(
+                                                processedHtml,
+                                            ),
+                                        }}
+                                    ></div>
+                                </div>
                                 <PackagesCards
                                     packages={packages}
                                     onSelectPackage={handlePackageSelect}
@@ -609,7 +641,18 @@ export default function LandingPage({
                                     }}
                                 ></p>
                                 <DayVisitPackageCards
-                                    packages={dayVisitPackages[0]?.items}
+                                    packages={[
+                                        ...(dayVisitPackages[0]?.items ?? []),
+                                    ].sort((a, b) => {
+                                        const priority = (title: string) =>
+                                            /immersion|experience/i.test(title)
+                                                ? 0
+                                                : 1;
+                                        return (
+                                            priority(a.title ?? '') -
+                                            priority(b.title ?? '')
+                                        );
+                                    })}
                                 />
                             </div>
                         </section>
@@ -631,12 +674,14 @@ export default function LandingPage({
                                 </p>
                             </div>
                             <div className="row">
-                                <a className="btn btn-primary" href="#quote">
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={handleOpenSchoolQuoteAll}
+                                >
                                     Request a school quote
-                                </a>
+                                </button>
                             </div>
                         </div>
-
                         <div className="grid-4">
                             {schoolPrograms[0]?.programs?.map((p) => (
                                 <SchoolCard
@@ -645,6 +690,7 @@ export default function LandingPage({
                                     button_message={
                                         schoolPrograms[0]?.button_message
                                     }
+                                    onRequestQuote={handleRequestQuote}
                                 />
                             ))}
                         </div>
@@ -790,7 +836,7 @@ export default function LandingPage({
                                         See visitor FAQs
                                     </a>
                                     <a
-                                        className="btn btn-tertiary"
+                                        className="btn btn-secondary"
                                         href="https://wa.me/+254708877244"
                                         target="_blank"
                                         rel="noreferrer"

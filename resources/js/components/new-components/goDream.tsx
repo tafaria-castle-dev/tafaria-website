@@ -1,5 +1,7 @@
+import { useSelectedPackage } from '@/hooks/SelectedPackageContext';
 import { Program, SchoolAdditional, SchoolProgram } from '@/types';
 import { useRef, useState } from 'react';
+import { SchoolCard } from './Landing';
 
 interface QuoteForm {
     schoolName: string;
@@ -32,22 +34,7 @@ const styles = `
 
   .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
 
-  .btn {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 12px 22px; border-radius: 999px;
-    font-size: 0.88rem; font-weight: 600;
-    cursor: pointer; text-decoration: none; border: none;
-    transition: transform 0.1s ease, box-shadow 0.15s ease;
-    white-space: nowrap; font-family: inherit;
-  }
-  .btn:hover { transform: translateY(-1px); }
-  .btn-primary  { background: linear-gradient(135deg,#b8924b,#8a6830); color:#fff; box-shadow:0 4px 14px rgba(184,146,75,0.35); }
-  .btn-primary:hover { box-shadow: 0 6px 20px rgba(184,146,75,0.5); }
-  .btn-secondary { background:#fff; color:#5a3e2b; border:1px solid rgba(90,62,43,0.25); box-shadow:0 2px 8px rgba(0,0,0,0.06); }
-  .btn-secondary:hover { background:#fbf7f0; }
-  .btn-tertiary { background:rgba(184,146,75,0.12); color:#7a5520; border:1px solid rgba(184,146,75,0.3); }
-  .btn-tertiary:hover { background:rgba(184,146,75,0.22); }
-
+  
   .card {
     background: #fff; border: 1px solid rgba(184,146,75,0.18);
     border-radius: 20px; overflow: hidden;
@@ -133,52 +120,6 @@ function Badge({
     return <span className={`badge badge-${type}`}>{children}</span>;
 }
 
-function SchoolCard({
-    program,
-    button_message,
-}: {
-    program: Program;
-    button_message?: string;
-}) {
-    return (
-        <div className="card">
-            <div className="card-media">
-                <img src={program.image} alt={program.title} loading="lazy" />
-            </div>
-            <div className="card-pad-sm">
-                <Badge
-                    type={
-                        program.badge_content?.includes('Agriculture')
-                            ? 'olive'
-                            : program.badge_content?.includes('Skills')
-                              ? 'gold'
-                              : program.badge_content?.includes('Leadership')
-                                ? 'gold'
-                                : 'neutral'
-                    }
-                >
-                    {program.badge_content}
-                </Badge>
-                <div className="h3" style={{ margin: '10px 0 6px' }}>
-                    {program.title}
-                </div>
-                <div
-                    className="small"
-                    dangerouslySetInnerHTML={{
-                        __html: program.description || '',
-                    }}
-                ></div>
-                <div className="meta-row"></div>
-                <div className="row" style={{ marginTop: 14 }}>
-                    <a className="btn btn-secondary" href="#quote">
-                        {button_message || 'Request Quote'}
-                    </a>
-                </div>
-            </div>
-        </div>
-    );
-}
-
 export default function GoDreamPage({
     schoolPrograms,
     schoolAdditional,
@@ -195,23 +136,23 @@ export default function GoDreamPage({
         days: '1 day',
         notes: '',
     });
+    const { setShowSchoolQuoteModal, setQuoteInitialProgram } =
+        useSelectedPackage();
+    const handleRequestQuote = (program: Program) => {
+        setQuoteInitialProgram(program);
+        setShowSchoolQuoteModal(true);
+    };
 
+    const handleOpenSchoolQuoteAll = () => {
+        setQuoteInitialProgram(null);
+        setShowSchoolQuoteModal(true);
+    };
     function handleChange(field: keyof QuoteForm, value: string | number) {
         setForm((f) => ({ ...f, [field]: value }));
     }
 
     function scrollToQuote() {
         quoteRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }
-
-    function handleQuoteFromCard(programId: number) {
-        const program = schoolPrograms[0]?.programs?.find(
-            (p) => p.id === programId,
-        );
-        if (program) {
-            handleChange('notes', `Interested in: ${program.title}\n\n`);
-        }
-        scrollToQuote();
     }
 
     function buildWhatsAppMessage() {
@@ -248,9 +189,25 @@ export default function GoDreamPage({
 
                 <section className="section">
                     <div className="container">
-                        <h2 className="h2">
-                            {schoolPrograms[0]?.programs_title}
-                        </h2>
+                        <div className="strip-header">
+                            <div>
+                                <h2 className="h2">
+                                    {schoolPrograms[0]?.title}
+                                </h2>
+                                <p className="p" style={{ marginBottom: 0 }}>
+                                    {schoolPrograms[0]?.subtitle ||
+                                        'School Programs'}
+                                </p>
+                            </div>
+                            <div className="row">
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={handleOpenSchoolQuoteAll}
+                                >
+                                    Request a school quote
+                                </button>
+                            </div>
+                        </div>
                         <div className="grid-4">
                             {schoolPrograms[0]?.programs?.map((p) => (
                                 <SchoolCard
@@ -259,6 +216,7 @@ export default function GoDreamPage({
                                     button_message={
                                         schoolPrograms[0]?.button_message
                                     }
+                                    onRequestQuote={handleRequestQuote}
                                 />
                             ))}
                         </div>
@@ -294,172 +252,6 @@ export default function GoDreamPage({
                                         </div>
                                     </div>
                                 ))}
-                        </div>
-                    </div>
-                </section>
-
-                <section
-                    id="quote"
-                    ref={quoteRef}
-                    className="section"
-                    style={{ paddingTop: 0 }}
-                >
-                    <div className="container">
-                        <h2 className="h2">Request a school quote</h2>
-                        <div className="grid-2">
-                            <div className="card">
-                                <div className="card-pad-lg">
-                                    <div className="form-grid">
-                                        <div className="field">
-                                            <label className="label">
-                                                School name
-                                            </label>
-                                            <input
-                                                className="input"
-                                                placeholder="e.g., Nairobi Waldorf School"
-                                                value={form.schoolName}
-                                                onChange={(e) =>
-                                                    handleChange(
-                                                        'schoolName',
-                                                        e.target.value,
-                                                    )
-                                                }
-                                            />
-                                        </div>
-                                        <div className="field">
-                                            <label className="label">
-                                                Contact phone
-                                            </label>
-                                            <input
-                                                className="input"
-                                                placeholder="+254..."
-                                                value={form.phone}
-                                                onChange={(e) =>
-                                                    handleChange(
-                                                        'phone',
-                                                        e.target.value,
-                                                    )
-                                                }
-                                            />
-                                        </div>
-                                        <div className="field">
-                                            <label className="label">
-                                                Students
-                                            </label>
-                                            <input
-                                                className="input"
-                                                type="number"
-                                                min={1}
-                                                value={form.students}
-                                                onChange={(e) =>
-                                                    handleChange(
-                                                        'students',
-                                                        Number(e.target.value),
-                                                    )
-                                                }
-                                            />
-                                        </div>
-                                        <div className="field">
-                                            <label className="label">
-                                                Days
-                                            </label>
-                                            <select
-                                                className="select"
-                                                value={form.days}
-                                                onChange={(e) =>
-                                                    handleChange(
-                                                        'days',
-                                                        e.target.value,
-                                                    )
-                                                }
-                                            >
-                                                <option>1 day</option>
-                                                <option>2 days</option>
-                                                <option>3 days</option>
-                                                <option>4–5 days</option>
-                                            </select>
-                                        </div>
-                                        <div className="field full">
-                                            <label className="label">
-                                                Learning goals / notes
-                                            </label>
-                                            <textarea
-                                                className="textarea"
-                                                placeholder="Age group, goals, any sensitivities, meal needs, etc."
-                                                value={form.notes}
-                                                onChange={(e) =>
-                                                    handleChange(
-                                                        'notes',
-                                                        e.target.value,
-                                                    )
-                                                }
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div
-                                        className="row"
-                                        style={{ marginTop: 20 }}
-                                    >
-                                        <a
-                                            className="btn btn-primary"
-                                            href={`https://wa.me/${WHATSAPP_NUMBER}?text=${buildWhatsAppMessage()}`}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                        >
-                                            Send on WhatsApp
-                                        </a>
-                                        <button
-                                            className="btn btn-secondary"
-                                            onClick={handleEmailSend}
-                                        >
-                                            Send on Email
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <div className="strip">
-                                    <b style={{ color: '#1a0f06' }}>
-                                        What you'll get
-                                    </b>
-                                    <hr className="strip-divider" />
-                                    {schoolPrograms.length > 0 &&
-                                        schoolPrograms[0]
-                                            ?.what_you_get_message && (
-                                            <div
-                                                dangerouslySetInnerHTML={{
-                                                    __html: schoolPrograms[0]
-                                                        .what_you_get_message,
-                                                }}
-                                            />
-                                        )}
-                                </div>
-
-                                <div style={{ height: 16 }} />
-
-                                <div className="strip">
-                                    <b style={{ color: '#1a0f06' }}>
-                                        Need help fast?
-                                    </b>
-                                    <div
-                                        className="small"
-                                        style={{ margin: '8px 0 14px' }}
-                                    >
-                                        Message us and we'll assemble the best
-                                        program based on your goals.
-                                    </div>
-                                    <a
-                                        className="btn btn-secondary"
-                                        href={`https://wa.me/${WHATSAPP_NUMBER}`}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                    >
-                                        WhatsApp now
-                                    </a>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </section>

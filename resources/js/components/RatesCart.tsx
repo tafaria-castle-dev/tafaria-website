@@ -271,16 +271,12 @@ const RatesCart = () => {
         <div>
             {cart.length > 0 && (
                 <section aria-labelledby="cart-summary">
-                    <div className="overflow-hidden rounded-2xl border border-[#9c7833]/20 bg-gradient-to-br from-white to-gray-50 shadow-lg">
-                        <div className="flex bg-gradient-to-r from-[#93723c] to-[#9c7833] px-6 py-4">
+                    <div className="overflow-hidden rounded-2xl border border-[#902729]/20 bg-gradient-to-br from-white to-gray-50 shadow-lg">
+                        <div className="flex bg-gradient-to-r from-[#902729] to-[#902729] px-6 py-4">
                             <div className="flex-1">
                                 <h2 className="text-xl font-bold text-white">
-                                    Your Booking Cart
+                                    Your Booking Summary
                                 </h2>
-                                <p className="mt-1 text-sm text-white/80">
-                                    {cart.length} item
-                                    {cart.length > 1 ? 's' : ''} in cart
-                                </p>
                             </div>
                             <button
                                 onClick={() => setShowCart(false)}
@@ -295,7 +291,7 @@ const RatesCart = () => {
                                 {cart.map((item, index) => (
                                     <div
                                         key={index}
-                                        className="relative rounded-xl border-2 border-[#9c7833]/30 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
+                                        className="relative rounded-xl border-2 border-[#902729]/30 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
                                     >
                                         <div className="absolute top-3 right-3">
                                             <button
@@ -327,7 +323,7 @@ const RatesCart = () => {
                                         item.kind === 'leisure-room' ? (
                                             <div className="pr-12">
                                                 <div className="mb-3 flex items-start gap-3">
-                                                    <div className="rounded-lg bg-[#93723c] p-2">
+                                                    <div className="rounded-lg bg-[#902729] p-2">
                                                         <svg
                                                             className="h-6 w-6 text-white"
                                                             fill="none"
@@ -395,7 +391,7 @@ const RatesCart = () => {
                                                 </div>
 
                                                 <div className="mb-3 flex items-center gap-2 text-sm">
-                                                    <span className="rounded-full bg-[#9c7833]/10 px-3 py-1 font-medium text-[#93723c]">
+                                                    <span className="rounded-full bg-[#902729]/10 px-3 py-1 font-medium text-[#902729]">
                                                         {item.boardType === 'FB'
                                                             ? 'Full Board'
                                                             : item.boardType ===
@@ -476,7 +472,7 @@ const RatesCart = () => {
                                                         <span className="font-medium text-gray-600">
                                                             Total for Group:
                                                         </span>
-                                                        <span className="text-xl font-bold text-[#93723c]">
+                                                        <span className="text-xl font-bold text-[#902729]">
                                                             {item.currency}{' '}
                                                             {item.totalCost.toLocaleString()}
                                                         </span>
@@ -486,7 +482,7 @@ const RatesCart = () => {
                                         ) : item.kind === 'conference' ? (
                                             <div className="pr-12">
                                                 <div className="mb-3 flex items-start gap-3">
-                                                    <div className="rounded-lg bg-[#93723c] p-2">
+                                                    <div className="rounded-lg bg-[#902729] p-2">
                                                         <svg
                                                             className="h-6 w-6 text-white"
                                                             fill="none"
@@ -566,7 +562,7 @@ const RatesCart = () => {
                                                         <span className="font-medium text-gray-600">
                                                             Total Cost:
                                                         </span>
-                                                        <span className="text-xl font-bold text-[#93723c]">
+                                                        <span className="text-xl font-bold text-[#902729]">
                                                             {item.currency}{' '}
                                                             {item.totalCost.toLocaleString()}
                                                         </span>
@@ -576,7 +572,7 @@ const RatesCart = () => {
                                         ) : (
                                             <div className="pr-12">
                                                 <div className="mb-3 flex items-start gap-3">
-                                                    <div className="rounded-lg bg-[#93723c] p-2">
+                                                    <div className="rounded-lg bg-[#902729] p-2">
                                                         <svg
                                                             className="h-6 w-6 text-white"
                                                             fill="none"
@@ -644,7 +640,7 @@ const RatesCart = () => {
                                                         <span className="font-medium text-gray-600">
                                                             Total Cost:
                                                         </span>
-                                                        <span className="text-xl font-bold text-[#93723c]">
+                                                        <span className="text-xl font-bold text-[#902729]">
                                                             {item.currency}{' '}
                                                             {item.totalCost.toLocaleString()}
                                                         </span>
@@ -655,7 +651,7 @@ const RatesCart = () => {
                                     </div>
                                 ))}
                             </div>
-                            <div className="rounded-xl bg-gradient-to-r from-[#93723c] to-[#9c7833] p-6 text-white">
+                            <div className="rounded-xl bg-gradient-to-r from-[#902729] to-[#902729] p-6 text-white">
                                 <div className="flex items-center justify-between">
                                     <svg
                                         className="h-12 w-12 opacity-20"
@@ -692,14 +688,30 @@ const RatesCart = () => {
 
                             <div className="flex flex-col gap-3 pt-2 sm:flex-row">
                                 <button
-                                    className="w-full rounded-xl bg-gray-100 px-6 py-3 font-semibold text-gray-700 transition-colors hover:bg-gray-200 sm:flex-1"
+                                    className="w-full rounded-xl bg-gray-200 px-6 py-3 font-semibold text-gray-700 transition-colors hover:bg-gray-200 sm:flex-1"
                                     onClick={clearCartAndClose}
                                 >
-                                    Clear Cart
+                                    Clear Booking
                                 </button>
                                 <div className="flex gap-3 sm:flex-2">
                                     <button
-                                        className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#93723c] to-[#9c7833] px-6 py-3 font-semibold text-white transition-shadow hover:shadow-lg"
+                                        className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#902729] to-[#902729] px-6 py-3 font-semibold text-white transition-shadow hover:shadow-lg"
+                                        onClick={sendCartToEmail}
+                                    >
+                                        <svg
+                                            className="h-5 w-5"
+                                            fill="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                                        </svg>
+                                        <span className="hidden sm:inline">
+                                            Send via Email
+                                        </span>
+                                        <span className="sm:hidden">Email</span>
+                                    </button>
+                                    <button
+                                        className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#902729] to-[#902729] px-6 py-3 font-semibold text-white transition-shadow hover:shadow-lg"
                                         onClick={sendCartToWhatsApp}
                                     >
                                         <svg
@@ -715,22 +727,6 @@ const RatesCart = () => {
                                         <span className="sm:hidden">
                                             WhatsApp
                                         </span>
-                                    </button>
-                                    <button
-                                        className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#93723c] to-[#9c7833] px-6 py-3 font-semibold text-white transition-shadow hover:shadow-lg"
-                                        onClick={sendCartToEmail}
-                                    >
-                                        <svg
-                                            className="h-5 w-5"
-                                            fill="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
-                                        </svg>
-                                        <span className="hidden sm:inline">
-                                            Send via Email
-                                        </span>
-                                        <span className="sm:hidden">Email</span>
                                     </button>
                                 </div>
                             </div>

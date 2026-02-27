@@ -1,0 +1,1847 @@
+import { DatePickerModal } from '@/components/DatePickerModal';
+import { ExperiencesTab } from '@/components/ExperiencesTab';
+import { SelectionModal } from '@/components/SelectionModal';
+import { useRatesBooking } from '@/hooks/RatesCartContext';
+import { useSelectedPackage } from '@/hooks/SelectedPackageContext';
+import { calculateNights, isHoliday } from '@/lib/dateUtils';
+import { getKidsMealCost, getRoomRate, getSupplement } from '@/lib/rateUtils';
+import { DayVisitPackageItem } from '@/types';
+import {
+    ConferencePackage,
+    LeisureExperience,
+    LeisureRoom,
+    Meal,
+    RatesDescription,
+    Residency,
+    Room,
+} from '@/types/types';
+import axios from 'axios';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Minus, Plus, ShoppingCart, Sparkles, Users, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
+import { RecreationTab } from '../RecreationTab';
+
+const styles = `
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+  .h1 { font-family: 'Cinzel', serif; font-size: clamp(2rem,4vw,3rem); font-weight: 700; line-height: 1.2; color: #1a0f06; margin-bottom: 14px; }
+  .h2 { font-family: 'Cinzel', serif; font-size: clamp(1.3rem,3vw,1.9rem); font-weight: 600; color: #1a0f06; margin-bottom: 10px; }
+  .h3 { font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 600; color: #1a0f06; }
+  .p-lg { font-size: 1.1rem; line-height: 1.7; color: #5a3e2b; margin-bottom: 20px; }
+  .p   { font-size: 1rem;   line-height: 1.7; color: #5a3e2b; }
+  .small { font-size: 0.85rem; color: #6b4f35; line-height: 1.5; }
+  .micro { font-size: 0.78rem; color: #8a6830; font-weight: 600; }
+
+  .badge {
+    display: inline-block; padding: 4px 12px; border-radius: 999px;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+  }
+  .badge-gold    { background: rgba(184,146,75,0.18); color: #7a5520; border: 1px solid rgba(184,146,75,0.4); }
+  .badge-neutral { background: rgba(90,62,43,0.1);   color: #5a3e2b; border: 1px solid rgba(90,62,43,0.2); }
+  .badge-olive   { background: rgba(100,120,60,0.12); color: #4a6030; border: 1px solid rgba(100,120,60,0.3); }
+
+  .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 12px 22px; border-radius: 999px;
+    font-size: 0.88rem; font-weight: 600;
+    cursor: pointer; text-decoration: none; border: none;
+    transition: transform 0.1s ease, box-shadow 0.15s ease;
+    white-space: nowrap; font-family: inherit;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary  { background: linear-gradient(135deg,#b8924b,#8a6830); color:#fff; box-shadow: 0 4px 14px rgba(184,146,75,0.35); }
+  .btn-primary:hover { box-shadow: 0 6px 20px rgba(184,146,75,0.5); }
+  .btn-secondary { background:#fff; color:#5a3e2b; border:1px solid rgba(90,62,43,0.25); box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+  .btn-secondary:hover { background:#fbf7f0; }
+
+  .card {
+     border:1px solid rgba(184,146,75,0.18);
+    border-radius:20px; overflow:hidden;
+    box-shadow:0 4px 20px rgba(0,0,0,0.06);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .card:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(0,0,0,0.1); }
+  .card-media { height: 180px; overflow: hidden; }
+  .card-media img { width:100%; height:100%; object-fit:cover; display:block; transition: transform 0.3s ease; }
+  .card:hover .card-media img { transform: scale(1.04); }
+  .card-pad { padding: 16px; }
+
+  .grid-3 { display:grid; gap:20px; grid-template-columns: repeat(3,1fr); margin-top:20px; }
+  .grid-2 { display:grid; gap:24px; grid-template-columns: repeat(2,1fr); margin-top:20px; }
+  .grid-4 { display:grid; gap:20px; grid-template-columns: repeat(4,1fr); margin-top:20px; }
+
+  @media (max-width: 900px) {
+    .grid-3 { grid-template-columns: repeat(2,1fr); }
+    .grid-2 { grid-template-columns: 1fr; }
+    .grid-4 { grid-template-columns: repeat(2,1fr); }
+  }
+  @media (max-width: 560px) {
+    .grid-3 { grid-template-columns: 1fr; }
+    .grid-4 { grid-template-columns: 1fr; }
+  }
+
+  /* Tab switcher */
+  .tabs { display:flex; gap:0; background:rgba(184,146,75,0.1); border:1px solid rgba(184,146,75,0.25); border-radius:16px; padding:4px; margin-bottom:32px; }
+  .tab {
+    flex:1; padding:12px 20px; border-radius:12px; border:none;
+    font-size:0.9rem; font-weight:600; cursor:pointer; font-family:inherit;
+    color:#5a3e2b; background:transparent;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .tab.active {  color:#7a5520; box-shadow:0 2px 10px rgba(0,0,0,0.08); }
+
+  .section-header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px; margin-bottom:20px; }
+
+  .package-section {
+    border: 1px solid rgba(184,146,75,0.2);
+    border-radius: 24px;
+    padding: 32px;
+    margin-bottom: 32px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.05);
+  }
+
+  .rates-wrapper {
+    background: linear-gradient(135deg, rgba(90,62,43,0.04), rgba(184,146,75,0.08));
+    border: 1px solid rgba(184,146,75,0.2);
+    border-radius: 24px;
+    padding: 32px;
+    margin-top: 12px;
+  }
+  .rates-label {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem; font-weight: 600; color: #1a0f06;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(184,146,75,0.2);
+  }
+
+  .dining-image { height: 220px; overflow: hidden; }
+  .dining-image img { width:100%; height:100%; object-fit:cover; display:block; }
+  .dining-text { display:flex; flex-direction:column; justify-content:center; }
+  .meta-row { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0; }
+
+  .amenity-card { padding: 20px; }
+
+  .toast {
+    position: fixed; top: 40px; right: 16px; z-index: 9999;
+    background: #902729; color: #fff;
+    border-radius: 16px; padding: 14px 20px; 
+    display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    animation: slide-in 0.3s ease-out;
+    font-weight: 600;
+  }
+  @keyframes slide-in {
+    from { transform: translateX(100%); opacity: 0; }
+    to   { transform: translateX(0);   opacity: 1; }
+  }
+
+  /* ─── Package Modal ─── */
+  .pkg-modal-overlay {
+    position: fixed; inset: 0; z-index: 35;
+    background: rgba(26,15,6,0.55);
+    backdrop-filter: blur(4px);
+    display: flex; align-items: flex-end;
+  }
+  @media (min-width: 700px) {
+    .pkg-modal-overlay { align-items: center; justify-content: center; }
+  }
+
+  .pkg-modal {
+    background: #fffdf9;
+    border-radius: 28px 28px 0 0;
+    width:96vw;
+    max-height: 96vh;
+    overflow-y: auto;
+    box-shadow: 0 -8px 48px rgba(0,0,0,0.18);
+    display: flex; flex-direction: column;
+  }
+  @media (min-width: 700px) {
+    .pkg-modal {
+      border-radius: 28px;
+      width: min(1100px, 94vw);
+      max-height: 96vh;
+    }
+  }
+
+  .pkg-modal-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    padding: 15px 32px;
+    border-bottom: 1px solid rgba(184,146,75,0.18);
+    position: sticky; top: 0;
+    background: #fffdf9; z-index: 2;
+    border-radius: 28px 28px 0 0;
+  }
+  .pkg-modal-close {
+    width: 36px; height: 36px; border-radius: 50%; border: none;
+    background: rgba(90,62,43,0.08); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: #5a3e2b; flex-shrink: 0;
+    transition: background 0.15s ease;
+  }
+  .pkg-modal-close:hover { background: rgba(90,62,43,0.16); }
+
+  .pkg-modal-body { padding:15px 32px; flex: 1; overflow-y: auto; }
+
+  /* Step indicator */
+  .step-indicator {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 28px;
+  }
+  .step-dot {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 700; font-family: inherit;
+    transition: all 0.2s ease;
+  }
+  .step-dot.active { background: linear-gradient(135deg,#b8924b,#8a6830); color: #fff; box-shadow: 0 2px 8px rgba(184,146,75,0.4); }
+  .step-dot.done   { background: rgba(184,146,75,0.2); color: #8a6830; }
+  .step-dot.idle   { background: rgba(90,62,43,0.08); color: #9a7d5a; }
+  .step-line { flex: 1; height: 2px; background: rgba(184,146,75,0.2); border-radius: 2px; }
+  .step-line.done { background: rgba(184,146,75,0.5); }
+  .step-label { font-size: 0.78rem; font-weight: 600; color: #8a6830; }
+
+  /* Date selection cards */
+  .date-prompt { font-family: 'Cinzel', serif; font-size: 1.35rem; font-weight: 600; color: #1a0f06; margin-bottom: 8px; }
+  .date-subtext { font-size: 0.95rem; color: #7a5a3a; margin-bottom: 28px; }
+
+  .date-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 28px; }
+  @media (max-width: 500px) { .date-fields { grid-template-columns: 1fr; } }
+
+  .date-field-btn {
+    display: flex; flex-direction: column; gap: 4px;
+    padding: 12px 20px; border-radius: 16px;
+    border: 1.5px solid rgba(184,146,75,0.3);
+    background: #fff; cursor: pointer;
+    text-align: left; font-family: inherit;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .date-field-btn:hover { border-color: rgba(184,146,75,0.6); box-shadow: 0 2px 12px rgba(184,146,75,0.15); }
+  .date-field-btn.has-value { border-color: rgba(184,146,75,0.55); background: rgba(255,251,240,0.8); }
+  .date-field-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #8a6830; }
+  .date-field-value { font-size: 1rem; font-weight: 600; color: #1a0f06; }
+  .date-field-placeholder { font-size: 1rem; color: #b89c7a; }
+
+  .nights-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 999px;
+    background: rgba(184,146,75,0.12); border: 1px solid rgba(184,146,75,0.3);
+    font-size: 0.85rem; font-weight: 600; color: #7a5520;
+    margin-bottom: 24px;
+  }
+
+  .pkg-modal-footer {
+    padding: 12px 32px;
+    border-top: 1px solid rgba(184,146,75,0.15);
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    position: sticky; bottom: 0; background: #fffdf9; z-index: 2;
+  }
+
+  /* Guest counter */
+  .guest-section {
+    background: rgba(255,251,240,0.8);
+    border: 1px solid rgba(184,146,75,0.25);
+    border-radius: 20px;
+    padding: 24px;
+    margin-top: 0;
+  }
+  .guest-section-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.92rem; font-weight: 600; color: #1a0f06;
+    margin-bottom: 18px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .guest-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(184,146,75,0.12);
+  }
+  .guest-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .guest-info { display: flex; flex-direction: column; gap: 2px; }
+  .guest-label { font-size: 0.9rem; font-weight: 600; color: #1a0f06; }
+  .guest-sublabel { font-size: 0.75rem; color: #9a7d5a; }
+  .guest-counter { display: flex; align-items: center; gap: 10px; }
+  .counter-btn {
+    width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid rgba(184,146,75,0.4);
+    background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    color: #8a6830; transition: all 0.15s ease;
+    font-family: inherit;
+  }
+  .counter-btn:hover:not(:disabled) { background: rgba(184,146,75,0.12); border-color: rgba(184,146,75,0.7); }
+  .counter-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .counter-value { font-size: 1rem; font-weight: 700; color: #1a0f06; min-width: 20px; text-align: center; }
+
+  /* Upsell modal */
+  .upsell-overlay {
+    position: fixed; inset: 0; z-index: 60;
+    background: rgba(26,15,6,0.6);
+    backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .upsell-modal {
+    background: #fffdf9;
+    border-radius: 28px;
+    width: min(500px, 96vw);
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.25);
+  }
+  .upsell-header {
+    position: relative; overflow: hidden;
+    padding: 36px 32px 28px;
+    background: linear-gradient(135deg, #1a0f06, #3d2010);
+    text-align: center;
+  }
+  .upsell-sparkle {
+    position: absolute; inset: 0; opacity: 0.07;
+    background-image: radial-gradient(circle at 20% 50%, #b8924b 0%, transparent 60%),
+                      radial-gradient(circle at 80% 50%, #8a6830 0%, transparent 60%);
+  }
+  .upsell-icon-wrap {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: rgba(184,146,75,0.2); border: 1.5px solid rgba(184,146,75,0.4);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+  }
+  .upsell-title {
+    font-family: 'Cinzel', serif; font-size: 1.4rem; font-weight: 700;
+    color: #f5e6c8; margin-bottom: 8px; position: relative;
+  }
+  .upsell-subtitle { font-size: 0.9rem; color: rgba(245,230,200,0.7); position: relative; }
+  .upsell-body { padding: 28px 32px; }
+  .upsell-offer-card {
+    background: linear-gradient(135deg, rgba(184,146,75,0.08), rgba(184,146,75,0.04));
+    border: 1px solid rgba(184,146,75,0.25);
+    border-radius: 16px; padding: 18px 20px; margin-bottom: 20px;
+  }
+  .upsell-offer-name { font-size: 1rem; font-weight: 700; color: #1a0f06; margin-bottom: 4px; }
+  .upsell-offer-desc { font-size: 0.85rem; color: #7a5a3a; margin-bottom: 12px; line-height: 1.5; }
+  .upsell-price-row { display: flex; align-items: baseline; gap: 6px; }
+  .upsell-price { font-size: 1.3rem; font-weight: 800; color: #8a6830; }
+  .upsell-price-per { font-size: 0.8rem; color: #9a7d5a; }
+  .upsell-total { font-size: 0.85rem; color: #5a3e2b; font-weight: 600; margin-top: 6px; }
+  .upsell-actions { display: flex; flex-direction: column; gap: 10px; }
+  .upsell-accept {
+    width: 100%; padding: 14px; border-radius: 14px; border: none;
+    background: linear-gradient(135deg, #b8924b, #8a6830);
+    color: #fff; font-size: 0.95rem; font-weight: 700; cursor: pointer;
+    box-shadow: 0 4px 16px rgba(184,146,75,0.35);
+    font-family: inherit; transition: all 0.15s ease;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .upsell-accept:hover { box-shadow: 0 6px 22px rgba(184,146,75,0.5); transform: translateY(-1px); }
+  .upsell-decline {
+    width: 100%; padding: 12px; border-radius: 14px;
+    border: 1px solid rgba(90,62,43,0.18);
+    background: transparent; color: #7a5a3a;
+    font-size: 0.88rem; font-weight: 600; cursor: pointer;
+    font-family: inherit; transition: background 0.15s ease;
+  }
+  .upsell-decline:hover { background: rgba(90,62,43,0.05); }
+`;
+
+interface SelectedPackageModalProps {
+    /** Flat items array from dayVisitPackages[0].items — upsell modal pulls
+     *  real titles and descriptions from here instead of hardcoded text. */
+    dayVisitPackageItems?: DayVisitPackageItem[];
+}
+
+export default function SelectedPackageModal({
+    dayVisitPackageItems = [],
+}: SelectedPackageModalProps) {
+    const {
+        showBookingModal,
+        setShowBookingModal,
+        cart,
+        addToCart,
+        setShowCart,
+        boardType,
+        setBoardType,
+    } = useRatesBooking();
+
+    const [residency] = useState<Residency>('East African Resident');
+    const [rooms, setRooms] = useState<Room[]>([]);
+    const [leisureRooms, setLeisureRooms] = useState<LeisureRoom[]>([]);
+    const [meals, setMeals] = useState<Meal[]>([]);
+    const [conferences, setConferences] = useState<ConferencePackage[]>([]);
+    const [leisureExperiences, setLeisureExperiences] = useState<
+        LeisureExperience[]
+    >([]);
+    const [ratesDescriptions, setRatesDescriptions] = useState<
+        RatesDescription[]
+    >([]);
+    const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+    const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
+    const [selectedLeisureRoom, setSelectedLeisureRoom] =
+        useState<LeisureRoom | null>(null);
+    const [selectedConference, setSelectedConference] =
+        useState<ConferencePackage | null>(null);
+    const [selectedLeisure, setSelectedLeisure] =
+        useState<LeisureExperience | null>(null);
+    const [selectedOccupancy, setSelectedOccupancy] = useState<
+        'Single' | 'Double' | null
+    >(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [numRooms, setNumRooms] = useState(1);
+    const [checkIn, setCheckIn] = useState('');
+    const [checkOut, setCheckOut] = useState('');
+    const [showDatePicker, setShowDatePicker] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+    const [showToast, setShowToast] = useState(false);
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const datePickerTriggerRef = useRef<HTMLDivElement | null>(null);
+
+    // Guest counts
+    const [numAdults, setNumAdults] = useState(2);
+    const [numKids4to11, setNumKids4to11] = useState(0);
+    const [numKids0to3, setNumKids0to3] = useState(0);
+
+    // Upsell modal
+    const [showUpsellModal, setShowUpsellModal] = useState(false);
+
+    const {
+        selectedPackage,
+        showSelectedPackageModal,
+        setShowSelectedPackageModal,
+    } = useSelectedPackage();
+    const [packageStep, setPackageStep] = useState<'dates' | 'rates'>('dates');
+    const pkgDateTriggerRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setIsLoading(true);
+                const [
+                    roomsRes,
+                    leisureRoomsRes,
+                    mealsRes,
+                    confRes,
+                    leisureRes,
+                    descriptionsRes,
+                ] = await Promise.all([
+                    axios.get('https://website-cms.tafaria.com/api/rooms'),
+                    axios.get(
+                        'https://website-cms.tafaria.com/api/leisure-rooms',
+                    ),
+                    axios.get('https://website-cms.tafaria.com/api/meals'),
+                    axios.get(
+                        'https://website-cms.tafaria.com/api/conference-packages',
+                    ),
+                    axios.get(
+                        'https://website-cms.tafaria.com/api/leisure-experiences',
+                    ),
+                    axios.get(
+                        'https://website-cms.tafaria.com/api/rates-descriptions',
+                    ),
+                ]);
+                setRooms(roomsRes.data.data || []);
+                setLeisureRooms(leisureRoomsRes.data.data || []);
+                setMeals(mealsRes.data.data || []);
+                setConferences(confRes.data.data || []);
+                setLeisureExperiences(leisureRes.data || []);
+                setRatesDescriptions(descriptionsRes.data || []);
+            } catch (error) {
+                console.error('Failed to fetch data:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        return () => {
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        };
+    }, []);
+
+    useEffect(() => {
+        const handleEsc = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                if (showUpsellModal) {
+                    setShowUpsellModal(false);
+                    return;
+                }
+                if (showDatePicker) {
+                    setShowDatePicker(false);
+                    return;
+                }
+                if (showSelectedPackageModal) {
+                    setShowSelectedPackageModal(false);
+                    return;
+                }
+                if (showBookingModal) setShowBookingModal(false);
+            }
+        };
+        document.addEventListener('keydown', handleEsc);
+        return () => document.removeEventListener('keydown', handleEsc);
+    }, [
+        showDatePicker,
+        showBookingModal,
+        showSelectedPackageModal,
+        showUpsellModal,
+        setShowBookingModal,
+    ]);
+
+    useEffect(() => {
+        document.body.style.overflow =
+            showBookingModal ||
+            showDatePicker ||
+            showSelectedPackageModal ||
+            showUpsellModal
+                ? 'hidden'
+                : '';
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [
+        showBookingModal,
+        showDatePicker,
+        showSelectedPackageModal,
+        showUpsellModal,
+    ]);
+
+    const closeModal = () => {
+        setShowBookingModal(false);
+        setSelectedRoom(null);
+        setShowDatePicker(false);
+        setSelectedLeisureRoom(null);
+        setSelectedConference(null);
+        setSelectedLeisure(null);
+        setSelectedOccupancy(null);
+        setNumRooms(1);
+    };
+
+    const getRoomCountInCart = (roomId: string) =>
+        cart.reduce(
+            (total, item) =>
+                (item.kind === 'room' && item.room.id === roomId) ||
+                (item.kind === 'leisure-room' && item.room.id === roomId)
+                    ? total + item.numRooms
+                    : total,
+            0,
+        );
+
+    const handleAddRoomToCart = (
+        room: Room,
+        occupancy: 'Single' | 'Double',
+    ) => {
+        if (cart.length > 0) {
+            setCheckIn(cart[0].checkIn);
+            setCheckOut(cart[0].checkOut);
+        }
+        setSelectedRoom(room);
+        setSelectedLeisureRoom(null);
+        setSelectedConference(null);
+        setSelectedLeisure(null);
+        setSelectedOccupancy(occupancy);
+        setShowBookingModal(true);
+    };
+
+    const handleAddLeisureRoomToCart = (
+        room: LeisureRoom,
+        occupancy: 'Single' | 'Double',
+    ) => {
+        if (cart.length > 0) {
+            setCheckIn(cart[0].checkIn);
+            setCheckOut(cart[0].checkOut);
+        }
+        setSelectedLeisureRoom(room);
+        setSelectedRoom(null);
+        setSelectedConference(null);
+        setSelectedLeisure(null);
+        setSelectedOccupancy(occupancy);
+        setShowBookingModal(true);
+    };
+
+    const handleAddConferenceToCart = (conference: ConferencePackage) => {
+        if (cart.length > 0) {
+            setCheckIn(cart[0].checkIn);
+            setCheckOut(cart[0].checkOut);
+        }
+        setSelectedConference(conference);
+        setSelectedRoom(null);
+        setSelectedLeisureRoom(null);
+        setSelectedLeisure(null);
+        setSelectedOccupancy(null);
+        setShowBookingModal(true);
+    };
+
+    const handleAddLeisureToCart = (leisure: LeisureExperience) => {
+        if (cart.length > 0) {
+            setCheckIn(cart[0].checkIn);
+            setCheckOut(cart[0].checkOut);
+        }
+        setSelectedLeisure(leisure);
+        setSelectedRoom(null);
+        setSelectedLeisureRoom(null);
+        setSelectedConference(null);
+        setSelectedOccupancy(null);
+        setShowBookingModal(true);
+    };
+
+    const triggerToast = (message: string) => {
+        setToastMessage(message);
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
+    };
+
+    const handleConfirmBooking = (bookingData: {
+        isKidsRoom?: boolean;
+        hasKidsSharing?: boolean;
+        kidsAgesPerRoom?: number[][];
+        numGuests?: number;
+        numAdults?: number;
+        numKids?: number;
+    }) => {
+        if (!checkIn || !checkOut) {
+            toast.error('Please select check-in and check-out dates.');
+            return;
+        }
+
+        const nights = calculateNights(checkIn, checkOut);
+        let holidayNights = 0;
+        let christmas = false;
+        let easter = false;
+        let current = new Date(checkIn);
+        const end = new Date(checkOut);
+
+        while (current < end) {
+            if (isHoliday(current)) {
+                holidayNights++;
+                const month = current.getMonth();
+                const day = current.getDate();
+                if (month === 11 && day >= 24 && day <= 26) christmas = true;
+                else easter = true;
+            }
+            current.setDate(current.getDate() + 1);
+        }
+
+        if (holidayNights > 0 && holidayNights < 2) {
+            const holidays = [];
+            if (christmas) holidays.push('Christmas');
+            if (easter) holidays.push('Easter');
+            toast.error(
+                `Please select at least two consecutive nights for ${holidays.join(' and ')} bookings.`,
+            );
+            return;
+        }
+
+        const holidayMessage =
+            holidayNights > 0
+                ? `Includes higher rate due to ${[christmas && 'Christmas', easter && 'Easter'].filter(Boolean).join(' and ')} Supplement`
+                : '';
+
+        const currency = residency === 'East African Resident' ? 'KES' : 'USD';
+
+        if ((selectedRoom || selectedLeisureRoom) && selectedOccupancy) {
+            const room = (selectedRoom || selectedLeisureRoom)!;
+            const basePerRoom = getRoomRate(
+                room,
+                boardType,
+                residency,
+                selectedOccupancy,
+            );
+            const numAdultsInRoom = selectedOccupancy === 'Single' ? 1 : 2;
+            const adultSupp = getSupplement(residency, true);
+            const childSupp = getSupplement(residency, false);
+            const bedCost = residency === 'East African Resident' ? 2000 : 20;
+
+            let totalCost = 0;
+            let allKidsAges: number[] = [];
+            let perRoomCosts: number[] = [];
+
+            for (let roomIndex = 0; roomIndex < numRooms; roomIndex++) {
+                const kidsAges = bookingData.kidsAgesPerRoom?.[roomIndex] || [];
+                allKidsAges = [...allKidsAges, ...kidsAges];
+                const qualifyingKids = kidsAges.filter(
+                    (age) => age > 3 && age < 12,
+                );
+                const maxKidsForBaseRate =
+                    selectedOccupancy === 'Single' ? 1 : 2;
+                let baseCost = 0;
+                let kidsMealCostPerNight = 0;
+                let suppTotal = 0;
+
+                if (!bookingData.isKidsRoom) {
+                    baseCost += basePerRoom;
+                    suppTotal += numAdultsInRoom * adultSupp * holidayNights;
+                    if (bookingData.hasKidsSharing) {
+                        const singleRate = getRoomRate(
+                            room,
+                            boardType,
+                            residency,
+                            'Single',
+                        );
+                        const doubleRate = getRoomRate(
+                            room,
+                            boardType,
+                            residency,
+                            'Double',
+                        );
+                        const ratesAreEqual = singleRate === doubleRate;
+                        let kidsToCharge = qualifyingKids;
+                        if (
+                            ratesAreEqual &&
+                            selectedOccupancy === 'Single' &&
+                            qualifyingKids.length > 0
+                        ) {
+                            kidsToCharge = qualifyingKids.slice(1);
+                        }
+                        kidsMealCostPerNight +=
+                            kidsToCharge.length *
+                            getKidsMealCost(boardType, residency);
+                        if (kidsToCharge.length > 3)
+                            kidsMealCostPerNight +=
+                                (kidsToCharge.length - 3) * bedCost;
+                    }
+                } else {
+                    const kidsInBaseRate = Math.min(
+                        qualifyingKids.length,
+                        maxKidsForBaseRate,
+                    );
+                    if (kidsInBaseRate > 0) baseCost += basePerRoom * 0.8;
+                    const extraKids = Math.max(
+                        0,
+                        qualifyingKids.length - maxKidsForBaseRate,
+                    );
+                    for (let i = 0; i < extraKids; i++) {
+                        const kidAge = qualifyingKids[maxKidsForBaseRate + i];
+                        if (kidAge > 3 && kidAge < 12)
+                            kidsMealCostPerNight += getKidsMealCost(
+                                boardType,
+                                residency,
+                            );
+                    }
+                    if (qualifyingKids.length > 3)
+                        kidsMealCostPerNight +=
+                            (qualifyingKids.length - 3) * bedCost;
+                }
+
+                qualifyingKids.forEach(() => {
+                    suppTotal += childSupp * holidayNights;
+                });
+                const roomCostPerNight = baseCost + kidsMealCostPerNight;
+                const roomTotal = roomCostPerNight * nights + suppTotal;
+                perRoomCosts.push(roomTotal);
+                totalCost += roomTotal;
+            }
+
+            addToCart({
+                kind: selectedRoom ? 'room' : 'leisure-room',
+                room,
+                occupancy: selectedOccupancy,
+                isKidsRoom: bookingData.isKidsRoom || false,
+                hasKidsSharing: bookingData.hasKidsSharing || false,
+                numRooms,
+                kidsCount: allKidsAges.length,
+                kidsAges: allKidsAges,
+                kidsAgesPerRoom: bookingData.kidsAgesPerRoom || [],
+                perRoomCosts,
+                totalCost,
+                currency,
+                checkIn,
+                checkOut,
+                nights,
+                boardType,
+                holidayMessage: holidayMessage || undefined,
+                roomRatePerNight: basePerRoom,
+            });
+            triggerToast(`${room.name} added to cart!`);
+        } else if (selectedConference) {
+            const perGuest =
+                residency === 'East African Resident'
+                    ? selectedConference.rate_kshs
+                    : selectedConference.rate_usd;
+            const adultSupp = getSupplement(residency, true);
+            const totalCost =
+                bookingData.numGuests! * perGuest * nights +
+                bookingData.numGuests! * adultSupp * holidayNights;
+            addToCart({
+                kind: 'conference',
+                conference: selectedConference,
+                numGuests: bookingData.numGuests!,
+                totalCost,
+                currency,
+                checkIn,
+                checkOut,
+                nights,
+                holidayMessage: holidayMessage || undefined,
+            });
+            triggerToast(`${selectedConference.name} added to cart!`);
+        } else if (selectedLeisure) {
+            const adultPrice =
+                residency === 'East African Resident'
+                    ? selectedLeisure.price_adults || 0
+                    : (selectedLeisure.price_adults || 0) / 130;
+            const kidPrice =
+                residency === 'East African Resident'
+                    ? selectedLeisure.price_kids || 0
+                    : (selectedLeisure.price_kids || 0) / 130;
+            const totalCost =
+                bookingData.numAdults! * adultPrice +
+                bookingData.numKids! * kidPrice;
+            addToCart({
+                kind: 'leisure',
+                leisure: selectedLeisure,
+                numAdults: bookingData.numAdults!,
+                numKids: bookingData.numKids!,
+                totalCost,
+                currency,
+                checkIn,
+                checkOut,
+                nights,
+            });
+            triggerToast(`${selectedLeisure.title} added to cart!`);
+        }
+
+        closeModal();
+    };
+
+    const TYPE_GROUPS = {
+        experience: ['arts', 'essence', 'museum', 'herbarium', 'immersion'],
+        recreation: [
+            'leisure',
+            'recreation',
+            'activities',
+            'archery',
+            'mini golf',
+        ],
+    } as const;
+
+    const getTabType = (title: string) => {
+        const lower = title.toLowerCase();
+        if (TYPE_GROUPS.experience.some((k) => lower.includes(k)))
+            return 'experience';
+        if (TYPE_GROUPS.recreation.some((k) => lower.includes(k)))
+            return 'recreation';
+        return null;
+    };
+
+    const findDesc = (
+        group: keyof typeof TYPE_GROUPS,
+    ): RatesDescription | undefined =>
+        ratesDescriptions.find((d) =>
+            TYPE_GROUPS[group].some(
+                (t) =>
+                    d.type.toLowerCase().includes(t) ||
+                    d.description.toLowerCase().includes(t),
+            ),
+        );
+
+    const experienceDescription = findDesc('experience');
+    const leisureDescription = findDesc('recreation');
+
+    const handlePkgContinue = () => {
+        if (!checkIn || !checkOut) {
+            toast.error('Please select both check-in and check-out dates.');
+            return;
+        }
+        setPackageStep('rates');
+    };
+
+    // ── Upsell logic ──────────────────────────────────────────────
+    const selectedPackageType = selectedPackage
+        ? getTabType(selectedPackage.title ?? '')
+        : null;
+
+    // Guests eligible for upsell pricing = adults + kids 4-11
+    const upsellGuestCount = numAdults + numKids4to11;
+
+    /** Find a DayVisitPackageItem whose title matches any of the given keywords. */
+    const findDayVisitItem = (
+        keywords: string[],
+    ): DayVisitPackageItem | undefined =>
+        dayVisitPackageItems.find((item) =>
+            keywords.some((kw) => item.title?.toLowerCase().includes(kw)),
+        );
+
+    // Strip HTML tags for plain-text description fallback
+    const stripHtml = (html: string): string =>
+        html?.replace(/<[^>]*>/g, '').trim() ?? '';
+
+    const getUpsellOffer = () => {
+        if (!selectedPackageType) return null;
+
+        if (selectedPackageType === 'recreation') {
+            // Offer an immersion/experience package to recreation guests
+            const item = findDayVisitItem([
+                'immersion',
+                'experience',
+                'arts',
+                'museum',
+                'herbarium',
+            ]);
+            const price = item?.price ?? 1500;
+            return {
+                name: item?.title ?? 'Immersion Experience',
+                description: item?.description
+                    ? stripHtml(item.description)
+                    : 'Deepen your stay with a curated cultural immersion — guided walks through our herbarium, arts encounters, and sensory museum trails.',
+                price,
+                totalCost: upsellGuestCount * price,
+                icon: '🌿',
+            };
+        }
+
+        if (selectedPackageType === 'experience') {
+            // Offer a leisure/recreation ticket to experience guests
+            const item = findDayVisitItem([
+                'leisure',
+                'recreation',
+                'activities',
+                'archery',
+                'golf',
+            ]);
+            const price = item?.price ?? 1500;
+            return {
+                name: item?.title ?? 'Leisure & Recreation Ticket',
+                description: item?.description
+                    ? stripHtml(item.description)
+                    : 'Complement your cultural journey with access to leisure activities — archery, mini golf, nature walks, and poolside relaxation.',
+                price,
+                totalCost: upsellGuestCount * price,
+                icon: '🏹',
+            };
+        }
+
+        return null;
+    };
+
+    const handleViewCart = () => {
+        const offer = getUpsellOffer();
+        if (offer && cart.length > 0) {
+            setShowUpsellModal(true);
+        } else {
+            setShowCart(true);
+        }
+    };
+
+    const handleUpsellAccept = () => {
+        const offer = getUpsellOffer();
+        if (!offer) return;
+
+        const currency = residency === 'East African Resident' ? 'KES' : 'USD';
+        const cartRef = cart[0];
+
+        // Build a synthetic leisure experience from the matched dayVisitPackageItem
+        const upsellLeisure: LeisureExperience = {
+            id: -1,
+            title: offer.name,
+            description: offer.description,
+            image_url: null,
+            price_adults: offer.price,
+            price_kids: offer.price,
+        };
+
+        addToCart({
+            kind: 'leisure',
+            leisure: upsellLeisure,
+            numAdults: numAdults,
+            numKids: numKids4to11,
+            totalCost: offer.totalCost,
+            currency,
+            checkIn: cartRef?.checkIn || checkIn,
+            checkOut: cartRef?.checkOut || checkOut,
+            nights: cartRef
+                ? calculateNights(cartRef.checkIn, cartRef.checkOut)
+                : 0,
+        });
+
+        triggerToast(`${offer.name} added to cart!`);
+        setShowUpsellModal(false);
+        setShowCart(true);
+    };
+
+    const handleUpsellDecline = () => {
+        setShowUpsellModal(false);
+        setShowCart(true);
+    };
+
+    const pkgNights =
+        checkIn && checkOut ? calculateNights(checkIn, checkOut) : 0;
+
+    const formatDate = (d: string) =>
+        d
+            ? new Date(d).toLocaleDateString('en-GB', {
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric',
+              })
+            : null;
+
+    // Counter component
+    const GuestCounter = ({
+        value,
+        onIncrement,
+        onDecrement,
+        min = 0,
+    }: {
+        value: number;
+        onIncrement: () => void;
+        onDecrement: () => void;
+        min?: number;
+    }) => (
+        <div className="guest-counter">
+            <motion.button
+                className="counter-btn"
+                onClick={onDecrement}
+                disabled={value <= min}
+                whileTap={{ scale: 0.85 }}
+            >
+                <Minus size={13} />
+            </motion.button>
+            <motion.span
+                key={value}
+                initial={{ scale: 1.3, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ type: 'spring', stiffness: 500, damping: 25 }}
+                className="counter-value"
+            >
+                {value}
+            </motion.span>
+            <motion.button
+                className="counter-btn"
+                onClick={onIncrement}
+                whileTap={{ scale: 0.85 }}
+            >
+                <Plus size={13} />
+            </motion.button>
+        </div>
+    );
+
+    const upsellOffer = getUpsellOffer();
+
+    return (
+        <>
+            <style>{styles}</style>
+            <div className="container">
+                {showDatePicker && (
+                    <DatePickerModal
+                        checkIn={checkIn}
+                        checkOut={checkOut}
+                        setCheckIn={setCheckIn}
+                        setCheckOut={setCheckOut}
+                        onClose={() => setShowDatePicker(false)}
+                        triggerRef={datePickerTriggerRef}
+                        inline
+                    />
+                )}
+
+                {showBookingModal &&
+                    (selectedRoom ||
+                        selectedLeisureRoom ||
+                        selectedConference ||
+                        selectedLeisure) && (
+                        <SelectionModal
+                            selectedRoom={selectedRoom}
+                            selectedLeisureRoom={selectedLeisureRoom}
+                            selectedConference={selectedConference}
+                            selectedLeisure={selectedLeisure}
+                            selectedOccupancy={selectedOccupancy}
+                            numRooms={numRooms}
+                            setNumRooms={setNumRooms}
+                            checkIn={checkIn}
+                            checkOut={checkOut}
+                            setShowDatePicker={setShowDatePicker}
+                            datePickerTriggerRef={datePickerTriggerRef}
+                            residency={residency}
+                            getRoomCountInCart={getRoomCountInCart}
+                            onConfirm={handleConfirmBooking}
+                            onClose={closeModal}
+                        />
+                    )}
+
+                {/* ── Upsell Modal ── */}
+                <AnimatePresence>
+                    {showUpsellModal && upsellOffer && (
+                        <motion.div
+                            className="upsell-overlay"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            onClick={(e) => {
+                                if (e.target === e.currentTarget)
+                                    setShowUpsellModal(false);
+                            }}
+                        >
+                            <motion.div
+                                className="upsell-modal"
+                                initial={{ opacity: 0, scale: 0.88, y: 30 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.92, y: 20 }}
+                                transition={{
+                                    type: 'spring',
+                                    stiffness: 340,
+                                    damping: 28,
+                                }}
+                            >
+                                {/* Header */}
+                                <div className="upsell-header">
+                                    <div className="upsell-sparkle" />
+                                    <motion.div
+                                        className="upsell-icon-wrap"
+                                        initial={{ scale: 0, rotate: -20 }}
+                                        animate={{ scale: 1, rotate: 0 }}
+                                        transition={{
+                                            type: 'spring',
+                                            stiffness: 400,
+                                            damping: 20,
+                                            delay: 0.15,
+                                        }}
+                                    >
+                                        <Sparkles size={28} color="#b8924b" />
+                                    </motion.div>
+                                    <motion.p
+                                        className="upsell-title"
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.2 }}
+                                    >
+                                        Complete Your Stay
+                                    </motion.p>
+                                    <motion.p
+                                        className="upsell-subtitle"
+                                        initial={{ opacity: 0, y: 8 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.27 }}
+                                    >
+                                        Guests who booked this package also
+                                        loved…
+                                    </motion.p>
+                                </div>
+
+                                {/* Body */}
+                                <motion.div
+                                    className="upsell-body"
+                                    initial={{ opacity: 0, y: 12 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.3 }}
+                                >
+                                    <div className="upsell-offer-card">
+                                        <div className="upsell-offer-name">
+                                            {upsellOffer.icon}{' '}
+                                            {upsellOffer.name}
+                                        </div>
+                                        <div className="upsell-offer-desc">
+                                            {upsellOffer.description}
+                                        </div>
+                                        <div className="upsell-price-row">
+                                            <span className="upsell-price">
+                                                KES{' '}
+                                                {upsellOffer.price.toLocaleString()}
+                                            </span>
+                                            <span className="upsell-price-per">
+                                                / person
+                                            </span>
+                                        </div>
+                                        {upsellGuestCount > 0 && (
+                                            <div className="upsell-total">
+                                                {upsellGuestCount} guest
+                                                {upsellGuestCount !== 1
+                                                    ? 's'
+                                                    : ''}{' '}
+                                                ×&nbsp;KES{' '}
+                                                {upsellOffer.price.toLocaleString()}
+                                                &nbsp;=&nbsp;
+                                                <strong>
+                                                    KES{' '}
+                                                    {upsellOffer.totalCost.toLocaleString()}
+                                                </strong>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="upsell-actions">
+                                        <motion.button
+                                            className="upsell-accept"
+                                            onClick={handleUpsellAccept}
+                                            whileHover={{ scale: 1.02 }}
+                                            whileTap={{ scale: 0.97 }}
+                                        >
+                                            <Sparkles size={16} />
+                                            Add to cart &amp; View Cart
+                                        </motion.button>
+                                        <button
+                                            className="upsell-decline"
+                                            onClick={handleUpsellDecline}
+                                        >
+                                            No thanks, proceed to cart
+                                        </button>
+                                    </div>
+                                </motion.div>
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* ── Selected Package Modal ── */}
+                <AnimatePresence>
+                    {showSelectedPackageModal && selectedPackage && (
+                        <motion.div
+                            className="pkg-modal-overlay"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.22 }}
+                            onClick={(e) => {
+                                if (e.target === e.currentTarget)
+                                    setShowSelectedPackageModal(false);
+                            }}
+                        >
+                            <motion.div
+                                className="pkg-modal"
+                                initial={{ opacity: 0, y: 60, scale: 0.97 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                exit={{ opacity: 0, y: 40, scale: 0.97 }}
+                                transition={{
+                                    type: 'spring',
+                                    stiffness: 300,
+                                    damping: 30,
+                                }}
+                            >
+                                {/* Modal Header */}
+                                <div className="pkg-modal-header">
+                                    <div>
+                                        <div
+                                            className="h3"
+                                            style={{ marginBottom: 2 }}
+                                        >
+                                            {selectedPackage.title}
+                                        </div>
+                                        <div className="small">
+                                            {packageStep === 'dates'
+                                                ? 'Select dates & guests'
+                                                : 'Browse rates'}
+                                        </div>
+                                    </div>
+                                    <button
+                                        className="pkg-modal-close"
+                                        onClick={() =>
+                                            setShowSelectedPackageModal(false)
+                                        }
+                                    >
+                                        <X size={16} />
+                                    </button>
+                                </div>
+
+                                {/* Modal Body */}
+                                <div className="pkg-modal-body">
+                                    {/* Step indicator */}
+                                    <div className="step-indicator">
+                                        <div
+                                            className={`step-dot ${packageStep === 'dates' ? 'active' : 'done'}`}
+                                        >
+                                            1
+                                        </div>
+                                        <span
+                                            className="step-label"
+                                            style={{ marginLeft: 4 }}
+                                        >
+                                            Dates & Guests
+                                        </span>
+                                        <div
+                                            className={`step-line ${packageStep === 'rates' ? 'done' : ''}`}
+                                        />
+                                        <div
+                                            className={`step-dot ${packageStep === 'rates' ? 'active' : 'idle'}`}
+                                        >
+                                            2
+                                        </div>
+                                        <span
+                                            className="step-label"
+                                            style={{ marginLeft: 4 }}
+                                        >
+                                            Rates
+                                        </span>
+                                    </div>
+
+                                    {/* STEP 1: Dates & Guests */}
+                                    <AnimatePresence mode="wait">
+                                        {packageStep === 'dates' && (
+                                            <motion.div
+                                                key="dates-step"
+                                                initial={{ opacity: 0, x: -24 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                exit={{ opacity: 0, x: 24 }}
+                                                transition={{
+                                                    type: 'spring',
+                                                    stiffness: 320,
+                                                    damping: 28,
+                                                }}
+                                            >
+                                                <div className="date-prompt">
+                                                    When are you visiting?
+                                                </div>
+                                                <div className="date-subtext">
+                                                    Choose your dates and tell
+                                                    us about your group.
+                                                </div>
+
+                                                {/* Date fields */}
+                                                <div
+                                                    className="date-fields"
+                                                    ref={pkgDateTriggerRef}
+                                                >
+                                                    <motion.button
+                                                        className={`date-field-btn ${checkIn ? 'has-value' : ''}`}
+                                                        onClick={() =>
+                                                            setShowDatePicker(
+                                                                true,
+                                                            )
+                                                        }
+                                                        whileHover={{
+                                                            scale: 1.01,
+                                                        }}
+                                                        whileTap={{
+                                                            scale: 0.99,
+                                                        }}
+                                                    >
+                                                        <span className="date-field-label">
+                                                            Check-in
+                                                        </span>
+                                                        {checkIn ? (
+                                                            <span className="date-field-value">
+                                                                {formatDate(
+                                                                    checkIn,
+                                                                )}
+                                                            </span>
+                                                        ) : (
+                                                            <span className="date-field-placeholder">
+                                                                Select date
+                                                            </span>
+                                                        )}
+                                                    </motion.button>
+                                                    <motion.button
+                                                        className={`date-field-btn ${checkOut ? 'has-value' : ''}`}
+                                                        onClick={() =>
+                                                            setShowDatePicker(
+                                                                true,
+                                                            )
+                                                        }
+                                                        whileHover={{
+                                                            scale: 1.01,
+                                                        }}
+                                                        whileTap={{
+                                                            scale: 0.99,
+                                                        }}
+                                                    >
+                                                        <span className="date-field-label">
+                                                            Check-out
+                                                        </span>
+                                                        {checkOut ? (
+                                                            <span className="date-field-value">
+                                                                {formatDate(
+                                                                    checkOut,
+                                                                )}
+                                                            </span>
+                                                        ) : (
+                                                            <span className="date-field-placeholder">
+                                                                Select date
+                                                            </span>
+                                                        )}
+                                                    </motion.button>
+                                                </div>
+
+                                                {/* Inline DatePicker */}
+                                                <AnimatePresence>
+                                                    {showDatePicker && (
+                                                        <motion.div
+                                                            initial={{
+                                                                opacity: 0,
+                                                                height: 0,
+                                                                marginBottom: 0,
+                                                            }}
+                                                            animate={{
+                                                                opacity: 1,
+                                                                height: 'auto',
+                                                                marginBottom: 24,
+                                                            }}
+                                                            exit={{
+                                                                opacity: 0,
+                                                                height: 0,
+                                                                marginBottom: 0,
+                                                            }}
+                                                            transition={{
+                                                                type: 'spring',
+                                                                stiffness: 260,
+                                                                damping: 26,
+                                                            }}
+                                                            style={{
+                                                                overflow:
+                                                                    'hidden',
+                                                            }}
+                                                        >
+                                                            <DatePickerModal
+                                                                checkIn={
+                                                                    checkIn
+                                                                }
+                                                                checkOut={
+                                                                    checkOut
+                                                                }
+                                                                setCheckIn={
+                                                                    setCheckIn
+                                                                }
+                                                                setCheckOut={
+                                                                    setCheckOut
+                                                                }
+                                                                onClose={() =>
+                                                                    setShowDatePicker(
+                                                                        false,
+                                                                    )
+                                                                }
+                                                                inline
+                                                            />
+                                                        </motion.div>
+                                                    )}
+                                                </AnimatePresence>
+
+                                                {/* Nights badge */}
+                                                <AnimatePresence>
+                                                    {pkgNights > 0 && (
+                                                        <motion.div
+                                                            className="nights-badge"
+                                                            initial={{
+                                                                opacity: 0,
+                                                                scale: 0.8,
+                                                            }}
+                                                            animate={{
+                                                                opacity: 1,
+                                                                scale: 1,
+                                                            }}
+                                                            exit={{
+                                                                opacity: 0,
+                                                                scale: 0.8,
+                                                            }}
+                                                            transition={{
+                                                                type: 'spring',
+                                                                stiffness: 400,
+                                                                damping: 22,
+                                                            }}
+                                                        >
+                                                            🌙 {pkgNights} night
+                                                            {pkgNights !== 1
+                                                                ? 's'
+                                                                : ''}
+                                                        </motion.div>
+                                                    )}
+                                                </AnimatePresence>
+
+                                                {/* ── Guest Counts ── */}
+                                                <motion.div
+                                                    className="guest-section"
+                                                    initial={{
+                                                        opacity: 0,
+                                                        y: 12,
+                                                    }}
+                                                    animate={{
+                                                        opacity: 1,
+                                                        y: 0,
+                                                    }}
+                                                    transition={{ delay: 0.1 }}
+                                                >
+                                                    <div className="guest-section-title">
+                                                        <Users
+                                                            size={16}
+                                                            color="#8a6830"
+                                                        />
+                                                        Who's joining?
+                                                    </div>
+
+                                                    {/* Adults */}
+                                                    <div className="guest-row">
+                                                        <div className="guest-info">
+                                                            <div className="guest-label">
+                                                                <span
+                                                                    style={{
+                                                                        marginRight: 6,
+                                                                    }}
+                                                                >
+                                                                    👤
+                                                                </span>
+                                                                Adults
+                                                            </div>
+                                                            <div className="guest-sublabel">
+                                                                Age 12 and above
+                                                            </div>
+                                                        </div>
+                                                        <GuestCounter
+                                                            value={numAdults}
+                                                            onIncrement={() =>
+                                                                setNumAdults(
+                                                                    (n) =>
+                                                                        n + 1,
+                                                                )
+                                                            }
+                                                            onDecrement={() =>
+                                                                setNumAdults(
+                                                                    (n) =>
+                                                                        Math.max(
+                                                                            1,
+                                                                            n -
+                                                                                1,
+                                                                        ),
+                                                                )
+                                                            }
+                                                            min={1}
+                                                        />
+                                                    </div>
+
+                                                    {/* Kids 4–11 */}
+                                                    <div className="guest-row">
+                                                        <div className="guest-info">
+                                                            <div className="guest-label">
+                                                                <span
+                                                                    style={{
+                                                                        marginRight: 6,
+                                                                    }}
+                                                                >
+                                                                    🧒
+                                                                </span>
+                                                                Children
+                                                            </div>
+                                                            <div className="guest-sublabel">
+                                                                Age 4 – 11 years
+                                                            </div>
+                                                        </div>
+                                                        <GuestCounter
+                                                            value={numKids4to11}
+                                                            onIncrement={() =>
+                                                                setNumKids4to11(
+                                                                    (n) =>
+                                                                        n + 1,
+                                                                )
+                                                            }
+                                                            onDecrement={() =>
+                                                                setNumKids4to11(
+                                                                    (n) =>
+                                                                        Math.max(
+                                                                            0,
+                                                                            n -
+                                                                                1,
+                                                                        ),
+                                                                )
+                                                            }
+                                                        />
+                                                    </div>
+
+                                                    {/* Infants 0–3 */}
+                                                    <div className="guest-row">
+                                                        <div className="guest-info">
+                                                            <div className="guest-label">
+                                                                <span
+                                                                    style={{
+                                                                        marginRight: 6,
+                                                                    }}
+                                                                >
+                                                                    👶
+                                                                </span>
+                                                                Infants
+                                                            </div>
+                                                            <div className="guest-sublabel">
+                                                                Age 0 – 3 years
+                                                                · complimentary
+                                                            </div>
+                                                        </div>
+                                                        <GuestCounter
+                                                            value={numKids0to3}
+                                                            onIncrement={() =>
+                                                                setNumKids0to3(
+                                                                    (n) =>
+                                                                        n + 1,
+                                                                )
+                                                            }
+                                                            onDecrement={() =>
+                                                                setNumKids0to3(
+                                                                    (n) =>
+                                                                        Math.max(
+                                                                            0,
+                                                                            n -
+                                                                                1,
+                                                                        ),
+                                                                )
+                                                            }
+                                                        />
+                                                    </div>
+                                                </motion.div>
+                                            </motion.div>
+                                        )}
+
+                                        {/* STEP 2: Rates */}
+                                        {packageStep === 'rates' && (
+                                            <motion.div
+                                                key="rates-step"
+                                                initial={{ opacity: 0, x: 24 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                exit={{ opacity: 0, x: -24 }}
+                                                transition={{
+                                                    type: 'spring',
+                                                    stiffness: 320,
+                                                    damping: 28,
+                                                }}
+                                            >
+                                                {/* Date + guest summary pill */}
+                                                <motion.div
+                                                    className="row"
+                                                    style={{ marginBottom: 24 }}
+                                                    initial={{
+                                                        opacity: 0,
+                                                        y: -8,
+                                                    }}
+                                                    animate={{
+                                                        opacity: 1,
+                                                        y: 0,
+                                                    }}
+                                                >
+                                                    <div
+                                                        className="nights-badge"
+                                                        style={{
+                                                            marginBottom: 0,
+                                                        }}
+                                                    >
+                                                        📅 {formatDate(checkIn)}{' '}
+                                                        → {formatDate(checkOut)}{' '}
+                                                        · {pkgNights}n
+                                                    </div>
+                                                    <div
+                                                        className="nights-badge"
+                                                        style={{
+                                                            marginBottom: 0,
+                                                        }}
+                                                    >
+                                                        👥 {numAdults} adult
+                                                        {numAdults !== 1
+                                                            ? 's'
+                                                            : ''}
+                                                        {numKids4to11 > 0
+                                                            ? ` · ${numKids4to11} child${numKids4to11 !== 1 ? 'ren' : ''}`
+                                                            : ''}
+                                                        {numKids0to3 > 0
+                                                            ? ` · ${numKids0to3} infant${numKids0to3 !== 1 ? 's' : ''}`
+                                                            : ''}
+                                                    </div>
+                                                    <button
+                                                        className="btn btn-secondary"
+                                                        style={{
+                                                            padding: '6px 14px',
+                                                            fontSize: '0.8rem',
+                                                        }}
+                                                        onClick={() =>
+                                                            setPackageStep(
+                                                                'dates',
+                                                            )
+                                                        }
+                                                    >
+                                                        Edit
+                                                    </button>
+                                                </motion.div>
+
+                                                {/* Render rates content based on package type */}
+                                                {selectedPackageType ===
+                                                    'experience' && (
+                                                    <ExperiencesTab
+                                                        description={
+                                                            experienceDescription
+                                                        }
+                                                        rooms={rooms}
+                                                        meals={meals}
+                                                        conferences={
+                                                            conferences
+                                                        }
+                                                        hoveredItem={
+                                                            hoveredItem
+                                                        }
+                                                        setHoveredItem={
+                                                            setHoveredItem
+                                                        }
+                                                        residency={residency}
+                                                        boardType={boardType}
+                                                        setBoardType={
+                                                            setBoardType
+                                                        }
+                                                        isLoading={isLoading}
+                                                        getRoomCountInCart={
+                                                            getRoomCountInCart
+                                                        }
+                                                        handleAddRoomToCart={
+                                                            handleAddRoomToCart
+                                                        }
+                                                        handleAddConferenceToCart={
+                                                            handleAddConferenceToCart
+                                                        }
+                                                    />
+                                                )}
+                                                {selectedPackageType ===
+                                                    'recreation' && (
+                                                    <RecreationTab
+                                                        description={
+                                                            leisureDescription
+                                                        }
+                                                        leisureRooms={
+                                                            leisureRooms
+                                                        }
+                                                        leisureExperiences={
+                                                            leisureExperiences
+                                                        }
+                                                        meals={meals}
+                                                        hoveredItem={
+                                                            hoveredItem
+                                                        }
+                                                        setHoveredItem={
+                                                            setHoveredItem
+                                                        }
+                                                        residency={residency}
+                                                        boardType={boardType}
+                                                        setBoardType={
+                                                            setBoardType
+                                                        }
+                                                        isLoading={isLoading}
+                                                        getRoomCountInCart={
+                                                            getRoomCountInCart
+                                                        }
+                                                        handleAddLeisureRoomToCart={
+                                                            handleAddLeisureRoomToCart
+                                                        }
+                                                        handleAddLeisureToCart={
+                                                            handleAddLeisureToCart
+                                                        }
+                                                    />
+                                                )}
+                                                {!selectedPackageType && (
+                                                    <div
+                                                        className="p"
+                                                        style={{
+                                                            color: '#9a7d5a',
+                                                            textAlign: 'center',
+                                                            padding: '40px 0',
+                                                        }}
+                                                    >
+                                                        No rates available for
+                                                        this package type.
+                                                    </div>
+                                                )}
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+
+                                {/* Modal Footer */}
+                                <div className="pkg-modal-footer">
+                                    {packageStep === 'dates' ? (
+                                        <>
+                                            <div
+                                                className="small"
+                                                style={{ color: '#9a7d5a' }}
+                                            >
+                                                {numAdults +
+                                                    numKids4to11 +
+                                                    numKids0to3}{' '}
+                                                guest
+                                                {numAdults +
+                                                    numKids4to11 +
+                                                    numKids0to3 !==
+                                                1
+                                                    ? 's'
+                                                    : ''}{' '}
+                                                total
+                                            </div>
+                                            <motion.button
+                                                className="btn btn-primary"
+                                                onClick={handlePkgContinue}
+                                                whileHover={{ scale: 1.03 }}
+                                                whileTap={{ scale: 0.97 }}
+                                                disabled={!checkIn || !checkOut}
+                                                style={{
+                                                    opacity:
+                                                        !checkIn || !checkOut
+                                                            ? 0.5
+                                                            : 1,
+                                                }}
+                                            >
+                                                Continue to Rates →
+                                            </motion.button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <motion.button
+                                                className="btn btn-secondary"
+                                                onClick={() =>
+                                                    setPackageStep('dates')
+                                                }
+                                                whileHover={{ scale: 1.02 }}
+                                                whileTap={{ scale: 0.97 }}
+                                            >
+                                                ← Back
+                                            </motion.button>
+                                            <motion.button
+                                                className="btn btn-primary"
+                                                onClick={handleViewCart}
+                                                whileHover={{ scale: 1.03 }}
+                                                whileTap={{ scale: 0.97 }}
+                                                style={{ position: 'relative' }}
+                                            >
+                                                <ShoppingCart size={16} />
+                                                View Cart
+                                                {cart.length > 0 && (
+                                                    <motion.span
+                                                        initial={{ scale: 0 }}
+                                                        animate={{ scale: 1 }}
+                                                        style={{
+                                                            position:
+                                                                'absolute',
+                                                            top: -6,
+                                                            right: -6,
+                                                            width: 18,
+                                                            height: 18,
+                                                            borderRadius: '50%',
+                                                            background:
+                                                                '#902729',
+                                                            color: '#fff',
+                                                            fontSize: '0.65rem',
+                                                            fontWeight: 700,
+                                                            display: 'flex',
+                                                            alignItems:
+                                                                'center',
+                                                            justifyContent:
+                                                                'center',
+                                                        }}
+                                                    >
+                                                        {cart.length}
+                                                    </motion.span>
+                                                )}
+                                            </motion.button>
+                                        </>
+                                    )}
+                                </div>
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* Toast */}
+                <AnimatePresence>
+                    {showToast && (
+                        <motion.div
+                            className="toast"
+                            initial={{ x: '110%', opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            exit={{ x: '110%', opacity: 0 }}
+                            transition={{
+                                type: 'spring',
+                                stiffness: 320,
+                                damping: 28,
+                            }}
+                        >
+                            <ShoppingCart size={16} />
+                            {toastMessage}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+        </>
+    );
+}

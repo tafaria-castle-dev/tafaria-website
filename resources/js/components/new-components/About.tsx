@@ -18,19 +18,8 @@ const styles = `
     background: rgba(184,146,75,0.18); color: #7a5520; border: 1px solid rgba(184,146,75,0.4);
   }
 
-  .btn {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 12px 22px; border-radius: 999px;
-    font-size: 0.88rem; font-weight: 600;
-    cursor: pointer; text-decoration: none; border: none;
-    transition: transform 0.1s ease, box-shadow 0.15s ease;
-    white-space: nowrap; font-family: inherit;
-  }
-  .btn:hover { transform: translateY(-1px); }
-  .btn-primary  { background: linear-gradient(135deg,#b8924b,#8a6830); color:#fff; box-shadow:0 4px 14px rgba(184,146,75,0.35); }
-  .btn-primary:hover { box-shadow: 0 6px 20px rgba(184,146,75,0.5); }
-  .btn-secondary { background:#fff; color:#5a3e2b; border:1px solid rgba(90,62,43,0.25); box-shadow:0 2px 8px rgba(0,0,0,0.06); }
-  .btn-secondary:hover { background:#fbf7f0; }
+
+
 
   .card {
     background: #fff; border: 1px solid rgba(184,146,75,0.18);

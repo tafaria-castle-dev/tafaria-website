@@ -2,6 +2,8 @@ import BookingEngine from '@/components/booking';
 import Footer from '@/components/footer';
 import Header from '@/components/header';
 import HeaderAndStories from '@/components/HeaderAndStories';
+import SchoolQuoteModal from '@/components/new-components/RequestSchoolQuoteModal';
+import SelectedDayVisitPackageModal from '@/components/new-components/SelectedDayVisitPackageModal';
 import SelectedPackageModal from '@/components/new-components/SelectedPackageModal';
 import RatesCart from '@/components/RatesCart';
 import Stories from '@/components/stories';
@@ -38,7 +40,11 @@ const AppLayoutContent: React.FC<AppLayoutProps> = ({
     const { showBookingModal, setShowBookingModal } = useBooking();
     const finalMetadata = metadata;
     const { showCart, setShowCart, cart } = useRatesBooking();
-    const { showSelectedPackageModal } = useSelectedPackage();
+    const {
+        showSelectedPackageModal,
+        showDayVisitModal,
+        showSchoolQuoteModal,
+    } = useSelectedPackage();
     const { component } = usePage();
     const isRestaurantMenu = component === 'restaurant-menu';
     return (
@@ -172,6 +178,8 @@ const AppLayoutContent: React.FC<AppLayoutProps> = ({
                 </div>
             )}
             {showSelectedPackageModal && <SelectedPackageModal />}
+            {showDayVisitModal && <SelectedDayVisitPackageModal />}
+            {showSchoolQuoteModal && <SchoolQuoteModal />}
 
             {showCart && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">

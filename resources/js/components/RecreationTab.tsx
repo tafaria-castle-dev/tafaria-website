@@ -7,7 +7,6 @@ import {
     LeisureExperience,
     LeisureRoom,
     Meal,
-    RatesDescription,
     Residency,
 } from '@/types/types';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -16,7 +15,7 @@ import { MealCard } from './ExperiencesTab';
 import { LoadingComponent } from './LoadingComponent';
 
 interface RecreationTabProps {
-    description: RatesDescription | undefined;
+    description: string | null;
     leisureRooms: LeisureRoom[];
     leisureExperiences: LeisureExperience[];
     meals: Meal[];
@@ -312,16 +311,10 @@ export const RecreationTab: React.FC<RecreationTabProps> = ({
         <div className="space-y-6">
             {description && (
                 <div className="mb-8 rounded-2xl border border-[#9c7833]/60 bg-white/80 p-6">
-                    <p className="mb-4 text-base text-gray-800 sm:text-lg">
-                        {description.description}
-                    </p>
-                    {description.audio_url && (
-                        <audio
-                            controls
-                            src={description.audio_url}
-                            className="w-full"
-                        />
-                    )}
+                    <p
+                        className="mb-4 text-base text-gray-800 sm:text-lg"
+                        dangerouslySetInnerHTML={{ __html: description }}
+                    ></p>
                 </div>
             )}
 
@@ -435,7 +428,7 @@ export const RecreationTab: React.FC<RecreationTabProps> = ({
                     </div>
                 )}
             </section>
-            <section aria-labelledby="holiday-supplements-recreation">
+            {/* <section aria-labelledby="holiday-supplements-recreation">
                 <h2
                     id="holiday-supplements-recreation"
                     className="mb-8 text-center text-lg font-bold tracking-tight text-[#902729] sm:text-xl md:text-2xl lg:text-3xl"
@@ -450,7 +443,7 @@ export const RecreationTab: React.FC<RecreationTabProps> = ({
                     stay free; minimum 2-night stay. East African Residents
                     receive a premium brunch and activity vouchers.
                 </p>
-            </section>
+            </section> */}
         </div>
     );
 };
