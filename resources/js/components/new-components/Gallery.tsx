@@ -27,18 +27,6 @@ const FILTERS = [
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
 
-  .h1 {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(2rem, 4vw, 3rem);
-    font-weight: 700;
-    line-height: 1.2;
-    color: #1a0f06;
-    margin: 10px 0 14px;
-  }
-  .p-lg { font-size: 1.1rem; line-height: 1.7; color: #5a3e2b; }
-  .h3 { font-family: 'Cinzel', serif; font-size: 1.05rem; font-weight: 600; color: #1a0f06; }
-  .small { font-size: 0.875rem; color: #6b4f35; line-height: 1.5; }
-
   .badge {
     display: inline-block; padding: 4px 12px; border-radius: 999px;
     font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;

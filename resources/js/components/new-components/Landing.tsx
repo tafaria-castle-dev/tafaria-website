@@ -19,36 +19,6 @@ const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
 
 
-  .h1 {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(2rem, 4vw, 3rem);
-    font-weight: 700;
-    line-height: 1.2;
-    color: #1a0f06;
-    margin-bottom: 18px;
-  }
-
-  .h2 {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(1.5rem, 3vw, 2.2rem);
-    font-weight: 600;
-    color: #1a0f06;
-    margin-bottom: 8px;
-  }
-
-  .h3 {
-    font-family: 'Cinzel', serif;
-    font-size: 1.15rem;
-    font-weight: 600;
-    color: #1a0f06;
-  }
-
-  .p-lg {
-    font-size: 1.1rem;
-    line-height: 1.7;
-    color: #5a3e2b;
-    margin-bottom: 24px;
-  }
 
   .p {
     font-size: 1rem;
@@ -259,7 +229,10 @@ export function SchoolCard({
     onRequestQuote: (program: Program) => void;
 }) {
     return (
-        <div className="card">
+        <div
+            className="card cursor-pointer"
+            onClick={() => onRequestQuote(program)}
+        >
             <div className="card-media">
                 <img src={program.image} alt={program.title} loading="lazy" />
             </div>
@@ -276,7 +249,7 @@ export function SchoolCard({
                 >
                     {program.badge_content}
                 </Badge>
-                <div className="h3" style={{ margin: '10px 0 6px' }}>
+                <div className="h4" style={{ margin: '10px 0 6px' }}>
                     {program.title}
                 </div>
                 <div
@@ -312,91 +285,147 @@ export function toTabKey(title: string): string {
     return title.toLowerCase().trim().replace(/\s+/g, '-');
 }
 
+function parseIncludesList(html: string): string[] {
+    if (!html) return [];
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    const items: string[] = [];
+    div.querySelectorAll('li').forEach((li) =>
+        items.push(li.textContent?.trim() || ''),
+    );
+    if (items.length === 0) {
+        div.querySelectorAll('p').forEach((p) => {
+            const t = p.textContent?.trim();
+            if (t) items.push(t);
+        });
+    }
+    return items;
+}
+
+function getPackageTheme(title: string): 'red' | 'gold' {
+    const t = title.toLowerCase();
+    if (t.includes('immersion') || t.includes('experience')) return 'red';
+    return 'gold';
+}
+
+function getPackageTagline(title: string): string {
+    const t = title.toLowerCase();
+    if (t.includes('immersion') || t.includes('experience'))
+        return 'Deep. Reflective. Transformative.';
+    if (t.includes('recreation') || t.includes('leisure'))
+        return 'Relaxed. Fun. Countryside Escape.';
+    return '';
+}
+
+function getPackageBadge(title: string): string {
+    const t = title.toLowerCase();
+    if (
+        t.includes('immersion') ||
+        t.includes('experience') ||
+        t.includes('popular')
+    )
+        return 'Popular';
+    return 'Leisure';
+}
+
 export const PackagesCards = ({
     onSelectPackage,
     activeTab,
     packages,
 }: PackagesCardsProps) => {
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
     const handleCardClick = (pkg: Package) => {
-        if (onSelectPackage) {
-            onSelectPackage(pkg);
-            return;
-        }
+        if (onSelectPackage) onSelectPackage(pkg);
     };
 
-    return (
-        <div className="grid-2" style={{ marginTop: 16 }}>
-            {packages?.map((pkg) => {
-                const key = toTabKey(pkg.title);
-                const isActive = activeTab === pkg;
-                const title = pkg.title?.toLowerCase() ?? '';
+    function getPackageTheme(title: string): 'red' | 'gold' {
+        const t = title.toLowerCase();
+        if (t.includes('immersion') || t.includes('experience')) return 'red';
+        return 'gold';
+    }
 
-                const isPopular =
-                    title.includes('experience') ||
-                    title.includes('immersion') ||
-                    title.includes('popular');
-                return (
-                    <div
-                        className={`package-card cursor-pointer ${activeTab === pkg ? 'active' : ''}`}
-                        key={pkg.id}
-                        onClick={() => handleCardClick(pkg)}
-                    >
-                        <div className="package-header">
-                            <img
-                                src={pkg.image}
-                                alt={pkg.title}
-                                loading="lazy"
-                            />
-                            {isPopular && (
-                                <span
-                                    className="rounded-4xl bg-[#902729] px-5 py-2 text-white"
-                                    style={{
-                                        position: 'absolute',
-                                        bottom: 12,
-                                        right: 12,
-                                        zIndex: 2,
+    function getPackageBadge(title: string): string {
+        const t = title.toLowerCase();
+        if (
+            t.includes('immersion') ||
+            t.includes('experience') ||
+            t.includes('popular')
+        )
+            return 'Popular';
+        return '';
+    }
+
+    return (
+        <>
+            <div className="pkg-grid-wrapper">
+                <div className="pkg-or-circle">OR</div>
+                {packages?.map((pkg) => {
+                    const theme = getPackageTheme(pkg.title ?? '');
+                    const badge = getPackageBadge(pkg.title ?? '');
+                    const isActive = activeTab === pkg;
+
+                    return (
+                        <div
+                            key={pkg.id}
+                            className={`pkg-card-new${isActive ? 'active' : ''}`}
+                            onClick={() => handleCardClick(pkg)}
+                        >
+                            <div className="pkg-card-media">
+                                <img
+                                    src={pkg.image}
+                                    alt={pkg.title}
+                                    loading="lazy"
+                                />
+                                {badge && (
+                                    <span
+                                        className={`pkg-badge-top pkg-badge-${theme === 'red' ? 'red' : 'gold'}`}
+                                    >
+                                        {badge}
+                                    </span>
+                                )}
+                                <div
+                                    className={`pkg-title-banner pkg-title-banner-${theme}`}
+                                >
+                                    <h3>{pkg.title}</h3>
+                                    <p>{pkg.subtitle}</p>
+                                </div>
+                            </div>
+
+                            <div className="pkg-card-body">
+                                <div
+                                    className="pkg-rich-content"
+                                    dangerouslySetInnerHTML={{
+                                        __html: pkg.description || '',
+                                    }}
+                                />
+
+                                <button
+                                    className={`pkg-cta-${theme}`}
+                                    style={{ marginTop: 18 }}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleCardClick(pkg);
                                     }}
                                 >
-                                    Popular
-                                </span>
-                            )}
-                            <div
-                                className="h3 btn btn-secondary"
-                                style={{
-                                    marginTop: 10,
-                                    position: 'absolute',
-                                    top: 12,
-                                    left: 12,
-                                    zIndex: 2,
-                                }}
-                            >
-                                {pkg.title}
-                            </div>
-                        </div>
-                        <div className="card-pad">
-                            <div
-                                className="small"
-                                dangerouslySetInnerHTML={{
-                                    __html: pkg.description || '',
-                                }}
-                            ></div>
-
-                            <div className="row" style={{ marginTop: 16 }}>
-                                <button
-                                    className="btn btn-secondary"
-                                    onClick={() => handleCardClick(pkg)}
-                                >
                                     {isActive
-                                        ? 'Current Package'
-                                        : pkg.button_message ||
-                                          'Choose Package'}
+                                        ? '✓ Current Package'
+                                        : pkg.button_message
+                                          ? `${pkg.button_message} →`
+                                          : theme === 'red'
+                                            ? 'Book Immersion Experience →'
+                                            : 'Book Recreation Escape →'}
                                 </button>
                             </div>
                         </div>
-                    </div>
-                );
-            })}
-        </div>
+                    );
+                })}
+            </div>
+        </>
     );
 };
 const DayVisitPackageCards = ({ packages }: DayVisitCardsProps) => {
@@ -592,7 +621,7 @@ export default function LandingPage({
         introductionDescription?.description ||
         'Visit for the day, stay overnight, bring a school, host an event, or apply for an art residency — Tafaria makes learning and leisure feel magical through its two packages below.';
 
-    const processedHtml = rawHtml.replace(/<h1([^>]*)>/gi, '<h2 class="h2"$1>');
+    const processedHtml = rawHtml.replace(/<h1([^>]*)>/gi, '<h2 class="h1"$1>');
     const handleRequestQuote = (program: Program) => {
         setQuoteInitialProgram(program);
         setShowSchoolQuoteModal(true);
@@ -620,6 +649,7 @@ export default function LandingPage({
                                                 processedHtml,
                                             ),
                                         }}
+                                        className="flex flex-col items-center justify-center"
                                     ></div>
                                 </div>
                                 <PackagesCards

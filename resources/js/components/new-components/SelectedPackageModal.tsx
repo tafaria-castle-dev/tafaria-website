@@ -23,15 +23,7 @@ import toast from 'react-hot-toast';
 import { RecreationTab } from '../RecreationTab';
 
 const styles = `
-  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
-
-  .h1 { font-family: 'Cinzel', serif; font-size: clamp(2rem,4vw,3rem); font-weight: 700; line-height: 1.2; color: #1a0f06; margin-bottom: 14px; }
-  .h2 { font-family: 'Cinzel', serif; font-size: clamp(1.3rem,3vw,1.9rem); font-weight: 600; color: #1a0f06; margin-bottom: 10px; }
-  .h3 { font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 600; color: #1a0f06; }
-  .p-lg { font-size: 1.1rem; line-height: 1.7; color: #5a3e2b; margin-bottom: 20px; }
-  .p   { font-size: 1rem;   line-height: 1.7; color: #5a3e2b; }
-  .small { font-size: 0.85rem; color: #6b4f35; line-height: 1.5; }
-  .micro { font-size: 0.78rem; color: #8a6830; font-weight: 600; }
+  
 
   .badge {
     display: inline-block; padding: 4px 12px; border-radius: 999px;

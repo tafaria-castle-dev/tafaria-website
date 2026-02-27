@@ -17,21 +17,6 @@ const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
 
 
-  .h1 { font-family: 'Cinzel', serif; font-size: clamp(2rem,4vw,3rem); font-weight: 700; line-height: 1.2; color: #1a0f06; margin: 10px 0 14px; }
-  .h2 { font-family: 'Cinzel', serif; font-size: clamp(1.3rem,3vw,1.9rem); font-weight: 600; color: #1a0f06; margin-bottom: 20px; }
-  .h3 { font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 600; color: #1a0f06; margin: 10px 0 6px; }
-  .p-lg { font-size: 1.1rem; line-height: 1.7; color: #5a3e2b; }
-  .small { font-size: 0.85rem; color: #6b4f35; line-height: 1.5; }
-  .micro { font-size: 0.78rem; color: #8a6830; font-weight: 600; }
-
-  .badge {
-    display: inline-block; padding: 4px 12px; border-radius: 999px;
-    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
-  }
-  .badge-gold    { background: rgba(184,146,75,0.18); color: #7a5520; border: 1px solid rgba(184,146,75,0.4); }
-  .badge-neutral { background: rgba(90,62,43,0.1);   color: #5a3e2b; border: 1px solid rgba(90,62,43,0.2); }
-  .badge-olive   { background: rgba(100,120,60,0.12); color: #4a6030; border: 1px solid rgba(100,120,60,0.3); }
-
   .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
 
   
