@@ -11,6 +11,7 @@ import {
     Room,
 } from '@/types/types';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useState } from 'react';
 import { LoadingComponent } from './LoadingComponent';
 
 interface ExperiencesTabProps {
@@ -56,6 +57,7 @@ export const RoomCard: React.FC<{
 }) => {
     const id = room.id;
     const isHovered = hoveredItem === id;
+    const [expanded, setExpanded] = useState(false);
     const nameParts = room.name.split(' - ');
     const roomName = nameParts[0];
     const roomType = nameParts[1] || 'Standard';
@@ -95,7 +97,7 @@ export const RoomCard: React.FC<{
                     {roomName}
                 </h3>
                 <AnimatePresence initial={false} mode="wait">
-                    {isHovered ? (
+                    {expanded ? (
                         <motion.div
                             key="full"
                             initial={{ opacity: 0, height: 0 }}
@@ -117,6 +119,12 @@ export const RoomCard: React.FC<{
                         />
                     )}
                 </AnimatePresence>
+                <button
+                    onClick={() => setExpanded((prev) => !prev)}
+                    className="mt-1 text-xs font-semibold text-[#902729] hover:underline"
+                >
+                    {expanded ? 'Read less' : 'Read more'}
+                </button>
                 <div className="mt-4 flex justify-between gap-4">
                     <div className="flex-1">
                         <span className="block text-sm font-semibold text-[#902729]">
@@ -193,7 +201,7 @@ export const MealCard: React.FC<{
             ? meal.child_rate_kshs
             : meal.child_rate_usd;
     const currency = residency === 'East African Resident' ? 'KES' : 'USD';
-
+    const [expanded, setExpanded] = useState(false);
     return (
         <motion.div
             onMouseEnter={() => setHoveredItem(id)}
@@ -222,14 +230,14 @@ export const MealCard: React.FC<{
                     {meal.name}
                 </h3>
                 <AnimatePresence initial={false} mode="wait">
-                    {isHovered ? (
+                    {expanded ? (
                         <motion.div
                             key="full"
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: 'auto' }}
                             exit={{ opacity: 0, height: 0 }}
                             transition={{ duration: 0.35, ease: 'easeInOut' }}
-                            className="mt-1 overflow-hidden bg-[#9c7833]/10 px-2 py-1 text-sm text-gray-700"
+                            className="mt-1 overflow-hidden text-sm text-gray-600"
                             dangerouslySetInnerHTML={{ __html: descHtml }}
                         />
                     ) : (
@@ -244,6 +252,12 @@ export const MealCard: React.FC<{
                         />
                     )}
                 </AnimatePresence>
+                <button
+                    onClick={() => setExpanded((prev) => !prev)}
+                    className="mt-1 text-xs font-semibold text-[#902729] hover:underline"
+                >
+                    {expanded ? 'Read less' : 'Read more'}
+                </button>
                 <div className="mt-4 flex justify-between gap-4">
                     <div className="flex-1">
                         <span className="block text-sm font-semibold text-[#902729]">
@@ -283,7 +297,7 @@ export const ConferenceCard: React.FC<{
             ? conference.rate_kshs
             : conference.rate_usd;
     const currency = residency === 'East African Resident' ? 'KES' : 'USD';
-
+    const [expanded, setExpanded] = useState(false);
     return (
         <motion.div
             onMouseEnter={() => setHoveredItem(id)}
@@ -312,14 +326,14 @@ export const ConferenceCard: React.FC<{
                     {conference.name}
                 </h3>
                 <AnimatePresence initial={false} mode="wait">
-                    {isHovered ? (
+                    {expanded ? (
                         <motion.div
                             key="full"
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: 'auto' }}
                             exit={{ opacity: 0, height: 0 }}
                             transition={{ duration: 0.35, ease: 'easeInOut' }}
-                            className="mt-1 overflow-hidden bg-[#9c7833]/10 px-2 py-1 text-sm text-gray-700"
+                            className="mt-1 overflow-hidden text-sm text-gray-600"
                             dangerouslySetInnerHTML={{ __html: descHtml }}
                         />
                     ) : (
@@ -334,6 +348,12 @@ export const ConferenceCard: React.FC<{
                         />
                     )}
                 </AnimatePresence>
+                <button
+                    onClick={() => setExpanded((prev) => !prev)}
+                    className="mt-1 text-xs font-semibold text-[#902729] hover:underline"
+                >
+                    {expanded ? 'Read less' : 'Read more'}
+                </button>
                 <div className="mt-4 flex items-center justify-between">
                     <span className="text-sm font-semibold text-[#902729]">
                         {currency} {rate.toLocaleString()}
@@ -386,6 +406,20 @@ export const ExperiencesTab: React.FC<ExperiencesTabProps> = ({
     return (
         <div className="space-y-6">
             <section aria-labelledby="room-rates">
+                {description && (
+                    <div className="mb-8 rounded-2xl border border-[#9c7833]/60 bg-white/80 p-6">
+                        <p className="mb-4 text-base text-gray-800 sm:text-lg">
+                            {description.description}
+                        </p>
+                        {description.audio_url && (
+                            <audio
+                                controls
+                                src={description.audio_url}
+                                className="w-full"
+                            />
+                        )}
+                    </div>
+                )}
                 <div className="mb-4 flex space-x-2">
                     {['FB', 'HB', 'BB'].map((type) => (
                         <button

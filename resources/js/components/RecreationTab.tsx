@@ -6,16 +6,20 @@ import {
     ChildPolicy,
     LeisureExperience,
     LeisureRoom,
+    Meal,
     RatesDescription,
     Residency,
 } from '@/types/types';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useState } from 'react';
+import { MealCard } from './ExperiencesTab';
 import { LoadingComponent } from './LoadingComponent';
 
 interface RecreationTabProps {
     description: RatesDescription | undefined;
     leisureRooms: LeisureRoom[];
     leisureExperiences: LeisureExperience[];
+    meals: Meal[];
     hoveredItem: string | null;
     setHoveredItem: (id: string | null) => void;
     residency: Residency;
@@ -64,7 +68,7 @@ export const LeisureExperienceCard: React.FC<{
             ? activity.price_kids || 0
             : (activity.price_kids || 0) / 130;
     const currency = residency === 'East African Resident' ? 'KES' : 'USD';
-
+    const [expanded, setExpanded] = useState(false);
     return (
         <motion.div
             onMouseEnter={() => setHoveredItem(id)}
@@ -93,7 +97,7 @@ export const LeisureExperienceCard: React.FC<{
                     {activity.title}
                 </h3>
                 <AnimatePresence initial={false} mode="wait">
-                    {isHovered && descHtml ? (
+                    {expanded && descHtml ? (
                         <motion.div
                             key="full"
                             initial={{ opacity: 0, height: 0 }}
@@ -115,6 +119,13 @@ export const LeisureExperienceCard: React.FC<{
                         />
                     )}
                 </AnimatePresence>
+
+                <button
+                    onClick={() => setExpanded((prev) => !prev)}
+                    className="mt-1 text-xs font-semibold text-[#902729] hover:underline"
+                >
+                    {expanded ? 'Read less' : 'Read more'}
+                </button>
                 <div className="mt-4 flex items-end justify-between gap-4">
                     <div>
                         <span className="block text-sm font-semibold text-[#902729]">
@@ -168,6 +179,7 @@ export const LeisureRoomCard: React.FC<{
     const currency = residency === 'East African Resident' ? 'KES' : 'USD';
     const roomCountInCart = getRoomCountInCart(room.id);
     const canAddToCart = roomCountInCart < room.number_of_rooms;
+    const [expanded, setExpanded] = useState(false);
 
     return (
         <motion.div
@@ -197,7 +209,7 @@ export const LeisureRoomCard: React.FC<{
                     {room.name}
                 </h3>
                 <AnimatePresence initial={false} mode="wait">
-                    {isHovered && descHtml ? (
+                    {expanded && descHtml ? (
                         <motion.div
                             key="full"
                             initial={{ opacity: 0, height: 0 }}
@@ -219,6 +231,13 @@ export const LeisureRoomCard: React.FC<{
                         />
                     )}
                 </AnimatePresence>
+
+                <button
+                    onClick={() => setExpanded((prev) => !prev)}
+                    className="mt-1 text-xs font-semibold text-[#902729] hover:underline"
+                >
+                    {expanded ? 'Read less' : 'Read more'}
+                </button>
                 <div className="mt-4 flex justify-between gap-4">
                     <div className="flex-1">
                         <span className="block text-sm font-semibold text-[#902729]">
@@ -261,6 +280,7 @@ export const RecreationTab: React.FC<RecreationTabProps> = ({
     leisureRooms,
     leisureExperiences,
     hoveredItem,
+    meals,
     setHoveredItem,
     residency,
     boardType,
@@ -392,7 +412,29 @@ export const RecreationTab: React.FC<RecreationTabProps> = ({
                     </table>
                 </div>
             </section>
-
+            <section aria-labelledby="buffet-meals">
+                <h2
+                    id="buffet-meals"
+                    className="mb-6 text-center text-lg font-bold tracking-tight text-[#902729] sm:text-xl md:text-2xl lg:text-3xl"
+                >
+                    Buffet Meals
+                </h2>
+                {isLoading ? (
+                    <LoadingComponent />
+                ) : (
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        {meals.map((meal) => (
+                            <MealCard
+                                key={meal.id}
+                                meal={meal}
+                                residency={residency}
+                                hoveredItem={hoveredItem}
+                                setHoveredItem={setHoveredItem}
+                            />
+                        ))}
+                    </div>
+                )}
+            </section>
             <section aria-labelledby="holiday-supplements-recreation">
                 <h2
                     id="holiday-supplements-recreation"

@@ -163,8 +163,8 @@ const styles = `
   @media (min-width: 700px) {
     .pkg-modal {
       border-radius: 28px;
-      width: min(860px, 94vw);
-      max-height: 88vh;
+      width: min(1100px, 94vw);
+      max-height: 96vh;
       animation: scale-in 0.25s cubic-bezier(0.34,1.56,0.64,1);
     }
   }
@@ -680,8 +680,7 @@ export default function SelectedPackageModal() {
     };
 
     const TYPE_GROUPS = {
-        experience: ['arts', 'package', 'essence', 'museum', 'herbarium'],
-        introduction: ['introduction', 'two'],
+        experience: ['arts', 'essence', 'museum', 'herbarium', 'immersion'],
         recreation: [
             'leisure',
             'recreation',
@@ -1065,6 +1064,7 @@ export default function SelectedPackageModal() {
                                                 leisureExperiences={
                                                     leisureExperiences
                                                 }
+                                                meals={meals}
                                                 hoveredItem={hoveredItem}
                                                 setHoveredItem={setHoveredItem}
                                                 residency={residency}

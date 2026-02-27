@@ -614,7 +614,7 @@ export default function StayWithUs({
                     </div>
                 )}
 
-                <section className="section-sm">
+                {/* <section className="section-sm">
                     <div className="container">
                         <h1 className="h1">Visit Tafaria</h1>
                         <p className="p-lg">
@@ -622,7 +622,7 @@ export default function StayWithUs({
                             specific activities you want.
                         </p>
                     </div>
-                </section>
+                </section> */}
 
                 {introductionDescription?.description && (
                     <div>
@@ -725,29 +725,6 @@ export default function StayWithUs({
                         </div>
                     </div>
                 </section>
-
-                <footer
-                    style={{
-                        borderTop: '1px solid rgba(156,120,51,0.3)',
-                        background: 'linear-gradient(135deg, #902729, #9c7833)',
-                        padding: '32px 24px',
-                        textAlign: 'center',
-                    }}
-                >
-                    <p
-                        style={{
-                            color: '#fff',
-                            fontWeight: 500,
-                            maxWidth: 760,
-                            margin: '0 auto',
-                            lineHeight: 1.7,
-                        }}
-                    >
-                        Kindly note that we operate a dynamic rate card, not a
-                        fixed annual rate structure. Our rates are published on
-                        our website and updated in real time.
-                    </p>
-                </footer>
             </div>
         </>
     );
