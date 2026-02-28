@@ -247,23 +247,18 @@ export default function EventsPage({
         <>
             <style>{styles}</style>
             <div className="container">
-                <section className="section-sm">
-                    <div className="container">
-                        <span className="badge badge-gold">
-                            Corporate • Social • Retreats
-                        </span>
-                        <h1 className="h1">
-                            {events[0]?.title || 'Host your event at Tafaria'}
-                        </h1>
-                        <p className="p-lg">
-                            {events[0]?.subtitle ||
-                                'Whether you are planning a corporate retreat, a team offsite, a wedding, or a family reunion, Tafaria offers a unique blend of inspiring spaces, delicious food, and memorable experiences to make your event truly special.'}
-                        </p>
-                    </div>
-                </section>
-
                 <section id="packages" className="section">
                     <div className="container">
+                        <div className="mb-3">
+                            <h1 className="h1">
+                                {events[0]?.title ||
+                                    'Host your event at Tafaria'}
+                            </h1>
+                            <p className="p-lg">
+                                {events[0]?.subtitle ||
+                                    'Whether you are planning a corporate retreat, a team offsite, a wedding, or a family reunion, Tafaria offers a unique blend of inspiring spaces, delicious food, and memorable experiences to make your event truly special.'}
+                            </p>
+                        </div>
                         <h2 className="h2">Event packages</h2>
                         <div className="grid-3">
                             {events[0]?.items?.map((pkg) => (

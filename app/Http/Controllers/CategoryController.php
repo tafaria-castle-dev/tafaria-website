@@ -27,26 +27,26 @@ class CategoryController extends Controller
         $schoolAdditionalResponse = $httpClient->get('https://website-cms.tafaria.com/api/school-additional');
         $schoolAdditional = $schoolAdditionalResponse->json()['data'] ?? [];
 
-        $aboutUsResponse = $httpClient->get('https://website-cms.tafaria.com/api/about-us');
-        $aboutUs = $aboutUsResponse->json()['data'] ?? [];
-        $tafariaPhilosophyResponse = $httpClient->get('https://website-cms.tafaria.com/api/tafaria-philosophy');
-        $tafariaPhilosophy = $tafariaPhilosophyResponse->json()['data'] ?? [];
+        // $aboutUsResponse = $httpClient->get('https://website-cms.tafaria.com/api/about-us');
+        // $aboutUs = $aboutUsResponse->json()['data'] ?? [];
+        // $tafariaPhilosophyResponse = $httpClient->get('https://website-cms.tafaria.com/api/tafaria-philosophy');
+        // $tafariaPhilosophy = $tafariaPhilosophyResponse->json()['data'] ?? [];
 
 
         $eventAddonsResponse = $httpClient->get('https://website-cms.tafaria.com/api/event-addons');
         $eventAddons = $eventAddonsResponse->json()['data'] ?? [];
 
 
-        $artsResponse = $httpClient->get('https://website-cms.tafaria.com/api/arts');
-        $arts = $artsResponse->json()['data'] ?? [];
-        $artsPackagesResponse = $httpClient->get('https://website-cms.tafaria.com/api/arts-packages');
-        $artsPackages = $artsPackagesResponse->json()['data'] ?? [];
-        $artsExperiencesResponse = $httpClient->get('https://website-cms.tafaria.com/api/arts-experiences');
-        $artsExperiences = $artsExperiencesResponse->json()['data'] ?? [];
-        $artsEnquiryResponse = $httpClient->get('https://website-cms.tafaria.com/api/arts-enquiry');
-        $artsEnquiry = $artsEnquiryResponse->json()['data'] ?? [];
-        $artFacilitiesResponse = $httpClient->get('https://website-cms.tafaria.com/api/art-facilities');
-        $artFacilities = $artFacilitiesResponse->json()['data'] ?? [];
+        // $artsResponse = $httpClient->get('https://website-cms.tafaria.com/api/arts');
+        // $arts = $artsResponse->json()['data'] ?? [];
+        // $artsPackagesResponse = $httpClient->get('https://website-cms.tafaria.com/api/arts-packages');
+        // $artsPackages = $artsPackagesResponse->json()['data'] ?? [];
+        // $artsExperiencesResponse = $httpClient->get('https://website-cms.tafaria.com/api/arts-experiences');
+        // $artsExperiences = $artsExperiencesResponse->json()['data'] ?? [];
+        // $artsEnquiryResponse = $httpClient->get('https://website-cms.tafaria.com/api/arts-enquiry');
+        // $artsEnquiry = $artsEnquiryResponse->json()['data'] ?? [];
+        // $artFacilitiesResponse = $httpClient->get('https://website-cms.tafaria.com/api/art-facilities');
+        // $artFacilities = $artFacilitiesResponse->json()['data'] ?? [];
 
         $dayVisitPackagesResponse = $httpClient->get('https://website-cms.tafaria.com/api/day-visit-packages');
         $dayVisitPackages = $dayVisitPackagesResponse->json()['data'] ?? [];
@@ -78,14 +78,13 @@ class CategoryController extends Controller
             'schoolAdditional' => $schoolAdditional,
             'schoolPrograms' => $schoolPrograms,
             'packages' => $packages,
-            'aboutUs' => $aboutUs,
-            'tafariaPhilosophy' => $tafariaPhilosophy,
 
-            'arts' => $arts,
-            'artsPackages' => $artsPackages,
-            'artsExperiences' => $artsExperiences,
-            'artsEnquiry' => $artsEnquiry,
-            'artFacilities' => $artFacilities,
+
+            // 'arts' => $arts,
+            // 'artsPackages' => $artsPackages,
+            // 'artsExperiences' => $artsExperiences,
+            // 'artsEnquiry' => $artsEnquiry,
+            // 'artFacilities' => $artFacilities,
 
             'dayVisitPackages' => $dayVisitPackages
         ]);

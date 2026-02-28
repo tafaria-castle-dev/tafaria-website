@@ -15,6 +15,7 @@ import {
     Room,
 } from '@/types/types';
 import axios from 'axios';
+import DOMPurify from 'dompurify';
 import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { PackagesCards } from './Landing';
@@ -226,64 +227,6 @@ export default function StayWithUs({
                     : total,
             0,
         );
-
-    const handleAddRoomToCart = (
-        room: Room,
-        occupancy: 'Single' | 'Double',
-    ) => {
-        if (cart.length > 0) {
-            setCheckIn(cart[0].checkIn);
-            setCheckOut(cart[0].checkOut);
-        }
-        setSelectedRoom(room);
-        setSelectedLeisureRoom(null);
-        setSelectedConference(null);
-        setSelectedLeisure(null);
-        setSelectedOccupancy(occupancy);
-        setShowBookingModal(true);
-    };
-
-    const handleAddLeisureRoomToCart = (
-        room: LeisureRoom,
-        occupancy: 'Single' | 'Double',
-    ) => {
-        if (cart.length > 0) {
-            setCheckIn(cart[0].checkIn);
-            setCheckOut(cart[0].checkOut);
-        }
-        setSelectedLeisureRoom(room);
-        setSelectedRoom(null);
-        setSelectedConference(null);
-        setSelectedLeisure(null);
-        setSelectedOccupancy(occupancy);
-        setShowBookingModal(true);
-    };
-
-    const handleAddConferenceToCart = (conference: ConferencePackage) => {
-        if (cart.length > 0) {
-            setCheckIn(cart[0].checkIn);
-            setCheckOut(cart[0].checkOut);
-        }
-        setSelectedConference(conference);
-        setSelectedRoom(null);
-        setSelectedLeisureRoom(null);
-        setSelectedLeisure(null);
-        setSelectedOccupancy(null);
-        setShowBookingModal(true);
-    };
-
-    const handleAddLeisureToCart = (leisure: LeisureExperience) => {
-        if (cart.length > 0) {
-            setCheckIn(cart[0].checkIn);
-            setCheckOut(cart[0].checkOut);
-        }
-        setSelectedLeisure(leisure);
-        setSelectedRoom(null);
-        setSelectedLeisureRoom(null);
-        setSelectedConference(null);
-        setSelectedOccupancy(null);
-        setShowBookingModal(true);
-    };
 
     const triggerToast = (message: string) => {
         setToastMessage(message);
@@ -533,7 +476,13 @@ export default function StayWithUs({
 
         setShowSelectedPackageModal(true);
     };
+    const rawHtml =
+        introductionDescription?.description ||
+        'Visit for the day, stay overnight, bring a school, host an event, or apply for an art residency — Tafaria makes learning and leisure feel magical through its two packages below.';
 
+    const processedHtml = rawHtml
+        .replace(/<h1([^>]*)>/gi, '<h1 class="h1"$1>')
+        .replace(/<h2([^>]*)>/gi, '<h2 class="rich-h2"$1>');
     return (
         <>
             <style>{styles}</style>
@@ -613,15 +562,16 @@ export default function StayWithUs({
                                 marginBottom: 8,
                             }}
                         >
-                            <p
-                                className="text-lg md:text-2xl"
-                                style={{ marginBottom: 16 }}
-                                dangerouslySetInnerHTML={{
-                                    __html:
-                                        introductionDescription.description ||
-                                        '',
-                                }}
-                            />
+                            <div className="rich-text-content">
+                                <div
+                                    dangerouslySetInnerHTML={{
+                                        __html: DOMPurify.sanitize(
+                                            processedHtml,
+                                        ),
+                                    }}
+                                    className="flex flex-col items-center justify-center"
+                                ></div>
+                            </div>
                             <PackagesCards
                                 packages={packages}
                                 activeTab={activeTab}

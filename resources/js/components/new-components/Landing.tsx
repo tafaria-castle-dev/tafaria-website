@@ -1,5 +1,6 @@
 import { useSelectedPackage } from '@/hooks/SelectedPackageContext';
 import {
+    About,
     AdditionalDetail,
     DayVisitPackage,
     DayVisitPackageItem,
@@ -14,6 +15,7 @@ import { RatesDescription } from '@/types/types';
 import axios from 'axios';
 import DOMPurify from 'dompurify';
 import { useEffect, useState } from 'react';
+import AboutsIntro from '../aboutsintro';
 import Hero from '../hero';
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
@@ -202,6 +204,7 @@ interface LandingPageProps {
     packages: Package[];
     events: EventPage[];
     dayVisitPackages: DayVisitPackage[];
+    abouts: About[];
 }
 function Badge({
     children,
@@ -285,49 +288,6 @@ export function toTabKey(title: string): string {
     return title.toLowerCase().trim().replace(/\s+/g, '-');
 }
 
-function parseIncludesList(html: string): string[] {
-    if (!html) return [];
-    const div = document.createElement('div');
-    div.innerHTML = html;
-    const items: string[] = [];
-    div.querySelectorAll('li').forEach((li) =>
-        items.push(li.textContent?.trim() || ''),
-    );
-    if (items.length === 0) {
-        div.querySelectorAll('p').forEach((p) => {
-            const t = p.textContent?.trim();
-            if (t) items.push(t);
-        });
-    }
-    return items;
-}
-
-function getPackageTheme(title: string): 'red' | 'gold' {
-    const t = title.toLowerCase();
-    if (t.includes('immersion') || t.includes('experience')) return 'red';
-    return 'gold';
-}
-
-function getPackageTagline(title: string): string {
-    const t = title.toLowerCase();
-    if (t.includes('immersion') || t.includes('experience'))
-        return 'Deep. Reflective. Transformative.';
-    if (t.includes('recreation') || t.includes('leisure'))
-        return 'Relaxed. Fun. Countryside Escape.';
-    return '';
-}
-
-function getPackageBadge(title: string): string {
-    const t = title.toLowerCase();
-    if (
-        t.includes('immersion') ||
-        t.includes('experience') ||
-        t.includes('popular')
-    )
-        return 'Popular';
-    return 'Leisure';
-}
-
 export const PackagesCards = ({
     onSelectPackage,
     activeTab,
@@ -392,7 +352,9 @@ export const PackagesCards = ({
                                     className={`pkg-title-banner pkg-title-banner-${theme}`}
                                 >
                                     <h3>{pkg.title}</h3>
-                                    <p>{pkg.subtitle}</p>
+                                    <h4 className="text-lg text-white sm:text-xl">
+                                        {pkg.subtitle}
+                                    </h4>
                                 </div>
                             </div>
 
@@ -445,10 +407,7 @@ const DayVisitPackageCards = ({ packages }: DayVisitCardsProps) => {
         <div className="grid-4" style={{ marginTop: 16 }}>
             {packages?.map((pkg) => {
                 const title = pkg.title?.toLowerCase() ?? '';
-                const isPopular =
-                    title.includes('experience') ||
-                    title.includes('immersion') ||
-                    title.includes('popular');
+
                 return (
                     <div
                         className={`package-card h-fit`}
@@ -464,9 +423,9 @@ const DayVisitPackageCards = ({ packages }: DayVisitCardsProps) => {
                                 alt={pkg.title || ''}
                                 loading="lazy"
                             />
-                            {isPopular && (
+                            {pkg.badge_content && (
                                 <span
-                                    className="rounded-4xl bg-[#902729] px-5 py-2 text-white"
+                                    className="pkg-badge-top pkg-badge-red"
                                     style={{
                                         position: 'absolute',
                                         top: 12,
@@ -474,7 +433,7 @@ const DayVisitPackageCards = ({ packages }: DayVisitCardsProps) => {
                                         zIndex: 2,
                                     }}
                                 >
-                                    Popular
+                                    {pkg.badge_content}
                                 </span>
                             )}
                         </div>
@@ -555,6 +514,7 @@ export default function LandingPage({
     packages,
     events,
     dayVisitPackages,
+    abouts,
 }: LandingPageProps) {
     const [_highlightedPackage, setHighlightedPackage] = useState<
         string | null
@@ -621,7 +581,9 @@ export default function LandingPage({
         introductionDescription?.description ||
         'Visit for the day, stay overnight, bring a school, host an event, or apply for an art residency — Tafaria makes learning and leisure feel magical through its two packages below.';
 
-    const processedHtml = rawHtml.replace(/<h1([^>]*)>/gi, '<h2 class="h1"$1>');
+    const processedHtml = rawHtml
+        .replace(/<h1([^>]*)>/gi, '<h1 class="h1"$1>')
+        .replace(/<h2([^>]*)>/gi, '<h2 class="rich-h2"$1>');
     const handleRequestQuote = (program: Program) => {
         setQuoteInitialProgram(program);
         setShowSchoolQuoteModal(true);
@@ -724,23 +686,31 @@ export default function LandingPage({
                                 />
                             ))}
                         </div>
+                        <div className="mt-6 flex items-center justify-center">
+                            <a
+                                className="btn btn-secondary"
+                                href="/goDream/about-godream"
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                More about Tafaria goDream Programs
+                            </a>
+                        </div>
                     </div>
-                </div>
-            </section>
-            <section className="section-sm">
-                <div className="container">
-                    <h1 className="h1">
-                        {events[0]?.title || 'Host your event at Tafaria'}
-                    </h1>
-                    <p className="p-lg">
-                        {events[0]?.subtitle ||
-                            'Whether you are planning a corporate retreat, a team offsite, a wedding, or a family reunion, Tafaria offers a unique blend of inspiring spaces, delicious food, and memorable experiences to make your event truly special.'}
-                    </p>
                 </div>
             </section>
 
             <section id="packages" className="section">
                 <div className="container">
+                    <div className="mb-3">
+                        <h1 className="h1">
+                            {events[0]?.title || 'Host your event at Tafaria'}
+                        </h1>
+                        <p className="p-lg">
+                            {events[0]?.subtitle ||
+                                'Whether you are planning a corporate retreat, a team offsite, a wedding, or a family reunion, Tafaria offers a unique blend of inspiring spaces, delicious food, and memorable experiences to make your event truly special.'}
+                        </p>
+                    </div>
                     <h2 className="h2">Event packages</h2>
                     <div className="grid-3">
                         {events[0]?.items?.map((pkg) => (
@@ -799,86 +769,28 @@ export default function LandingPage({
                 </div>
             </section>
 
-            {detail && (
-                <section className="section" style={{ paddingTop: 0 }}>
-                    <div className="container">
-                        <div className="grid-2">
-                            <div
-                                className="card"
-                                style={{
-                                    overflow: 'hidden',
-                                    width: '100%',
-                                }}
-                            >
-                                <iframe
-                                    title="Map to Tafaria"
-                                    src="https://www.google.com/maps?q=Tafaria%20Castle%20Laikipia&output=embed"
-                                    width="100%"
-                                    height="360"
-                                    style={{ border: 0, display: 'block' }}
-                                    loading="lazy"
-                                    referrerPolicy="no-referrer-when-downgrade"
-                                />
-                            </div>
-                            <div className="strip">
-                                <h2 className="h2" style={{ marginBottom: 6 }}>
-                                    Plan your visit
-                                </h2>
-                                {detail.opening_hours && (
-                                    <div
-                                        className="small"
-                                        style={{ marginBottom: 8 }}
-                                    >
-                                        <b>Opening hours:</b>{' '}
-                                        {detail.opening_hours}
-                                    </div>
-                                )}
-                                {detail.how_to_get_here_description && (
-                                    <div
-                                        className="small"
-                                        style={{ marginBottom: 8 }}
-                                    >
-                                        <b>How to get here:</b>{' '}
-                                        <span
-                                            dangerouslySetInnerHTML={{
-                                                __html: detail.how_to_get_here_description,
-                                            }}
-                                        />
-                                    </div>
-                                )}
-                                {detail.what_to_carry && (
-                                    <div
-                                        className="small"
-                                        style={{ marginBottom: 8 }}
-                                    >
-                                        <b>What to carry:</b>{' '}
-                                        {detail.what_to_carry}
-                                    </div>
-                                )}
-                                <div style={{ height: 12 }} />
-                                <div className="row">
-                                    <a
-                                        className="btn btn-secondary"
-                                        href="/blogs/tafaria-frequently-asked-questions-faqs"
-                                        target="_blank"
-                                        rel="noreferrer"
-                                    >
-                                        See visitor FAQs
-                                    </a>
-                                    <a
-                                        className="btn btn-secondary"
-                                        href="https://wa.me/+254708877244"
-                                        target="_blank"
-                                        rel="noreferrer"
-                                    >
-                                        WhatsApp
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
+            <section className="section" style={{ paddingTop: 0 }}>
+                <div className="container">
+                    <div
+                        className="card"
+                        style={{
+                            overflow: 'hidden',
+                            width: '100%',
+                        }}
+                    >
+                        <iframe
+                            title="Map to Tafaria"
+                            src="https://www.google.com/maps?q=Tafaria%20Castle%20Laikipia&output=embed"
+                            width="100%"
+                            height="360"
+                            style={{ border: 0, display: 'block' }}
+                            loading="lazy"
+                            referrerPolicy="no-referrer-when-downgrade"
+                        />
                     </div>
-                </section>
-            )}
+                </div>
+            </section>
+            <AboutsIntro abouts={abouts} />
         </>
     );
 }

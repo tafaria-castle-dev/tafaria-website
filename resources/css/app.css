@@ -620,6 +620,10 @@ li[data-list='ordered'] {
     letter-spacing: 0.2px;
     margin: 0 0 12px 0;
 }
+.rich-h2 {
+    font-size: 1.6rem !important;
+    margin-bottom: 0.3rem;
+}
 .pkg-cta-red {
     display: block;
     width: 100%;

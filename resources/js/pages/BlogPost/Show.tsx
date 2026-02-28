@@ -40,6 +40,8 @@ export default function BlogPost({
     return (
         <>
             <div>
+                {' '}
+                {/* <TopBar title={post?.title || ''} /> */}
                 <div className="flex items-center bg-white shadow-md">
                     <div className="container mx-auto mt-8 p-4">
                         <div

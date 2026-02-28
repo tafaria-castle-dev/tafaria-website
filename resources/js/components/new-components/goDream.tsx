@@ -140,38 +140,10 @@ export default function GoDreamPage({
         quoteRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
 
-    function buildWhatsAppMessage() {
-        return encodeURIComponent(
-            `Hello Tafaria! 👋\n\nSchool: ${form.schoolName}\nPhone: ${form.phone}\nStudents: ${form.students}\nDays: ${form.days}\nNotes: ${form.notes}`,
-        );
-    }
-
-    function handleEmailSend() {
-        if (!form.schoolName.trim()) {
-            setToast('Please enter your school name.');
-            setTimeout(() => setToast(''), 3000);
-            return;
-        }
-        const subject = encodeURIComponent(
-            `School Quote Request — ${form.schoolName}`,
-        );
-        const body = encodeURIComponent(
-            `School: ${form.schoolName}\nPhone: ${form.phone}\nStudents: ${form.students}\nDays: ${form.days}\nNotes:\n${form.notes}`,
-        );
-        window.location.href = `mailto:info@tafaria.com?subject=${subject}&body=${body}`;
-    }
-
     return (
         <>
             <style>{styles}</style>
             <div className="container">
-                <section className="section-sm">
-                    <div className="container">
-                        <h1 className="h1"> {schoolPrograms[0]?.title}</h1>
-                        <p className="p-lg">{schoolPrograms[0]?.subtitle}</p>
-                    </div>
-                </section>
-
                 <section className="section">
                     <div className="container">
                         <div className="strip-header">
