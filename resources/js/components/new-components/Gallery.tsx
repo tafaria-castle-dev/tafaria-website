@@ -1,10 +1,11 @@
-import { Image } from '@/types';
+import { Category, Image } from '@/types';
 import { useEffect, useRef, useState } from 'react';
 import { FiShare2 } from 'react-icons/fi';
 import { useInView } from 'react-intersection-observer';
 
 interface ImageGalleryProps {
     images: Image[];
+    categories: Category[];
 }
 
 const VIDEO_EXTENSIONS = ['mp4', 'webm', 'ogg', 'mov'];
@@ -12,17 +13,6 @@ const VIDEO_EXTENSIONS = ['mp4', 'webm', 'ogg', 'mov'];
 function isVideo(image: Image): boolean {
     return VIDEO_EXTENSIONS.includes((image.extension ?? '').toLowerCase());
 }
-
-const FILTERS = [
-    { label: 'All', value: 'all' },
-    { label: 'Stay', value: 'stay' },
-    { label: 'Experiences', value: 'experiences' },
-    { label: 'Arts', value: 'arts' },
-    { label: 'Nano Farm', value: 'farm' },
-    { label: 'Schools', value: 'schools' },
-    { label: 'Events', value: 'events' },
-    { label: 'Food', value: 'food' },
-];
 
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
@@ -427,7 +417,10 @@ function MediaCard({ item, onOpen }: { item: Image; onOpen: () => void }) {
 
 const PAGE_SIZE = 20;
 
-export default function ImageGallery({ images }: ImageGalleryProps) {
+export default function ImageGallery({
+    images,
+    categories,
+}: ImageGalleryProps) {
     const sorted = [...images].sort(
         (a, b) => (a.priority ?? 0) - (b.priority ?? 0),
     );
@@ -440,13 +433,7 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
     const filtered =
         activeFilter === 'all'
             ? sorted
-            : sorted.filter(
-                  (img) =>
-                      (img.description ?? '')
-                          .toLowerCase()
-                          .includes(activeFilter) ||
-                      (img.title ?? '').toLowerCase().includes(activeFilter),
-              );
+            : sorted.filter((img) => img.category?.name == activeFilter);
 
     const displayed = filtered.slice(0, page * PAGE_SIZE);
     const hasMore = displayed.length < filtered.length;
@@ -486,24 +473,39 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
             <div className="container">
                 <section className="py-0">
                     <div className="container">
-                        <h1 className="h1">Gallery</h1>
+                        <h1 className="h1">See Us In Pictures</h1>
                         <p className="p-lg m-0">
                             A visual tour of Tafaria Castle & Center for the
                             Arts
                         </p>
 
-                        {/* <div className="filters" aria-label="Gallery filters">
-                            {FILTERS.map((f) => (
-                                <button
-                                    key={f.value}
-                                    className={`chip ${activeFilter === f.value ? 'active' : ''}`}
-                                    onClick={() => handleFilterChange(f.value)}
-                                    aria-pressed={activeFilter === f.value}
-                                >
-                                    {f.label}
-                                </button>
-                            ))}
-                        </div> */}
+                        <div className="filters" aria-label="Gallery filters">
+                            <button
+                                className={`chip ${activeFilter === 'all' ? 'active' : ''}`}
+                                onClick={() => handleFilterChange('all')}
+                                aria-pressed={activeFilter === 'all'}
+                            >
+                                All
+                            </button>
+                            {categories
+                                .filter(
+                                    (f) =>
+                                        f.name !== 'Blogs' &&
+                                        f.name !== 'Rates',
+                                )
+                                .map((f) => (
+                                    <button
+                                        key={f.name}
+                                        className={`chip ${activeFilter === f.name ? 'active' : ''}`}
+                                        onClick={() =>
+                                            handleFilterChange(f.name)
+                                        }
+                                        aria-pressed={activeFilter === f.name}
+                                    >
+                                        {f.name}
+                                    </button>
+                                ))}
+                        </div>
                     </div>
                 </section>
 

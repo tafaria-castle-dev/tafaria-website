@@ -158,7 +158,7 @@ export default function GoDreamPage({
                             </div>
                             <div className="row">
                                 <button
-                                    className="btn btn-primary"
+                                    className="btn btn-secondary"
                                     onClick={handleOpenSchoolQuoteAll}
                                 >
                                     Request a school quote
@@ -179,37 +179,6 @@ export default function GoDreamPage({
                         </div>
 
                         <div style={{ height: 20 }} />
-
-                        <div className="flex w-full flex-col items-center justify-center gap-15">
-                            {schoolAdditional.length > 0 &&
-                                schoolAdditional.map((item) => (
-                                    <div className="strip w-full">
-                                        <div className="strip-row">
-                                            <div>
-                                                <b style={{ color: '#1a0f06' }}>
-                                                    {item.title}
-                                                </b>
-                                                <div
-                                                    className="small"
-                                                    style={{ marginTop: 6 }}
-                                                    dangerouslySetInnerHTML={{
-                                                        __html:
-                                                            item.description ||
-                                                            '',
-                                                    }}
-                                                ></div>
-                                            </div>
-                                            <button
-                                                className="btn btn-secondary"
-                                                onClick={scrollToQuote}
-                                            >
-                                                {item.button_message ||
-                                                    'Ask Quote'}
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))}
-                        </div>
                     </div>
                 </section>
 

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
+
 :root {
     /* Colors */
     --bg: #f6f1e7; /* Parchment */
@@ -233,8 +235,9 @@ body {
     text-decoration: none;
 }
 .btn-primary {
-    background: var(--brand);
-    color: #fff;
+    color: #7a5a22;
+    border-color: rgba(184, 146, 75, 0.22);
+    background-color: rgba(184, 146, 75, 0.32);
 }
 .btn-book {
     background: var(--brand);
@@ -255,6 +258,7 @@ body {
     background: var(--brand);
     color: var(--color-white) !important;
     border-color: var(--gold);
+    font-size: 13px;
 }
 .btn-secondary:hover {
     background: var(--gold) !important;
@@ -307,6 +311,7 @@ body {
 .badge-neutral {
     background: var(--bg);
     color: var(--muted);
+    margin-bottom: 12px;
     border-color: var(--border);
 }
 

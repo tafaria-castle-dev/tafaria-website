@@ -57,7 +57,7 @@ const TabComponent: React.FC<TabComponentProps> = ({ images, categories }) => {
 
     return (
         <div className="mt-3">
-            <ImageGallery images={images} />
+            <ImageGallery images={images} categories={categories} />
         </div>
     );
 };

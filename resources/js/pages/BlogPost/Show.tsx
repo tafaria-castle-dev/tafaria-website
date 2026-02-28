@@ -47,7 +47,7 @@ export default function BlogPost({
                         <div
                             className={`font-barlow-condensed m-5 mx-auto mt-5 flex w-full flex-col rounded-lg bg-white p-5 shadow-lg transition-shadow duration-300 hover:shadow-xl`}
                         >
-                            <h1 className="mt-4 ml-3 text-2xl font-semibold text-[#902729] sm:text-3xl">
+                            <h1 className="h1 mt-4 ml-3 text-[#902729]">
                                 {post.title}
                             </h1>
 

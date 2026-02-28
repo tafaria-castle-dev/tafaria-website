@@ -124,6 +124,7 @@ export interface Image {
     tag?: Tag | null;
     tags?: Tag[] | null;
     herosection?: HeroSection | null;
+    category?: { id: string; name: string };
     slug: string;
 }
 export interface Metadata {

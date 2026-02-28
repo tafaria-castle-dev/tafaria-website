@@ -1,120 +1,21 @@
 import { EventAddon, EventPage } from '@/types';
 import { useRef, useState } from 'react';
-
-interface EventPackage {
-    id: string;
-    image: string;
-    imageAlt: string;
-    badge: string;
-    badgeType: 'gold' | 'neutral' | 'olive';
-    title: string;
-    subtitle: string;
-    includes: string;
-}
-
-interface AddOn {
-    id: string;
-    image: string;
-    imageAlt: string;
-    title: string;
-    subtitle: string;
-}
+import { EventCard } from './Landing';
 
 interface ProposalForm {
     organization: string;
     phone: string;
+    email: string;
     eventType: string;
     guests: number;
     notes: string;
 }
 
-const WHATSAPP_NUMBER = 'YOURNUMBER';
-
-const EVENT_PACKAGES: EventPackage[] = [
-    {
-        id: 'event-dayconf',
-        image: '/assets/meeting Room.jpeg',
-        imageAlt: 'Tafaria Meeting Room',
-        badge: 'Day',
-        badgeType: 'neutral',
-        title: 'Day Conference',
-        subtitle: 'Rooms optional',
-        includes: 'Venue + catering options',
-    },
-    {
-        id: 'event-retreat',
-        image: '/assets/lords-room.png',
-        imageAlt: 'Tafaria Accommodation',
-        badge: 'Popular',
-        badgeType: 'gold',
-        title: 'Residential Retreat',
-        subtitle: 'Stay + meeting + activities',
-        includes: 'Rooms + sessions + add-ons',
-    },
-    {
-        id: 'event-celebrate',
-        image: '/assets/wedding-rides.jpeg',
-        imageAlt: 'Tafaria Wedding Rides',
-        badge: 'Social',
-        badgeType: 'olive',
-        title: 'Celebration',
-        subtitle: 'Weddings • birthdays • reunions',
-        includes: 'Venue + planning support',
-    },
-];
-
-const ADD_ONS: AddOn[] = [
-    {
-        id: 'addon-archery',
-        image: '/assets/archery.jpeg',
-        imageAlt: 'Archery at Tafaria',
-        title: 'Team Archery',
-        subtitle: 'Fun + focus',
-    },
-    {
-        id: 'addon-museum',
-        image: '/assets/museum.jpeg',
-        imageAlt: 'Tafaria Museum interior',
-        title: 'Museum Private Tour',
-        subtitle: 'Inspiration + story',
-    },
-    {
-        id: 'addon-farmwalk',
-        image: '/assets/nano farm.jpeg',
-        imageAlt: 'Tafaria Nano Farm',
-        title: 'Nano Farm Learning Tour',
-        subtitle: 'Modern agriculture + design',
-    },
-    {
-        id: 'addon-taxonomy',
-        image: '/assets/herbarium.jpeg',
-        imageAlt: 'Tafaria Herbarium',
-        title: 'Tafaria Taxonomy Session',
-        subtitle:
-            'Turn your event into a shared leadership & life-skills moment.',
-    },
-];
+const WHATSAPP_NUMBER = '+254708877244';
+const EMAIL_ADDRESS = 'info@tafaria.com';
 
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
-
-  .h1 { font-family: 'Cinzel', serif; font-size: clamp(2rem,4vw,3rem); font-weight: 700; line-height: 1.2; color: #1a0f06; margin: 10px 0 14px; }
-  .h2 { font-family: 'Cinzel', serif; font-size: clamp(1.3rem,3vw,1.9rem); font-weight: 600; color: #1a0f06; margin-bottom: 10px; }
-  .h3 { font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 600; color: #1a0f06; margin-top: 10px; }
-  .p-lg { font-size: 1.1rem; line-height: 1.7; color: #5a3e2b; }
-  .p   { font-size: 1rem;   line-height: 1.7; color: #5a3e2b; margin-bottom: 16px; }
-  .small { font-size: 0.85rem; color: #6b4f35; line-height: 1.5; }
-
-  .badge {
-    display: inline-block; padding: 4px 12px; border-radius: 999px;
-    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
-  }
-  .badge-gold    { background: rgba(184,146,75,0.18); color: #7a5520; border: 1px solid rgba(184,146,75,0.4); }
-  .badge-neutral { background: rgba(90,62,43,0.1);   color: #5a3e2b; border: 1px solid rgba(90,62,43,0.2); }
-  .badge-olive   { background: rgba(100,120,60,0.12); color: #4a6030; border: 1px solid rgba(100,120,60,0.3); }
-
-  .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
-
 
   .card {
     background: #fff; border: 1px solid rgba(184,146,75,0.18);
@@ -165,6 +66,7 @@ const styles = `
     background: rgba(255,255,255,0.85);
     font-family: inherit; font-size: 0.9rem; color: #2c1f10;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    width: 100%; box-sizing: border-box;
   }
   .input:focus, .select:focus, .textarea:focus {
     outline: none;
@@ -172,6 +74,32 @@ const styles = `
     box-shadow: 0 0 0 3px rgba(184,146,75,0.12);
   }
   .textarea { min-height: 110px; resize: vertical; }
+
+  .proposal-actions {
+    display: flex; align-items: center; gap: 10px;
+    margin-top: 20px; flex-wrap: wrap;
+  }
+  .btn-whatsapp {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 12px 20px; border-radius: 12px; border: none;
+    background: #25D366; color: #fff;
+    font-size: 0.92rem; font-weight: 700; cursor: pointer;
+    font-family: inherit; text-decoration: none;
+    box-shadow: 0 3px 12px rgba(37,211,102,0.3);
+    transition: all 0.15s ease;
+  }
+  .btn-whatsapp:hover { box-shadow: 0 5px 18px rgba(37,211,102,0.45); transform: translateY(-1px); }
+  .btn-email {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 11px 20px; border-radius: 12px;
+    background: #fff; color: #5a3e2b;
+    border: 1.5px solid rgba(184,146,75,0.4);
+    font-size: 0.92rem; font-weight: 700; cursor: pointer;
+    font-family: inherit; text-decoration: none;
+    transition: all 0.15s ease;
+  }
+  .btn-email:hover { border-color: rgba(184,146,75,0.7); background: rgba(255,251,240,0.8); transform: translateY(-1px); }
+  .actions-divider { font-size: 0.78rem; color: #9a7d5a; font-weight: 600; }
 
   .toast {
     position: fixed; bottom: 90px; right: 20px; z-index: 999;
@@ -187,6 +115,28 @@ const styles = `
   }
 `;
 
+const WhatsAppIcon = () => (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+    </svg>
+);
+
+const EmailIcon = () => (
+    <svg
+        width="15"
+        height="15"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+    >
+        <rect x="2" y="4" width="20" height="16" rx="2" />
+        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+    </svg>
+);
+
 export default function EventsPage({
     events,
     eventAddons,
@@ -195,10 +145,11 @@ export default function EventsPage({
     eventAddons: EventAddon[];
 }) {
     const proposalRef = useRef<HTMLElement>(null);
-    const [toast, setToast] = useState('');
+    const [toastMsg, setToastMsg] = useState('');
     const [form, setForm] = useState<ProposalForm>({
         organization: '',
         phone: '',
+        email: '',
         eventType: 'Conference',
         guests: 30,
         notes: '',
@@ -219,28 +170,49 @@ export default function EventsPage({
     }
 
     function showToast(msg: string) {
-        setToast(msg);
-        setTimeout(() => setToast(''), 3000);
+        setToastMsg(msg);
+        setTimeout(() => setToastMsg(''), 3000);
     }
 
-    function buildWhatsAppMessage() {
-        return encodeURIComponent(
-            `Hello Tafaria! 👋\n\nOrganization: ${form.organization}\nPhone: ${form.phone}\nEvent type: ${form.eventType}\nGuests: ${form.guests}\nNotes: ${form.notes}`,
-        );
+    function buildMessage() {
+        return `🏰 *Tafaria Castle – Event Proposal Request*
+
+Organization / Name: ${form.organization.trim() || '(not provided)'}
+Phone / WhatsApp: ${form.phone.trim() || '—'}
+Email: ${form.email.trim() || '—'}
+Event Type: ${form.eventType}
+Estimated Guests: ${form.guests}
+
+Notes:
+${form.notes.trim() || '(none)'}
+
+Please prepare a proposal for the above. Thank you! 🙏`;
     }
 
-    function handleEmailSend() {
+    function handleWhatsApp() {
+        if (!form.organization.trim()) {
+            showToast('Please enter your organization or name.');
+            return;
+        }
+        const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(buildMessage())}`;
+        window.open(url, '_blank');
+    }
+
+    function handleEmail() {
         if (!form.organization.trim()) {
             showToast('Please enter your organization or name.');
             return;
         }
         const subject = encodeURIComponent(
-            `Event Proposal Request — ${form.organization}`,
+            `Event Proposal Request — ${form.organization.trim()}`,
         );
         const body = encodeURIComponent(
-            `Organization: ${form.organization}\nPhone: ${form.phone}\nEvent type: ${form.eventType}\nGuests: ${form.guests}\nNotes:\n${form.notes}`,
+            buildMessage().replace(/\*/g, '').replace(/🏰/g, '[Tafaria] '),
         );
-        window.location.href = `mailto:info@tafaria.com?subject=${subject}&body=${body}`;
+        window.open(
+            `mailto:${EMAIL_ADDRESS}?subject=${subject}&body=${body}`,
+            '_blank',
+        );
     }
 
     return (
@@ -262,64 +234,12 @@ export default function EventsPage({
                         <h2 className="h2">Event packages</h2>
                         <div className="grid-3">
                             {events[0]?.items?.map((pkg) => (
-                                <div key={pkg.id} className="card">
-                                    <div className="card-media">
-                                        <img
-                                            src={pkg.image}
-                                            alt={pkg.title}
-                                            loading="lazy"
-                                        />
-                                    </div>
-                                    <div className="card-pad">
-                                        <span
-                                            className={`badge badge-${
-                                                pkg.badge_content?.includes(
-                                                    'Day',
-                                                )
-                                                    ? 'olive'
-                                                    : pkg.badge_content?.includes(
-                                                            'Popular',
-                                                        )
-                                                      ? 'gold'
-                                                      : pkg.badge_content?.includes(
-                                                              'Social',
-                                                          )
-                                                        ? 'gold'
-                                                        : 'neutral'
-                                            }`}
-                                        >
-                                            {pkg.badge_content}
-                                        </span>
-                                        <div className="h3">{pkg.title}</div>
-                                        <div
-                                            className="small"
-                                            style={{ marginTop: 4 }}
-                                        >
-                                            {pkg.subtitle}
-                                        </div>
-                                        <hr className="hr" />
-                                        <div
-                                            className="small"
-                                            dangerouslySetInnerHTML={{
-                                                __html: pkg.description || '',
-                                            }}
-                                        ></div>
-                                        <div style={{ height: 12 }} />
-                                        <button
-                                            className="btn btn-secondary"
-                                            onClick={() =>
-                                                scrollToProposal(pkg.title)
-                                            }
-                                        >
-                                            {events[0]?.button_message ||
-                                                'Request Proposal'}
-                                        </button>
-                                    </div>
-                                </div>
+                                <EventCard pkg={pkg} events={events} />
                             ))}
                         </div>
                     </div>
                 </section>
+
                 {eventAddons.length > 0 &&
                     eventAddons?.map((eventAddon) => (
                         <section className="section" style={{ paddingTop: 0 }}>
@@ -391,7 +311,7 @@ export default function EventsPage({
                                     <div className="form-grid">
                                         <div className="field">
                                             <label className="label">
-                                                Organization / Name
+                                                Organization / Name *
                                             </label>
                                             <input
                                                 className="input"
@@ -416,6 +336,23 @@ export default function EventsPage({
                                                 onChange={(e) =>
                                                     handleChange(
                                                         'phone',
+                                                        e.target.value,
+                                                    )
+                                                }
+                                            />
+                                        </div>
+                                        <div className="field">
+                                            <label className="label">
+                                                Email
+                                            </label>
+                                            <input
+                                                className="input"
+                                                type="email"
+                                                placeholder="you@example.com"
+                                                value={form.email}
+                                                onChange={(e) =>
+                                                    handleChange(
+                                                        'email',
                                                         e.target.value,
                                                     )
                                                 }
@@ -481,22 +418,22 @@ export default function EventsPage({
                                         </div>
                                     </div>
 
-                                    <div
-                                        className="row"
-                                        style={{ marginTop: 20 }}
-                                    >
-                                        <a
-                                            className="btn btn-primary"
-                                            href={`https://wa.me/${WHATSAPP_NUMBER}?text=${buildWhatsAppMessage()}`}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                        >
-                                            Send on WhatsApp
-                                        </a>
+                                    <div className="proposal-actions">
                                         <button
-                                            className="btn btn-secondary"
-                                            onClick={handleEmailSend}
+                                            className="btn-whatsapp"
+                                            onClick={handleWhatsApp}
                                         >
+                                            <WhatsAppIcon />
+                                            Send on WhatsApp
+                                        </button>
+                                        <span className="actions-divider">
+                                            or
+                                        </span>
+                                        <button
+                                            className="btn-email"
+                                            onClick={handleEmail}
+                                        >
+                                            <EmailIcon />
                                             Request via Email
                                         </button>
                                     </div>
@@ -509,20 +446,16 @@ export default function EventsPage({
                                         Typical proposal includes
                                     </b>
                                     <hr className="strip-divider" />
-                                    {[
-                                        'Venue options + capacities',
-                                        'Catering menus',
-                                        'Room blocks (if needed)',
-                                        'Add-on experiences',
-                                    ].map((item) => (
-                                        <div
-                                            key={item}
-                                            className="small"
-                                            style={{ marginBottom: 6 }}
-                                        >
-                                            • {item}
-                                        </div>
-                                    ))}
+
+                                    <div
+                                        style={{ marginBottom: 6 }}
+                                        dangerouslySetInnerHTML={{
+                                            __html:
+                                                events[0]
+                                                    ?.customer_proposal_contents ||
+                                                '',
+                                        }}
+                                    ></div>
                                 </div>
 
                                 <div style={{ height: 16 }} />
@@ -539,11 +472,13 @@ export default function EventsPage({
                                         we'll respond with options.
                                     </div>
                                     <a
-                                        className="btn btn-secondary"
+                                        className="btn-whatsapp"
                                         href={`https://wa.me/${WHATSAPP_NUMBER}`}
                                         target="_blank"
                                         rel="noreferrer"
+                                        style={{ display: 'inline-flex' }}
                                     >
+                                        <WhatsAppIcon />
                                         WhatsApp now
                                     </a>
                                 </div>
@@ -552,7 +487,7 @@ export default function EventsPage({
                     </div>
                 </section>
 
-                {toast && <div className="toast">{toast}</div>}
+                {toastMsg && <div className="toast">{toastMsg}</div>}
             </div>
         </>
     );

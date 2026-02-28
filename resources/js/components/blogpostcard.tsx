@@ -1,6 +1,6 @@
 import { Image, Video } from '@/types';
 import React, { useEffect, useRef, useState } from 'react';
-import { FiChevronDown, FiChevronUp, FiSend } from 'react-icons/fi';
+import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 
 interface BlogCardProps {
     id: string;
@@ -123,7 +123,7 @@ const BlogPostCard: React.FC<BlogCardProps> = ({
                     onClick={handleCardClick}
                 >
                     <div className="mb-1 flex items-center justify-between">
-                        <h1 className="ml-3 flex-1 text-2xl font-semibold text-[#902729] sm:text-3xl md:hidden lg:hidden">
+                        <h1 className="h1 ml-3 flex-1 text-[#902729] md:hidden lg:hidden">
                             {title}
                         </h1>
                         {showCollapse && (
@@ -144,7 +144,7 @@ const BlogPostCard: React.FC<BlogCardProps> = ({
                     <div className="flex flex-col justify-between px-4 pb-4">
                         <div>
                             <div className="mb-1 flex items-center justify-between">
-                                <h1 className="flex-1 text-2xl font-semibold text-[#902729] max-sm:hidden sm:hidden sm:text-3xl md:block lg:block">
+                                <h1 className="h1 flex-1 text-[#902729] max-sm:hidden sm:hidden md:block lg:block">
                                     {title}
                                 </h1>
                                 {showCollapse && (
@@ -221,36 +221,6 @@ const BlogPostCard: React.FC<BlogCardProps> = ({
                                         : 'Read more'}
                                 </button>
                             </div>
-                        </div>
-
-                        <div className="mt-4 flex space-x-4">
-                            <button
-                                className="flex items-center text-sm text-[#94723C] transition-colors duration-200 hover:text-[#b33235]"
-                                onClick={handleBookClick}
-                            >
-                                <span>Book a visit</span>
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="ml-1 h-4 w-4"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M9 5l7 7-7 7"
-                                    />
-                                </svg>
-                            </button>
-                            <button
-                                onClick={handleShareClick}
-                                className="rounded-full bg-green-500 p-2 text-white"
-                                aria-label="Share via WhatsApp"
-                            >
-                                <FiSend />
-                            </button>
                         </div>
                     </div>
                 </div>

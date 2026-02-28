@@ -2,8 +2,10 @@ import { useSelectedPackage } from '@/hooks/SelectedPackageContext';
 import {
     About,
     AdditionalDetail,
+    Category,
     DayVisitPackage,
     DayVisitPackageItem,
+    EventItem,
     EventPage,
     HeroSection,
     Offer,
@@ -14,12 +16,11 @@ import {
 import { RatesDescription } from '@/types/types';
 import axios from 'axios';
 import DOMPurify from 'dompurify';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import AboutsIntro from '../aboutsintro';
 import Hero from '../hero';
 const styles = `
-  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
-
 
 
   .p {
@@ -205,6 +206,7 @@ interface LandingPageProps {
     events: EventPage[];
     dayVisitPackages: DayVisitPackage[];
     abouts: About[];
+    categories: Category[];
 }
 function Badge({
     children,
@@ -221,6 +223,7 @@ function Badge({
               : 'badge badge-gold';
     return <span className={cls}>{children}</span>;
 }
+const DESCRIPTION_CHAR_LIMIT = 180;
 
 export function SchoolCard({
     program,
@@ -231,6 +234,12 @@ export function SchoolCard({
     button_message?: string;
     onRequestQuote: (program: Program) => void;
 }) {
+    const [expanded, setExpanded] = useState(false);
+
+    const rawDescription = program.description || '';
+    const strippedText = rawDescription.replace(/<[^>]*>/g, '');
+    const isLong = strippedText.length > DESCRIPTION_CHAR_LIMIT;
+
     return (
         <div
             className="card cursor-pointer"
@@ -252,20 +261,89 @@ export function SchoolCard({
                 >
                     {program.badge_content}
                 </Badge>
+
                 <div className="h4" style={{ margin: '10px 0 6px' }}>
                     {program.title}
                 </div>
-                <div
-                    className="small"
-                    dangerouslySetInnerHTML={{
-                        __html: program.description || '',
-                    }}
-                />
+
+                <motion.div
+                    animate={{ height: expanded ? 'auto' : '4.5em' }}
+                    initial={false}
+                    transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                    style={{ overflow: 'hidden', position: 'relative' }}
+                >
+                    <div
+                        className="small"
+                        dangerouslySetInnerHTML={{
+                            __html: rawDescription,
+                        }}
+                    />
+
+                    <AnimatePresence>
+                        {!expanded && isLong && (
+                            <motion.div
+                                key="fade"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.2 }}
+                                style={{
+                                    position: 'absolute',
+                                    bottom: 0,
+                                    left: 0,
+                                    right: 0,
+                                    height: '2.5em',
+                                    background:
+                                        'linear-gradient(to bottom, transparent, white)',
+                                    pointerEvents: 'none',
+                                }}
+                            />
+                        )}
+                    </AnimatePresence>
+                </motion.div>
+
+                {isLong && (
+                    <motion.button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setExpanded((prev) => !prev);
+                        }}
+                        className="micro"
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            padding: '4px 0',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 4,
+                            marginTop: 4,
+                        }}
+                        whileTap={{ scale: 0.96 }}
+                    >
+                        <AnimatePresence mode="wait" initial={false}>
+                            <motion.span
+                                key={expanded ? 'less' : 'more'}
+                                initial={{ opacity: 0, y: expanded ? 4 : -4 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: expanded ? -4 : 4 }}
+                                transition={{ duration: 0.18 }}
+                            >
+                                {expanded ? '↑ Show less' : '↓ Read more'}
+                            </motion.span>
+                        </AnimatePresence>
+                    </motion.button>
+                )}
+
                 <div className="meta-row" />
+
                 <div className="row" style={{ marginTop: 14 }}>
                     <button
-                        className="btn btn-secondary"
-                        onClick={() => onRequestQuote(program)}
+                        className="btn btn-primary"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onRequestQuote(program);
+                        }}
                     >
                         {button_message || 'Request Quote'}
                     </button>
@@ -506,6 +584,65 @@ const DayVisitPackageCards = ({ packages }: DayVisitCardsProps) => {
         </div>
     );
 };
+export function EventCard({
+    pkg,
+    events,
+}: {
+    pkg: EventItem;
+    events: EventPage[];
+}) {
+    const { setShowEventBookingModal, setSelectedEventItem } =
+        useSelectedPackage();
+
+    const handleOpenEventBooking = (pkg: EventItem) => {
+        setSelectedEventItem(pkg);
+        setShowEventBookingModal(true);
+    };
+    return (
+        <div
+            key={pkg.id}
+            className="card cursor-pointer"
+            onClick={() => handleOpenEventBooking(pkg)}
+        >
+            <div className="card-media">
+                <img src={pkg.image} alt={pkg.title} loading="lazy" />
+            </div>
+            <div className="card-pad">
+                <span
+                    className={`badge badge-${
+                        pkg.badge_content?.includes('Day')
+                            ? 'olive'
+                            : pkg.badge_content?.includes('Popular')
+                              ? 'gold'
+                              : pkg.badge_content?.includes('Social')
+                                ? 'gold'
+                                : 'neutral'
+                    }`}
+                >
+                    {pkg.badge_content}
+                </span>
+                <div className="h3">{pkg.title}</div>
+                <div className="small" style={{ marginTop: 4 }}>
+                    {pkg.subtitle}
+                </div>
+                <hr className="hr" />
+                <div
+                    className="small"
+                    dangerouslySetInnerHTML={{
+                        __html: pkg.description || '',
+                    }}
+                ></div>
+                <div style={{ height: 12 }} />
+                <button
+                    className="btn btn-secondary"
+                    onClick={() => handleOpenEventBooking(pkg)}
+                >
+                    {events[0]?.button_message || 'Request Proposal'}
+                </button>
+            </div>
+        </div>
+    );
+}
 export default function LandingPage({
     heroSection,
     offers,
@@ -593,6 +730,7 @@ export default function LandingPage({
         setQuoteInitialProgram(null);
         setShowSchoolQuoteModal(true);
     };
+
     return (
         <>
             <style>{styles}</style>
@@ -667,7 +805,7 @@ export default function LandingPage({
                             </div>
                             <div className="row">
                                 <button
-                                    className="btn btn-primary"
+                                    className="btn btn-secondary"
                                     onClick={handleOpenSchoolQuoteAll}
                                 >
                                     Request a school quote
@@ -686,6 +824,24 @@ export default function LandingPage({
                                 />
                             ))}
                         </div>
+
+                        <div>
+                            {schoolPrograms[0]?.what_you_get_message && (
+                                <div className="my-5 flex flex-col">
+                                    <div className="h3">
+                                        What you get with Each goDream program
+                                    </div>
+                                    <div
+                                        className=""
+                                        dangerouslySetInnerHTML={{
+                                            __html: schoolPrograms[0]
+                                                ?.what_you_get_message,
+                                        }}
+                                    />
+                                </div>
+                            )}
+                        </div>
+
                         <div className="mt-6 flex items-center justify-center">
                             <a
                                 className="btn btn-secondary"
@@ -714,56 +870,7 @@ export default function LandingPage({
                     <h2 className="h2">Event packages</h2>
                     <div className="grid-3">
                         {events[0]?.items?.map((pkg) => (
-                            <div key={pkg.id} className="card">
-                                <div className="card-media">
-                                    <img
-                                        src={pkg.image}
-                                        alt={pkg.title}
-                                        loading="lazy"
-                                    />
-                                </div>
-                                <div className="card-pad">
-                                    <span
-                                        className={`badge badge-${
-                                            pkg.badge_content?.includes('Day')
-                                                ? 'olive'
-                                                : pkg.badge_content?.includes(
-                                                        'Popular',
-                                                    )
-                                                  ? 'gold'
-                                                  : pkg.badge_content?.includes(
-                                                          'Social',
-                                                      )
-                                                    ? 'gold'
-                                                    : 'neutral'
-                                        }`}
-                                    >
-                                        {pkg.badge_content}
-                                    </span>
-                                    <div className="h3">{pkg.title}</div>
-                                    <div
-                                        className="small"
-                                        style={{ marginTop: 4 }}
-                                    >
-                                        {pkg.subtitle}
-                                    </div>
-                                    <hr className="hr" />
-                                    <div
-                                        className="small"
-                                        dangerouslySetInnerHTML={{
-                                            __html: pkg.description || '',
-                                        }}
-                                    ></div>
-                                    <div style={{ height: 12 }} />
-                                    <button
-                                        className="btn btn-secondary"
-                                        onClick={() => {}}
-                                    >
-                                        {events[0]?.button_message ||
-                                            'Request Proposal'}
-                                    </button>
-                                </div>
-                            </div>
+                            <EventCard pkg={pkg} events={events} />
                         ))}
                     </div>
                 </div>
@@ -771,6 +878,21 @@ export default function LandingPage({
 
             <section className="section" style={{ paddingTop: 0 }}>
                 <div className="container">
+                    <div className="mb-8 flex flex-col">
+                        <div className="h1">How to get here</div>
+                        {additionalDetails &&
+                            additionalDetails[0]
+                                ?.how_to_get_here_description && (
+                                <div
+                                    dangerouslySetInnerHTML={{
+                                        __html:
+                                            additionalDetails[0]
+                                                ?.how_to_get_here_description ||
+                                            '',
+                                    }}
+                                />
+                            )}
+                    </div>
                     <div
                         className="card"
                         style={{

@@ -556,10 +556,8 @@ export default function StayWithUs({
                     <div>
                         <div
                             style={{
-                                border: '1px solid rgba(184,146,75,0.22)',
-                                borderRadius: 20,
-                                padding: '20px 24px',
-                                marginBottom: 8,
+                                marginBottom: 25,
+                                marginTop: 22,
                             }}
                         >
                             <div className="rich-text-content">
@@ -580,7 +578,45 @@ export default function StayWithUs({
                         </div>
                     </div>
                 )}
-
+                {packages.length > 0 &&
+                    packages?.map((pkg) => (
+                        <section className="section" style={{ paddingTop: 0 }}>
+                            <div className="container">
+                                <h2 className="h2">{pkg?.title} Inclusions</h2>
+                                <p className="p">
+                                    {pkg.subtitle ||
+                                        'Enhance your event with unique add-on experiences.'}
+                                </p>
+                                <div className="grid-4">
+                                    {pkg?.items?.map((item) => (
+                                        <div
+                                            key={item.id}
+                                            className="card h-fit"
+                                        >
+                                            <div className="card-media">
+                                                <img
+                                                    src={item.image}
+                                                    alt={item.title}
+                                                    loading="lazy"
+                                                />
+                                            </div>
+                                            <div className="card-pad">
+                                                <div
+                                                    className="h4"
+                                                    style={{
+                                                        marginTop: 0,
+                                                        marginBottom: 4,
+                                                    }}
+                                                >
+                                                    {item.title}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </section>
+                    ))}
                 <section
                     id="dining"
                     className="section"
@@ -619,38 +655,6 @@ export default function StayWithUs({
                                     </span>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section
-                    id="amenities"
-                    className="section"
-                    style={{ paddingTop: 0 }}
-                >
-                    <div className="container">
-                        <h2 className="h2">Amenities</h2>
-                        <div className="grid-4">
-                            {amenities?.map(({ title, subtitle, image }) => (
-                                <div key={title} className="card">
-                                    <div className="amenity-card">
-                                        <b
-                                            style={{
-                                                fontSize: '0.95rem',
-                                                color: '#1a0f06',
-                                            }}
-                                        >
-                                            {title}
-                                        </b>
-                                        <div
-                                            className="small"
-                                            style={{ marginTop: 4 }}
-                                        >
-                                            {subtitle}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
                         </div>
                     </div>
                 </section>

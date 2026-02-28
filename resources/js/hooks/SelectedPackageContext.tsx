@@ -1,6 +1,16 @@
 import { DayVisitPackageItem, Package, Program } from '@/types';
 import React, { createContext, ReactNode, useContext, useState } from 'react';
 
+export interface EventItem {
+    id: number | string;
+    image?: string;
+    title?: string;
+    subtitle?: string;
+    description?: string;
+    badge_content?: string;
+    button_message?: string;
+}
+
 interface SelectedPackageContextType {
     showSelectedPackageModal: boolean;
     setShowSelectedPackageModal: (show: boolean) => void;
@@ -14,6 +24,10 @@ interface SelectedPackageContextType {
     setShowSchoolQuoteModal: (v: boolean) => void;
     quoteInitialProgram: Program | null;
     setQuoteInitialProgram: (p: Program | null) => void;
+    showEventBookingModal: boolean;
+    setShowEventBookingModal: (v: boolean) => void;
+    selectedEventItem: EventItem | null;
+    setSelectedEventItem: (item: EventItem | null) => void;
 }
 
 const SelectedPackageContext = createContext<
@@ -34,6 +48,10 @@ export const SelectedPackageProvider: React.FC<{ children: ReactNode }> = ({
     const [showSchoolQuoteModal, setShowSchoolQuoteModal] = useState(false);
     const [quoteInitialProgram, setQuoteInitialProgram] =
         useState<Program | null>(null);
+    const [showEventBookingModal, setShowEventBookingModal] = useState(false);
+    const [selectedEventItem, setSelectedEventItem] =
+        useState<EventItem | null>(null);
+
     return (
         <SelectedPackageContext.Provider
             value={{
@@ -49,6 +67,10 @@ export const SelectedPackageProvider: React.FC<{ children: ReactNode }> = ({
                 setShowSchoolQuoteModal,
                 quoteInitialProgram,
                 setQuoteInitialProgram,
+                showEventBookingModal,
+                setShowEventBookingModal,
+                selectedEventItem,
+                setSelectedEventItem,
             }}
         >
             {children}

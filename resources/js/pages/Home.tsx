@@ -60,6 +60,7 @@ const Home: React.FC<HomeProps> = ({
                 events={events}
                 dayVisitPackages={dayVisitPackages}
                 abouts={abouts}
+                categories={categories}
             />
             <TabComponent images={images} categories={categories} />
         </>
