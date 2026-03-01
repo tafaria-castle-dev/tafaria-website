@@ -23,7 +23,7 @@ const styles = `
     background: rgba(184,146,75,0.18); color: #7a5520; border: 1px solid rgba(184,146,75,0.4);
   }
 
-  .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+  .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; align-items:center;justify-content:center; }
   .chip {
     border: 1px solid rgba(184,146,75,0.25);
     background: rgba(255,255,255,0.7);
@@ -474,7 +474,7 @@ export default function ImageGallery({
                 <section className="py-0">
                     <div className="container">
                         <h1 className="h1">See Us In Pictures</h1>
-                        <p className="p-lg m-0">
+                        <p className="p m-0">
                             A visual tour of Tafaria Castle & Center for the
                             Arts
                         </p>

@@ -45,7 +45,7 @@ const BlogPost: React.FC<BlogPostProps> = ({
         <>
             <div>
                 <div className="flex items-center bg-white">
-                    <div className="container mx-auto mt-16 p-4">
+                    <div className="mt-16 p-4">
                         <div
                             className={`font-barlow-condensed m-5 mx-auto mt-5 flex w-full flex-col rounded-lg bg-white p-5 shadow-lg transition-shadow duration-300 hover:shadow-xl`}
                         >

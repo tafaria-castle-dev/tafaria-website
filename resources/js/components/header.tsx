@@ -97,12 +97,14 @@ const Header: React.FC = () => {
                     <a href="tel:070015000" className="text-xs text-black">
                         0700151480
                     </a>
-                    <a
-                        href="mailto:info@tafaria.com"
-                        className="text-xs text-black"
-                    >
-                        info@tafaria.com
-                    </a>
+                    {!isMobileView && (
+                        <a
+                            href="mailto:info@tafaria.com"
+                            className="text-xs text-black"
+                        >
+                            info@tafaria.com
+                        </a>
+                    )}
                     <button
                         onClick={() => setShowBookingModal(true)}
                         //onClick={() => (window.location.href = '/rates')}

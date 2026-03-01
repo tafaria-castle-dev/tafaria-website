@@ -239,7 +239,7 @@ export function ReadMoreText({
     const shouldTruncate = isMobile && text.length > limit;
 
     return (
-        <p>
+        <p className="p">
             {shouldTruncate && !expanded
                 ? text.slice(0, limit).trimEnd() + '…'
                 : text}
@@ -664,7 +664,7 @@ export function EventCard({
                 </div>
                 <hr className="hr" />
                 <div
-                    className="small"
+                    className="pkg-rich-content"
                     dangerouslySetInnerHTML={{
                         __html: pkg.description || '',
                     }}
@@ -902,7 +902,7 @@ export default function LandingPage({
                         <h1 className="h1">
                             {events[0]?.title || 'Host your event at Tafaria'}
                         </h1>
-                        <p className="p-lg">
+                        <p className="p">
                             {events[0]?.subtitle ||
                                 'Whether you are planning a corporate retreat, a team offsite, a wedding, or a family reunion, Tafaria offers a unique blend of inspiring spaces, delicious food, and memorable experiences to make your event truly special.'}
                         </p>
@@ -924,6 +924,7 @@ export default function LandingPage({
                             additionalDetails[0]
                                 ?.how_to_get_here_description && (
                                 <div
+                                    className="pkg-rich-content"
                                     dangerouslySetInnerHTML={{
                                         __html:
                                             additionalDetails[0]

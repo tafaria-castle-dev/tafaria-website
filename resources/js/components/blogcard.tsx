@@ -44,7 +44,7 @@ const BlogCard: React.FC<BlogCardProps> = ({
     return (
         <Link href={postUrl} className="block">
             <div className="flex items-center bg-white">
-                <div className="container mx-auto p-4">
+                <div className="p-4">
                     <div
                         className={`font-barlow-condensed mx-auto flex w-full flex-col rounded-lg bg-white px-3 py-5 shadow-lg transition-shadow duration-300 hover:shadow-xl`}
                     >

@@ -17,6 +17,7 @@ import {
     Room,
 } from '@/types/types';
 import axios from 'axios';
+import DOMPurify from 'dompurify';
 import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -484,7 +485,11 @@ export default function RackRates() {
         ratesDescriptions,
         'introduction',
     );
+    const rawHtml =
+        introductionDescription?.description ||
+        'Visit for the day, stay overnight, bring a school, host an event, or apply for an art residency — Tafaria makes learning and leisure feel magical through its two packages below.';
 
+    const processedHtml = rawHtml.replace(/<h1[^>]*>.*?<\/h1>/gis, '');
     return (
         <>
             {showDatePicker && (
@@ -586,23 +591,31 @@ export default function RackRates() {
                                 className="text-lg md:text-2xl"
                                 style={{ marginBottom: 16 }}
                                 dangerouslySetInnerHTML={{
-                                    __html:
-                                        introductionDescription.description ||
-                                        '',
+                                    __html: DOMPurify.sanitize(processedHtml),
                                 }}
                             />
                             <div className="mt-2 flex w-full flex-wrap justify-center gap-4">
                                 {packages?.map((pkg) => {
                                     return (
                                         <button
-                                            className={`flex-1 rounded-xl px-6 py-3 text-base font-semibold transition-all sm:text-lg ${activeTab === pkg ? 'bg-[#902729] text-white' : 'bg-gray-200 text-gray-800 hover:bg-[#9c7833]/60'}`}
+                                            className={`min-w-[250px] flex-1 rounded-xl px-6 py-3 text-base font-semibold transition-all sm:text-lg ${activeTab === pkg ? 'bg-[#902729] text-white' : 'bg-[#9c7833]/40 text-gray-800 hover:bg-[#9c7833]/60'}`}
                                             onClick={() => setActiveTab(pkg)}
                                         >
                                             {pkg.title}
                                         </button>
                                     );
                                 })}
-                            </div>
+                            </div>{' '}
+                            {activeTab?.description && (
+                                <div className="my-8 rounded-2xl p-6">
+                                    <p
+                                        className="mb-4 text-base text-gray-800 sm:text-lg"
+                                        dangerouslySetInnerHTML={{
+                                            __html: activeTab?.description,
+                                        }}
+                                    ></p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}

@@ -405,14 +405,14 @@ export const ExperiencesTab: React.FC<ExperiencesTabProps> = ({
     return (
         <div className="space-y-6">
             <section aria-labelledby="room-rates">
-                {description && (
+                {/* {description && (
                     <div className="mb-8 rounded-2xl border border-[#9c7833]/60 bg-white/80 p-6">
                         <p
                             className="mb-4 text-base text-gray-800 sm:text-lg"
                             dangerouslySetInnerHTML={{ __html: description }}
                         ></p>
                     </div>
-                )}
+                )} */}
                 <div className="mb-4 flex space-x-2">
                     {['FB', 'HB', 'BB'].map((type) => (
                         <button

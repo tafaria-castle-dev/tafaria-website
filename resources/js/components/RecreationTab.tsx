@@ -309,14 +309,14 @@ export const RecreationTab: React.FC<RecreationTabProps> = ({
 
     return (
         <div className="space-y-6">
-            {description && (
+            {/* {description && (
                 <div className="mb-8 rounded-2xl border border-[#9c7833]/60 bg-white/80 p-6">
                     <p
                         className="mb-4 text-base text-gray-800 sm:text-lg"
                         dangerouslySetInnerHTML={{ __html: description }}
                     ></p>
                 </div>
-            )}
+            )} */}
 
             <section aria-labelledby="leisure-room-rates">
                 <div className="mb-4 flex space-x-2">

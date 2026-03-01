@@ -94,7 +94,7 @@ const Stories: React.FC<StoriesProps> = ({ categories }) => {
                             className="absolute top-1/2 left-2 z-10 flex -translate-y-1/2 transform items-center justify-center rounded-full bg-[#9f4446] p-3 transition-colors duration-200 hover:bg-[#b35557]"
                             aria-label="Scroll Left"
                         >
-                            <FaChevronLeft className="text-xl text-black" />
+                            <FaChevronLeft className="text-xl text-white" />
                         </button>
                     )}
                     <div
@@ -141,7 +141,7 @@ const Stories: React.FC<StoriesProps> = ({ categories }) => {
                             className="absolute top-1/2 right-2 z-10 flex -translate-y-1/2 transform items-center justify-center rounded-full bg-[#9f4446] p-3 transition-colors duration-200 hover:bg-[#b35557]"
                             aria-label="Scroll Right"
                         >
-                            <FaChevronRight className="text-xl text-black" />
+                            <FaChevronRight className="text-xl text-white" />
                         </button>
                     )}
                 </div>

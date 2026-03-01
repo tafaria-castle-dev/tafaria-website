@@ -482,7 +482,7 @@ export default function StayWithUs({
         'Visit for the day, stay overnight, bring a school, host an event, or apply for an art residency — Tafaria makes learning and leisure feel magical through its two packages below.';
 
     const processedHtml = rawHtml
-        .replace(/<h1([^>]*)>/gi, '<h1 class="h1"$1>')
+        .replace(/<h1[^>]*>.*?<\/h1>/gis, '')
         .replace(/<h2([^>]*)>/gi, '<h2 class="rich-h2"$1>');
     return (
         <>
