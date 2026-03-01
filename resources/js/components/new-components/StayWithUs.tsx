@@ -567,7 +567,7 @@ export default function StayWithUs({
                                             processedHtml,
                                         ),
                                     }}
-                                    className="flex flex-col items-center justify-center"
+                                    className="mx-auto flex max-w-6xl flex-col items-center justify-center text-center"
                                 ></div>
                             </div>
                             <PackagesCards
