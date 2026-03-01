@@ -2,6 +2,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 
 import { About } from '@/types';
+import DOMPurify from 'dompurify';
 import { Suspense, useEffect, useState } from 'react';
 
 interface AboutsIntroProps {
@@ -24,6 +25,12 @@ const AboutsIntro: React.FC<AboutsIntroProps> = ({ abouts }) => {
 
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
+
+    const processedHtml = (rawHtml: string) => {
+        return rawHtml
+            .replace(/<h1([^>]*)>/gi, '<h1 class="h1"$1>')
+            .replace(/<h2([^>]*)>/gi, '<h3 class="h3"$1>');
+    };
     return (
         <Suspense
             fallback={
@@ -34,55 +41,61 @@ const AboutsIntro: React.FC<AboutsIntroProps> = ({ abouts }) => {
         >
             <div className="flex justify-center">
                 <div className="mx-auto max-w-3xl px-4 py-2 text-center">
-                    {abouts.map((about: About, index: number) => (
-                        <div key={index} className="mb-2">
-                            {/* <h2 className={`text-3xl font-bold text-[#94723C]`}>
+                    {abouts.map((about: About, index: number) => {
+                        const rawHtml =
+                            !expanded && isMobile
+                                ? about.content.slice(0, 400)
+                                : about.content;
+                        return (
+                            <div
+                                key={index}
+                                className="mb-2 flex flex-col items-center"
+                            >
+                                {/* <h2 className={`text-3xl font-bold text-[#94723C]`}>
                                 {about.name}
                             </h2> */}
-                            <h3 className="mt-1 text-xl text-[#902729] sm:text-3xl">
-                                {about.title}
-                            </h3>
-                            <div className="mt-4 text-gray-700">
-                                <div className="relative text-gray-700">
-                                    <AnimatePresence mode="wait">
-                                        <motion.div
-                                            key={
-                                                expanded
-                                                    ? 'expanded'
-                                                    : 'collapsed'
-                                            }
-                                            initial={{ opacity: 0, y: 10 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0, y: -10 }}
-                                            transition={{ duration: 0.3 }}
-                                            dangerouslySetInnerHTML={{
-                                                __html:
-                                                    !expanded && isMobile
-                                                        ? about.content.slice(
-                                                              0,
-                                                              400,
-                                                          )
-                                                        : about.content,
-                                            }}
-                                        ></motion.div>
-                                    </AnimatePresence>
+                                <h3 className="h2 mt-1 text-[#902729]">
+                                    {about.title}
+                                </h3>
+                                <div className="mt-4 text-gray-700">
+                                    <div className="relative text-gray-700">
+                                        <AnimatePresence mode="wait">
+                                            <motion.div
+                                                key={
+                                                    expanded
+                                                        ? 'expanded'
+                                                        : 'collapsed'
+                                                }
+                                                initial={{ opacity: 0, y: 10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: -10 }}
+                                                transition={{ duration: 0.3 }}
+                                                className="flex flex-col items-center"
+                                                dangerouslySetInnerHTML={{
+                                                    __html: DOMPurify.sanitize(
+                                                        processedHtml(rawHtml),
+                                                    ),
+                                                }}
+                                            ></motion.div>
+                                        </AnimatePresence>
 
-                                    {shouldTruncate && (
-                                        <button
-                                            onClick={() =>
-                                                setExpanded(!expanded)
-                                            }
-                                            className="cursor-pointer items-center text-xs text-[#902729] transition duration-300 hover:text-[#b33235] hover:underline"
-                                        >
-                                            {expanded
-                                                ? 'Read Less'
-                                                : 'Read More'}
-                                        </button>
-                                    )}
+                                        {shouldTruncate && (
+                                            <button
+                                                onClick={() =>
+                                                    setExpanded(!expanded)
+                                                }
+                                                className="cursor-pointer items-center text-xs text-[#902729] transition duration-300 hover:text-[#b33235] hover:underline"
+                                            >
+                                                {expanded
+                                                    ? 'Read Less'
+                                                    : 'Read More'}
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                     <p
                         className={`font-parisienne text-3xl text-[#94723C] italic`}
                     >

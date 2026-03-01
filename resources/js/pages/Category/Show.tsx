@@ -354,12 +354,6 @@ export default function CategoryShow({
                         )}
 
                         <div className="container mx-auto overflow-x-auto pb-4">
-                            {slug.toLowerCase() !== 'blogs' &&
-                                slug.toLowerCase() !== 'arts' && (
-                                    <h1 className="h1 p-4 text-3xl font-bold text-[#902729]">
-                                        {category.name} Blogs
-                                    </h1>
-                                )}
                             {displayPosts?.map((item, index) => (
                                 <div key={index}>
                                     <div

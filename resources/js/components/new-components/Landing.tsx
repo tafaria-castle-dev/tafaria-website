@@ -223,8 +223,45 @@ function Badge({
               : 'badge badge-gold';
     return <span className={cls}>{children}</span>;
 }
-const DESCRIPTION_CHAR_LIMIT = 180;
+const DESCRIPTION_CHAR_LIMIT = 220;
+export function ReadMoreText({
+    text,
+    limit = 180,
+}: {
+    text: string;
+    limit?: number;
+}) {
+    const [expanded, setExpanded] = useState(false);
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
 
+    if (!text) return null;
+
+    const shouldTruncate = isMobile && text.length > limit;
+
+    return (
+        <p className="p-lg">
+            {shouldTruncate && !expanded
+                ? text.slice(0, limit).trimEnd() + '…'
+                : text}
+            {shouldTruncate && (
+                <button
+                    onClick={() => setExpanded((p) => !p)}
+                    style={{
+                        background: 'none',
+                        border: 'none',
+                        padding: '0 0 0 6px',
+                        cursor: 'pointer',
+                        color: '#b8924b',
+                        fontWeight: 600,
+                        fontSize: '0.85rem',
+                    }}
+                >
+                    {expanded ? 'Show less' : 'Read more'}
+                </button>
+            )}
+        </p>
+    );
+}
 export function SchoolCard({
     program,
     button_message,
@@ -798,10 +835,13 @@ export default function LandingPage({
                                 <h2 className="h2">
                                     {schoolPrograms[0]?.title}
                                 </h2>
-                                <p className="p" style={{ marginBottom: 0 }}>
-                                    {schoolPrograms[0]?.subtitle ||
-                                        'School Programs'}
-                                </p>
+                                <ReadMoreText
+                                    text={
+                                        schoolPrograms[0]?.subtitle ||
+                                        'School Programs'
+                                    }
+                                    limit={200}
+                                />
                             </div>
                             <div className="row">
                                 <button
@@ -832,7 +872,7 @@ export default function LandingPage({
                                         What you get with Each goDream program
                                     </div>
                                     <div
-                                        className=""
+                                        className="pkg-rich-content"
                                         dangerouslySetInnerHTML={{
                                             __html: schoolPrograms[0]
                                                 ?.what_you_get_message,

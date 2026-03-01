@@ -1,7 +1,7 @@
 import { useSelectedPackage } from '@/hooks/SelectedPackageContext';
 import { Program, SchoolAdditional, SchoolProgram } from '@/types';
 import { useRef, useState } from 'react';
-import { SchoolCard } from './Landing';
+import { ReadMoreText, SchoolCard } from './Landing';
 
 interface QuoteForm {
     schoolName: string;
@@ -151,10 +151,13 @@ export default function GoDreamPage({
                                 <h2 className="h2">
                                     {schoolPrograms[0]?.title}
                                 </h2>
-                                <p className="p" style={{ marginBottom: 0 }}>
-                                    {schoolPrograms[0]?.subtitle ||
-                                        'School Programs'}
-                                </p>
+                                <ReadMoreText
+                                    text={
+                                        schoolPrograms[0]?.subtitle ||
+                                        'Whether you are planning a corporate retreat, a team offsite, a wedding, or a family reunion, Tafaria offers a unique blend of inspiring spaces, delicious food, and memorable experiences to make your event truly special.'
+                                    }
+                                    limit={120}
+                                />
                             </div>
                             <div className="row">
                                 <button
@@ -176,6 +179,22 @@ export default function GoDreamPage({
                                     onRequestQuote={handleRequestQuote}
                                 />
                             ))}
+                        </div>
+                        <div>
+                            {schoolPrograms[0]?.what_you_get_message && (
+                                <div className="my-5 flex flex-col">
+                                    <div className="h3">
+                                        What you get with Each goDream program
+                                    </div>
+                                    <div
+                                        className="pkg-rich-content"
+                                        dangerouslySetInnerHTML={{
+                                            __html: schoolPrograms[0]
+                                                ?.what_you_get_message,
+                                        }}
+                                    />
+                                </div>
+                            )}
                         </div>
 
                         <div style={{ height: 20 }} />
