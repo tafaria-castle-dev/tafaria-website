@@ -183,7 +183,7 @@ export default function GoDreamPage({
                         <div>
                             {schoolPrograms[0]?.what_you_get_message && (
                                 <div className="my-5 flex flex-col">
-                                    <div className="h3">
+                                    <div className="h2">
                                         What you get with Each goDream program
                                     </div>
                                     <div

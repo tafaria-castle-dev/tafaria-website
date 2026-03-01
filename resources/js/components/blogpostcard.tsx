@@ -115,7 +115,7 @@ const BlogPostCard: React.FC<BlogCardProps> = ({
     };
 
     return (
-        <div className="flex items-center bg-white shadow-md">
+        <div className="flex items-center bg-white">
             <div className="container mx-auto p-3">
                 <div
                     ref={cardRef}

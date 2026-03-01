@@ -1,10 +1,12 @@
 import { DatePickerModal } from '@/components/DatePickerModal';
 import { ExperiencesTab } from '@/components/ExperiencesTab';
+import { getTabType } from '@/components/new-components/SelectedPackageModal';
 import { RecreationTab } from '@/components/RecreationTab';
 import { SelectionModal } from '@/components/SelectionModal';
 import { useRatesBooking } from '@/hooks/RatesCartContext';
 import { calculateNights, isHoliday } from '@/lib/dateUtils';
 import { getKidsMealCost, getRoomRate, getSupplement } from '@/lib/rateUtils';
+import { Package } from '@/types';
 import {
     ConferencePackage,
     LeisureExperience,
@@ -13,7 +15,6 @@ import {
     RatesDescription,
     Residency,
     Room,
-    TabType,
 } from '@/types/types';
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
@@ -29,7 +30,7 @@ export default function RackRates() {
         setBoardType,
     } = useRatesBooking();
 
-    const [activeTab, setActiveTab] = useState<TabType>('experiences');
+    const [activeTab, setActiveTab] = useState<Package | null>(null);
     const [residency, setResidency] = useState<Residency>(
         'East African Resident',
     );
@@ -43,6 +44,7 @@ export default function RackRates() {
     const [ratesDescriptions, setRatesDescriptions] = useState<
         RatesDescription[]
     >([]);
+    const [packages, setPackages] = useState<Package[]>([]);
     const [hoveredItem, setHoveredItem] = useState<string | null>(null);
     const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
     const [selectedLeisureRoom, setSelectedLeisureRoom] =
@@ -76,6 +78,7 @@ export default function RackRates() {
                     confRes,
                     leisureRes,
                     descriptionsRes,
+                    packagesRes,
                 ] = await Promise.all([
                     axios.get('https://website-cms.tafaria.com/api/rooms'),
                     axios.get(
@@ -91,6 +94,7 @@ export default function RackRates() {
                     axios.get(
                         'https://website-cms.tafaria.com/api/rates-descriptions',
                     ),
+                    axios.get('https://website-cms.tafaria.com/api/packages'),
                 ]);
                 setRooms(roomsRes.data.data || []);
                 setLeisureRooms(leisureRoomsRes.data.data || []);
@@ -98,6 +102,7 @@ export default function RackRates() {
                 setConferences(confRes.data.data || []);
                 setLeisureExperiences(leisureRes.data || []);
                 setRatesDescriptions(descriptionsRes.data || []);
+                setPackages(packagesRes.data.data || []);
             } catch (error) {
                 console.error('Failed to fetch data:', error);
             } finally {
@@ -450,7 +455,7 @@ export default function RackRates() {
         closeModal();
     };
     const TYPE_GROUPS = {
-        experience: ['arts', 'package', 'essence', 'museum', 'herbarium'],
+        experience: ['arts', 'essence', 'museum', 'herbarium', 'immersion'],
         introduction: ['introduction', 'two'],
         recreation: [
             'leisure',
@@ -474,17 +479,10 @@ export default function RackRates() {
             ),
         );
     };
-    const experienceDescription = findDescriptionByGroup(
-        ratesDescriptions,
-        'experience',
-    );
+
     const introductionDescription = findDescriptionByGroup(
         ratesDescriptions,
         'introduction',
-    );
-    const leisureDescription = findDescriptionByGroup(
-        ratesDescriptions,
-        'recreation',
     );
 
     return (
@@ -594,27 +592,25 @@ export default function RackRates() {
                                 }}
                             />
                             <div className="mt-2 flex w-full flex-wrap justify-center gap-4">
-                                <button
-                                    className={`flex-1 rounded-xl px-6 py-3 text-base font-semibold transition-all sm:text-lg ${activeTab === 'experiences' ? 'bg-[#902729] text-white' : 'bg-gray-200 text-gray-800 hover:bg-[#9c7833]/60'}`}
-                                    onClick={() => setActiveTab('experiences')}
-                                >
-                                    {experienceDescription?.type}
-                                </button>
-                                <button
-                                    className={`flex-1 rounded-xl px-6 py-3 text-base font-semibold transition-all sm:text-lg ${activeTab === 'recreation' ? 'bg-[#902729] text-white' : 'bg-gray-400 text-gray-800 hover:bg-[#9c7833]/60'}`}
-                                    onClick={() => setActiveTab('recreation')}
-                                >
-                                    {leisureDescription?.type}
-                                </button>
+                                {packages?.map((pkg) => {
+                                    return (
+                                        <button
+                                            className={`flex-1 rounded-xl px-6 py-3 text-base font-semibold transition-all sm:text-lg ${activeTab === pkg ? 'bg-[#902729] text-white' : 'bg-gray-200 text-gray-800 hover:bg-[#9c7833]/60'}`}
+                                            onClick={() => setActiveTab(pkg)}
+                                        >
+                                            {pkg.title}
+                                        </button>
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>
                 )}
                 <div className="mx-3">
                     <div className="container mx-auto py-4 sm:py-6 lg:py-8">
-                        {activeTab === 'experiences' && (
+                        {getTabType(activeTab) === 'experience' && (
                             <ExperiencesTab
-                                description={experienceDescription}
+                                description={activeTab?.description}
                                 rooms={rooms}
                                 meals={meals}
                                 conferences={conferences}
@@ -632,10 +628,11 @@ export default function RackRates() {
                             />
                         )}
 
-                        {activeTab === 'recreation' && (
+                        {getTabType(activeTab) === 'recreation' && (
                             <RecreationTab
-                                description={leisureDescription}
+                                description={activeTab?.description || ''}
                                 leisureRooms={leisureRooms}
+                                meals={meals}
                                 leisureExperiences={leisureExperiences}
                                 hoveredItem={hoveredItem}
                                 setHoveredItem={setHoveredItem}

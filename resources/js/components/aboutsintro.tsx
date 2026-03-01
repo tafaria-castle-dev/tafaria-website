@@ -54,7 +54,7 @@ const AboutsIntro: React.FC<AboutsIntroProps> = ({ abouts }) => {
                                 {/* <h2 className={`text-3xl font-bold text-[#94723C]`}>
                                 {about.name}
                             </h2> */}
-                                <h3 className="h2 mt-1 text-[#902729]">
+                                <h3 className="h1 mt-1 text-[#902729]">
                                     {about.title}
                                 </h3>
                                 <div className="mt-4 text-gray-700">

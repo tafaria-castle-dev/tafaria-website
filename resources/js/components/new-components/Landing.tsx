@@ -239,7 +239,7 @@ export function ReadMoreText({
     const shouldTruncate = isMobile && text.length > limit;
 
     return (
-        <p className="p-lg">
+        <p>
             {shouldTruncate && !expanded
                 ? text.slice(0, limit).trimEnd() + '…'
                 : text}
@@ -832,7 +832,7 @@ export default function LandingPage({
                     <div className="">
                         <div className="strip-header">
                             <div>
-                                <h2 className="h2">
+                                <h2 className="h1">
                                     {schoolPrograms[0]?.title}
                                 </h2>
                                 <ReadMoreText
@@ -868,11 +868,11 @@ export default function LandingPage({
                         <div>
                             {schoolPrograms[0]?.what_you_get_message && (
                                 <div className="my-5 flex flex-col">
-                                    <div className="h3">
+                                    <div className="h2">
                                         What you get with Each goDream program
                                     </div>
                                     <div
-                                        className="pkg-rich-content"
+                                        className="pkg-rich-content centered"
                                         dangerouslySetInnerHTML={{
                                             __html: schoolPrograms[0]
                                                 ?.what_you_get_message,

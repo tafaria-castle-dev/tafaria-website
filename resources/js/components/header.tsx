@@ -24,15 +24,15 @@ const Header: React.FC = () => {
 
     return (
         <header
-            className="w-full shadow-md"
-            style={{
-                backgroundImage: `url(/assets/flower-bg.png), url(/assets/flower-bg.png), url(/assets/flower-bg.png)`,
-                backgroundPosition: '5% 40%, 50% 50%, 90% 35%',
-                backgroundRepeat: 'no-repeat, no-repeat, no-repeat',
-                backgroundSize:
-                    'clamp(300px, 30vw, 600px) auto, clamp(300px, 30vw, 600px) auto, clamp(300px, 30vw, 600px) auto',
-                backgroundColor: '#020202',
-            }}
+            className="header w-full shadow-md"
+            // style={{
+            //     backgroundImage: `url(/assets/flower-bg.png), url(/assets/flower-bg.png), url(/assets/flower-bg.png)`,
+            //     backgroundPosition: '5% 40%, 50% 50%, 90% 35%',
+            //     backgroundRepeat: 'no-repeat, no-repeat, no-repeat',
+            //     backgroundSize:
+            //         'clamp(300px, 30vw, 600px) auto, clamp(300px, 30vw, 600px) auto, clamp(300px, 30vw, 600px) auto',
+            //     backgroundColor: '#020202',
+            // }}
         >
             <div className="container mx-auto flex items-center justify-between px-4">
                 <div className="flex items-center">
@@ -46,7 +46,7 @@ const Header: React.FC = () => {
                         />
                     </Link>
                     {!isMobileView && (
-                        <h1 className="ml-2 text-white">
+                        <h1 className="ml-2 text-black">
                             Tafaria Castle & Center for the Arts
                         </h1>
                     )}
@@ -59,7 +59,7 @@ const Header: React.FC = () => {
                             rel="noopener noreferrer"
                         >
                             <FaWhatsapp
-                                className="rounded-full p-2 text-white"
+                                className="rounded-full p-2 text-black"
                                 size={40}
                             />
                         </a>
@@ -69,7 +69,7 @@ const Header: React.FC = () => {
                             rel="noopener noreferrer"
                         >
                             <FaFacebook
-                                className="rounded-full p-2 text-white"
+                                className="rounded-full p-2 text-black"
                                 size={40}
                             />
                         </a>
@@ -79,7 +79,7 @@ const Header: React.FC = () => {
                             rel="noopener noreferrer"
                         >
                             <FaInstagramSquare
-                                className="rounded-full p-2 text-white"
+                                className="rounded-full p-2 text-black"
                                 size={40}
                             />
                         </a>
@@ -90,16 +90,16 @@ const Header: React.FC = () => {
                         rel="noopener noreferrer"
                     >
                         <FaLocationDot
-                            className="rounded-full p-2 text-white"
+                            className="rounded-full p-2 text-black"
                             size={40}
                         />
                     </a>
-                    <a href="tel:070015000" className="text-xs text-white">
+                    <a href="tel:070015000" className="text-xs text-black">
                         0700151480
                     </a>
                     <a
                         href="mailto:info@tafaria.com"
-                        className="text-xs text-white"
+                        className="text-xs text-black"
                     >
                         info@tafaria.com
                     </a>
@@ -113,7 +113,7 @@ const Header: React.FC = () => {
                     {cart.length > 0 && (
                         <button
                             onClick={() => setShowCart(true)}
-                            className={`relative flex items-center rounded-md px-5 py-2 text-sm font-semibold text-white sm:px-6 sm:py-2 sm:text-base`}
+                            className={`relative flex items-center rounded-md px-5 py-2 text-sm font-semibold text-black sm:px-6 sm:py-2 sm:text-base`}
                         >
                             <div className="relative">
                                 <ShoppingCart className="mr-2 h-5 w-5" />

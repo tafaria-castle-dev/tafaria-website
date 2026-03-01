@@ -5,7 +5,7 @@ import { useRatesBooking } from '@/hooks/RatesCartContext';
 import { useSelectedPackage } from '@/hooks/SelectedPackageContext';
 import { calculateNights, isHoliday } from '@/lib/dateUtils';
 import { getKidsMealCost, getRoomRate, getSupplement } from '@/lib/rateUtils';
-import { DayVisitPackageItem } from '@/types';
+import { DayVisitPackageItem, Package } from '@/types';
 import {
     ConferencePackage,
     LeisureExperience,
@@ -320,7 +320,19 @@ const styles = `
   }
   .upsell-decline:hover { background: rgba(90,62,43,0.05); }
 `;
-
+const TYPE_GROUPS = {
+    experience: ['arts', 'essence', 'museum', 'herbarium', 'immersion'],
+    recreation: ['leisure', 'recreation', 'activities', 'archery', 'mini golf'],
+} as const;
+export const getTabType = (pkg: Package | null) => {
+    const title = pkg?.title?.toLowerCase();
+    const description = pkg?.description?.toLowerCase();
+    if (TYPE_GROUPS.experience.some((k) => title?.includes(k)))
+        return 'experience';
+    if (TYPE_GROUPS.recreation.some((k) => title?.includes(k)))
+        return 'recreation';
+    return null;
+};
 export default function SelectedPackageModal() {
     const {
         showBookingModal,
@@ -777,40 +789,6 @@ export default function SelectedPackageModal() {
         closeModal();
     };
 
-    const TYPE_GROUPS = {
-        experience: ['arts', 'essence', 'museum', 'herbarium', 'immersion'],
-        recreation: [
-            'leisure',
-            'recreation',
-            'activities',
-            'archery',
-            'mini golf',
-        ],
-    } as const;
-
-    const getTabType = (title: string) => {
-        const lower = title.toLowerCase();
-        if (TYPE_GROUPS.experience.some((k) => lower.includes(k)))
-            return 'experience';
-        if (TYPE_GROUPS.recreation.some((k) => lower.includes(k)))
-            return 'recreation';
-        return null;
-    };
-
-    const findDesc = (
-        group: keyof typeof TYPE_GROUPS,
-    ): RatesDescription | undefined =>
-        ratesDescriptions.find((d) =>
-            TYPE_GROUPS[group].some(
-                (t) =>
-                    d.type.toLowerCase().includes(t) ||
-                    d.description.toLowerCase().includes(t),
-            ),
-        );
-
-    const experienceDescription = findDesc('experience');
-    const leisureDescription = findDesc('recreation');
-
     const handlePkgContinue = () => {
         if (!checkIn || !checkOut) {
             toast.error('Please select both check-in and check-out dates.');
@@ -820,7 +798,7 @@ export default function SelectedPackageModal() {
     };
 
     const selectedPackageType = selectedPackage
-        ? getTabType(selectedPackage.title ?? '')
+        ? getTabType(selectedPackage)
         : null;
 
     const upsellGuestCount = numAdults + numKids4to11;

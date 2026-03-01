@@ -330,108 +330,132 @@ export default function CategoryShow({
 
                 {category && type !== 'videos' && type !== 'images' && (
                     <div className="relative flex flex-col items-center">
-                        {slug.toLowerCase() === 'accommodation' && (
-                            <StayWithUs
-                                packages={packages}
-                                dining={dining}
-                                amenities={amenities}
-                                dayVisitPackages={dayVisitPackages}
-                            />
-                        )}
                         {slug.toLowerCase() === 'godream' && (
                             <GoDreamPage
                                 schoolPrograms={schoolPrograms}
                                 schoolAdditional={schoolAdditional}
                             />
                         )}
-                        {slug.toLowerCase() === 'conference' && (
-                            <>
-                                <EventsPage
-                                    events={events}
-                                    eventAddons={eventAddons}
-                                />
-                            </>
-                        )}
 
                         <div className="container mx-auto overflow-x-auto pb-4">
-                            {displayPosts?.map((item, index) => (
-                                <div key={index}>
-                                    <div
-                                        ref={(el) => {
-                                            if (el)
-                                                cardRefs.current[item.slug] =
-                                                    el;
-                                        }}
-                                        className="flex-shrink-0 snap-start"
-                                    >
-                                        {slug === 'blogs' ? (
-                                            <BlogPostCard
-                                                id={item.slug}
-                                                imageUrls={item.images || []}
-                                                videoUrls={item.videos || []}
-                                                slug={item.slug}
-                                                type={slug}
-                                                title={item.title}
-                                                created_at={
-                                                    item.created_at || ''
-                                                }
-                                                content={item.content}
-                                                forceCollapse={collapseAll}
-                                                onToggle={(expanded) => {
-                                                    if (expanded) {
-                                                        setHasExpandedPosts(
-                                                            true,
-                                                        );
-                                                    } else if (
-                                                        !expanded &&
-                                                        !collapseAll
-                                                    ) {
-                                                        setHasExpandedPosts(
-                                                            displayPosts?.some(
-                                                                (post, i) => {
-                                                                    if (
-                                                                        i ===
-                                                                        index
-                                                                    )
-                                                                        return false;
-                                                                    const ref =
-                                                                        cardRefs
-                                                                            .current[
-                                                                            post
-                                                                                .slug
-                                                                        ];
-                                                                    return (
-                                                                        ref &&
-                                                                        ref.getAttribute(
-                                                                            'data-expanded',
-                                                                        ) ===
-                                                                            'true'
-                                                                    );
-                                                                },
-                                                            ) || false,
-                                                        );
+                            {displayPosts?.map((item, index) => {
+                                return (
+                                    <div key={index}>
+                                        {slug.toLowerCase() ===
+                                            'accommodation' &&
+                                            index === 2 && (
+                                                <div className="mt-15">
+                                                    <StayWithUs
+                                                        packages={packages}
+                                                        dining={dining}
+                                                        amenities={amenities}
+                                                        dayVisitPackages={
+                                                            dayVisitPackages
+                                                        }
+                                                    />
+                                                </div>
+                                            )}
+
+                                        {slug.toLowerCase() === 'conference' &&
+                                            index === 1 && (
+                                                <>
+                                                    <EventsPage
+                                                        events={events}
+                                                        eventAddons={
+                                                            eventAddons
+                                                        }
+                                                    />
+                                                </>
+                                            )}
+                                        <div
+                                            ref={(el) => {
+                                                if (el)
+                                                    cardRefs.current[
+                                                        item.slug
+                                                    ] = el;
+                                            }}
+                                            className="flex-shrink-0 snap-start"
+                                        >
+                                            {slug === 'blogs' ? (
+                                                <BlogPostCard
+                                                    id={item.slug}
+                                                    imageUrls={
+                                                        item.images || []
                                                     }
-                                                }}
-                                            />
-                                        ) : (
-                                            <BlogCard
-                                                id={item.slug}
-                                                imageUrls={item.images || []}
-                                                videoUrls={item.videos || []}
-                                                slug={item.slug}
-                                                type={slug}
-                                                title={item.title}
-                                                created_at={
-                                                    item.created_at || ''
-                                                }
-                                                content={item.content}
-                                                index={index}
-                                                videos={videos}
-                                            />
-                                        )}
+                                                    videoUrls={
+                                                        item.videos || []
+                                                    }
+                                                    slug={item.slug}
+                                                    type={slug}
+                                                    title={item.title}
+                                                    created_at={
+                                                        item.created_at || ''
+                                                    }
+                                                    content={item.content}
+                                                    forceCollapse={collapseAll}
+                                                    onToggle={(expanded) => {
+                                                        if (expanded) {
+                                                            setHasExpandedPosts(
+                                                                true,
+                                                            );
+                                                        } else if (
+                                                            !expanded &&
+                                                            !collapseAll
+                                                        ) {
+                                                            setHasExpandedPosts(
+                                                                displayPosts?.some(
+                                                                    (
+                                                                        post,
+                                                                        i,
+                                                                    ) => {
+                                                                        if (
+                                                                            i ===
+                                                                            index
+                                                                        )
+                                                                            return false;
+                                                                        const ref =
+                                                                            cardRefs
+                                                                                .current[
+                                                                                post
+                                                                                    .slug
+                                                                            ];
+                                                                        return (
+                                                                            ref &&
+                                                                            ref.getAttribute(
+                                                                                'data-expanded',
+                                                                            ) ===
+                                                                                'true'
+                                                                        );
+                                                                    },
+                                                                ) || false,
+                                                            );
+                                                        }
+                                                    }}
+                                                />
+                                            ) : (
+                                                <BlogCard
+                                                    id={item.slug}
+                                                    imageUrls={
+                                                        item.images || []
+                                                    }
+                                                    videoUrls={
+                                                        item.videos || []
+                                                    }
+                                                    slug={item.slug}
+                                                    type={slug}
+                                                    title={item.title}
+                                                    created_at={
+                                                        item.created_at || ''
+                                                    }
+                                                    content={item.content}
+                                                    index={index}
+                                                    videos={videos}
+                                                />
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
                 )}

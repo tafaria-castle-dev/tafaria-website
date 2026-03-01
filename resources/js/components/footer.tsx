@@ -10,22 +10,22 @@ const Footer = () => {
     return (
         <div
             id="footer"
-            className={`w-full`}
-            style={{
-                backgroundImage: `url(/assets/flower-bg.png), url(/assets/flower-bg.png), url(/assets/flower-bg.png)`,
-                backgroundPosition: '0% 40%, 50% 60%, 90% 30%',
-                backgroundRepeat: 'no-repeat, no-repeat, no-repeat',
-                backgroundSize:
-                    'clamp(300px, 30vw, 600px) auto, clamp(300px, 30vw, 600px) auto, clamp(300px, 30vw, 600px) auto',
-                backgroundColor: '#020202',
-            }}
+            className={`header w-full border-t-2 border-amber-50 shadow-md`}
+            // style={{
+            //     backgroundImage: `url(/assets/flower-bg.png), url(/assets/flower-bg.png), url(/assets/flower-bg.png)`,
+            //     backgroundPosition: '0% 40%, 50% 60%, 90% 30%',
+            //     backgroundRepeat: 'no-repeat, no-repeat, no-repeat',
+            //     backgroundSize:
+            //         'clamp(300px, 30vw, 600px) auto, clamp(300px, 30vw, 600px) auto, clamp(300px, 30vw, 600px) auto',
+            //     backgroundColor: '#020202',
+            // }}
         >
             <div className="mx-auto flex max-w-screen-xl flex-col items-center justify-between gap-6 p-5 lg:flex-row">
                 {/* Location Section */}
 
                 <div className="flex flex-col">
                     {!isMobileView && (
-                        <h1 className="text-white">
+                        <h1 className="text-black">
                             Tafaria Castle & Center for the Arts
                         </h1>
                     )}
@@ -34,9 +34,9 @@ const Footer = () => {
                             href="https://www.google.com/maps/search/Tafaria+Castle/@-0.1164533,36.6279602,17z?hl=en&entry=ttu&g_ep=EgoyMDI0MTIxMS4wIKXMDSoASAFQAw%3D%3D"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center text-white"
+                            className="flex items-center text-black"
                         >
-                            <p className="text-center text-white lg:text-left">
+                            <p className="text-center text-black lg:text-left">
                                 <span className="text-[#902729]">
                                     Location:
                                 </span>{' '}
@@ -56,7 +56,7 @@ const Footer = () => {
                             target="_blank"
                             rel="noopener noreferrer"
                         >
-                            <FaFacebookF className="text-white transition-colors hover:text-[#902729]" />
+                            <FaFacebookF className="text-black transition-colors hover:text-[#902729]" />
                         </a>
 
                         <a
@@ -64,7 +64,7 @@ const Footer = () => {
                             target="_blank"
                             rel="noopener noreferrer"
                         >
-                            <FaInstagram className="text-white transition-colors hover:text-[#902729]" />
+                            <FaInstagram className="text-black transition-colors hover:text-[#902729]" />
                         </a>
                     </div>
                 </div>

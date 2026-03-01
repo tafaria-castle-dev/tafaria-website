@@ -19,6 +19,7 @@ import DOMPurify from 'dompurify';
 import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { PackagesCards } from './Landing';
+import { getTabType } from './SelectedPackageModal';
 
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
@@ -582,7 +583,11 @@ export default function StayWithUs({
                     packages?.map((pkg) => (
                         <section className="section" style={{ paddingTop: 0 }}>
                             <div className="container">
-                                <h2 className="h2">{pkg?.title} Inclusions</h2>
+                                <h2 className="h2">
+                                    {getTabType(pkg) == 'experience'
+                                        ? 'Tafaria Tours'
+                                        : 'Tafaria Leisure Activities'}
+                                </h2>
                                 <p className="p">
                                     {pkg.subtitle ||
                                         'Enhance your event with unique add-on experiences.'}
@@ -617,47 +622,6 @@ export default function StayWithUs({
                             </div>
                         </section>
                     ))}
-                <section
-                    id="dining"
-                    className="section"
-                    style={{ paddingTop: 0 }}
-                >
-                    <div className="container">
-                        <h2 className="h2">Dining</h2>
-                        <div className="grid-2">
-                            <div className="card">
-                                <div className="dining-image">
-                                    <img
-                                        src={dining[0]?.image}
-                                        alt="Dining at Tafaria, table set with a view of the castle grounds"
-                                        loading="lazy"
-                                    />
-                                </div>
-                            </div>
-                            <div className="dining-text">
-                                <p
-                                    className="p-lg"
-                                    dangerouslySetInnerHTML={{
-                                        __html:
-                                            dining[0]?.description ||
-                                            'Experience a culinary journey at Tafaria Castle, where our dining offerings are as rich and diverse as our history. From hearty breakfasts to elegant dinners, our menus are crafted to delight every palate. Savor the flavors of locally sourced ingredients, expertly prepared to create memorable meals that complement your stay.',
-                                    }}
-                                />
-                                <div className="meta-row">
-                                    <span className="badge badge-neutral">
-                                        Breakfast
-                                    </span>
-                                    <span className="badge badge-neutral">
-                                        Lunch
-                                    </span>
-                                    <span className="badge badge-neutral">
-                                        Dinner
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
             </div>
         </>
     );

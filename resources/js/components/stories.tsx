@@ -75,15 +75,15 @@ const Stories: React.FC<StoriesProps> = ({ categories }) => {
                 }}
             ></div>
             <div
-                className="relative py-2"
-                style={{
-                    backgroundImage: `url(/assets/flower-bg.png), url(/assets/flower-bg.png), url(/assets/flower-bg.png)`,
-                    backgroundPosition: '0% 40%, 50% 60%, 90% 30%',
-                    backgroundRepeat: 'no-repeat, no-repeat, no-repeat',
-                    backgroundSize:
-                        'clamp(300px, 30vw, 600px) auto, clamp(300px, 30vw, 600px) auto, clamp(300px, 30vw, 600px) auto',
-                    backgroundColor: '#020202',
-                }}
+                className="header relative py-2"
+                // style={{
+                //     backgroundImage: `url(/assets/flower-bg.png), url(/assets/flower-bg.png), url(/assets/flower-bg.png)`,
+                //     backgroundPosition: '0% 40%, 50% 60%, 90% 30%',
+                //     backgroundRepeat: 'no-repeat, no-repeat, no-repeat',
+                //     backgroundSize:
+                //         'clamp(300px, 30vw, 600px) auto, clamp(300px, 30vw, 600px) auto, clamp(300px, 30vw, 600px) auto',
+                //     backgroundColor: '#020202',
+                // }}
             >
                 <div
                     className={`relative flex w-full items-stretch justify-center`}
@@ -94,7 +94,7 @@ const Stories: React.FC<StoriesProps> = ({ categories }) => {
                             className="absolute top-1/2 left-2 z-10 flex -translate-y-1/2 transform items-center justify-center rounded-full bg-[#9f4446] p-3 transition-colors duration-200 hover:bg-[#b35557]"
                             aria-label="Scroll Left"
                         >
-                            <FaChevronLeft className="text-xl text-white" />
+                            <FaChevronLeft className="text-xl text-black" />
                         </button>
                     )}
                     <div
@@ -126,7 +126,7 @@ const Stories: React.FC<StoriesProps> = ({ categories }) => {
                                             </div>
                                         </div>
                                         <p
-                                            className={`text-center ${activeCategory === img.slug ? 'text-[#c1913c]' : 'text-white'} w-full truncate text-sm font-medium`}
+                                            className={`text-center ${activeCategory === img.slug ? 'text-[#c1913c]' : 'text-black'} w-full truncate text-sm font-medium`}
                                         >
                                             {img.name}
                                         </p>
@@ -141,7 +141,7 @@ const Stories: React.FC<StoriesProps> = ({ categories }) => {
                             className="absolute top-1/2 right-2 z-10 flex -translate-y-1/2 transform items-center justify-center rounded-full bg-[#9f4446] p-3 transition-colors duration-200 hover:bg-[#b35557]"
                             aria-label="Scroll Right"
                         >
-                            <FaChevronRight className="text-xl text-white" />
+                            <FaChevronRight className="text-xl text-black" />
                         </button>
                     )}
                 </div>
