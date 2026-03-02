@@ -445,7 +445,9 @@ export default function ImageGallery({
     function nextItem() {
         setLbIndex((i) => (i === null ? null : (i + 1) % filtered.length));
     }
-
+    const sortedCategories = [...categories].sort(
+        (a, b) => (a.priority ?? 0) - (b.priority ?? 0),
+    );
     return (
         <>
             <style>{styles}</style>
@@ -466,10 +468,12 @@ export default function ImageGallery({
                             >
                                 All
                             </button>
-                            {categories
+                            {sortedCategories
                                 .filter(
                                     (f) =>
                                         f.name !== 'Blogs' &&
+                                        !f.name.includes('Story') &&
+                                        !f.name.includes('Our') &&
                                         f.name !== 'Rates',
                                 )
                                 .map((f) => (

@@ -771,7 +771,7 @@ export default function LandingPage({
 
     const processedHtml = rawHtml
         .replace(/<h1([^>]*)>/gi, '<h1 class="h1"$1>')
-        .replace(/<h2([^>]*)>/gi, '<h2 class="rich-h2"$1>');
+        .replace(/<h2([^>]*)>/gi, '<h3 class="rich-h2"$1>');
     const handleRequestQuote = (program: Program) => {
         setQuoteInitialProgram(program);
         setShowSchoolQuoteModal(true);

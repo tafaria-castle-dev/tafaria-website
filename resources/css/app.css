@@ -413,10 +413,15 @@ li[data-list='ordered'] {
     position: relative;
     align-items: stretch;
 }
-
+@media (min-width: 700px) {
+    .rich-h2 {
+        font-size: 1.6rem;
+        margin-bottom: 0.3rem;
+    }
+}
 @media (max-width: 700px) {
     .rich-h2 {
-        font-size: 1.1rem !important;
+        font-size: 1rem !important;
         margin-bottom: 0.3rem;
     }
     .pkg-grid-wrapper {
@@ -662,10 +667,7 @@ li[data-list='ordered'] {
     margin: 0 0 12px 0;
     font-size: 1.6rem !important;
 }
-.rich-h2 {
-    font-size: 1.6rem !important;
-    margin-bottom: 0.3rem;
-}
+
 .pkg-cta-red {
     display: block;
     width: 100%;
