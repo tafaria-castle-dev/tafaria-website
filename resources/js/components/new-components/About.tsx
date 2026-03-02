@@ -7,30 +7,7 @@ const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
 
 
-  .card {
-    background: #fff; border: 1px solid rgba(184,146,75,0.18);
-    border-radius: 20px; overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-  }
-  .card-pad    { padding: 20px; }
-  .card-pad-lg { padding: 28px; }
 
-  .card-media {
-    height: 260px; overflow: hidden;
-    background: linear-gradient(135deg, rgba(90,62,43,0.18), rgba(184,146,75,0.18));
-  }
-  .card-media img { width:100%; height:100%; object-fit:cover; display:block; }
-
-  .grid-2 { display: grid; gap: 24px; grid-template-columns: repeat(2,1fr); margin-top: 20px; }
-  .grid-3 { display: grid; gap: 20px; grid-template-columns: repeat(3,1fr); margin-top: 20px; }
-
-  @media (max-width: 900px) {
-    .grid-2 { grid-template-columns: 1fr; }
-    .grid-3 { grid-template-columns: repeat(2,1fr); }
-  }
-  @media (max-width: 560px) {
-    .grid-3 { grid-template-columns: 1fr; }
-  }
 
   .strip {
     background: rgba(184,146,75,0.08);

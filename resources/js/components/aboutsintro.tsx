@@ -40,7 +40,7 @@ const AboutsIntro: React.FC<AboutsIntroProps> = ({ abouts }) => {
             }
         >
             <div className="flex justify-center">
-                <div className="mx-auto max-w-3xl px-4 py-2 text-center">
+                <div className="mx-auto max-w-3xl px-4 py-5 text-center">
                     {abouts.map((about: About, index: number) => {
                         const rawHtml =
                             !expanded && isMobile

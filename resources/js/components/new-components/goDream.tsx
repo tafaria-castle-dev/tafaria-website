@@ -19,19 +19,6 @@ const styles = `
 
   .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
 
-  
-  .card {
-    background: #fff; border: 1px solid rgba(184,146,75,0.18);
-    border-radius: 20px; overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-  }
-  .card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.1); }
-  .card-media { height: 180px; overflow: hidden; }
-  .card-media img { width:100%; height:100%; object-fit:cover; display:block; transition: transform 0.3s ease; }
-  .card:hover .card-media img { transform: scale(1.04); }
-  .card-pad { padding: 18px; }
-  .card-pad-lg { padding: 28px; }
 
   .grid-4 { display: grid; gap: 20px; grid-template-columns: repeat(4,1fr); }
   .grid-2 { display: grid; gap: 24px; grid-template-columns: repeat(2,1fr); }

@@ -39,7 +39,7 @@ button:hover:not(:disabled),
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    width: 88vw;
+    width: 92vw;
 }
 
 @font-face {
@@ -571,7 +571,10 @@ li[data-list='ordered'] {
     flex-direction: column;
     flex: 1;
 }
-
+.card-body {
+    padding: 11px 16px;
+    text-align: center;
+}
 .pkg-includes-title {
     font-family: 'Inter', sans-serif;
     font-size: 0.95rem;
@@ -586,12 +589,14 @@ li[data-list='ordered'] {
         column-count: 2 !important;
         column-gap: 24px !important;
         display: inline-block !important;
-        text-align: center;
         margin: 0 auto !important;
     }
 
     .pkg-rich-content ul li,
     .pkg-rich-content ol li {
+        text-align: left;
+        line-height: 1.4;
+
         break-inside: avoid !important;
     }
 }
@@ -613,7 +618,7 @@ li[data-list='ordered'] {
     display: flex;
     align-items: flex-start;
     gap: 8px;
-    line-height: 1.4;
+    line-height: 1.1;
     width: fit-content;
 }
 
@@ -627,7 +632,7 @@ li[data-list='ordered'] {
 }
 
 .pkg-rich-content {
-    flex: 1;
+    flex: 1 !important;
     text-align: center;
 }
 .pkg-rich-content.centered {

@@ -53,46 +53,7 @@ const styles = `
     align-items: center;
   }
 
-  /* Badges */
-  .badge {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 999px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
-  .badge-gold {
-    background: rgba(184,146,75,0.18);
-    color: #7a5520;
-    border: 1px solid rgba(184,146,75,0.4);
-  }
-  .badge-neutral {
-    background: rgba(90,62,43,0.1);
-    color: #5a3e2b;
-    border: 1px solid rgba(90,62,43,0.2);
-  }
-  .badge-olive {
-    background: rgba(100,120,60,0.12);
-    color: #4a6030;
-    border: 1px solid rgba(100,120,60,0.3);
-  }
 
-  /* Card */
-  .card {
-     border: 1px solid rgba(184,146,75,0.18);
-    border-radius: 20px; overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-    width: 100% !important;
-  }
-  .card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.1); }
-  .card-media { height: 180px; overflow: hidden; }
-  .card-media img { width:100%; height:100%; object-fit:cover; display:block; transition: transform 0.3s ease; }
-  .card:hover .card-media img { transform: scale(1.04); }
-  .card-pad { padding: 18px; }
-  .card-pad-lg { padding: 28px; }
 
 
   /* Hero */
@@ -130,35 +91,11 @@ const styles = `
     z-index: 1;
   }
 
-  /* Grid */
-  .grid-2 {
-    display: grid;
-    gap: 24px;
-    grid-template-columns: repeat(2, 1fr);
-  }
 
-    .grid-4 { display: grid; gap: 20px; grid-template-columns: repeat(4,1fr); }
-  .grid-3 { display: grid; gap: 20px; grid-template-columns: repeat(3,1fr); margin-top: 20px; }
-
-  .grid-2 { display: grid; gap: 24px; grid-template-columns: repeat(2,1fr); }
-
-  @media (max-width: 900px) {
-    .grid-4 { grid-template-columns: repeat(2,1fr); }
-    .grid-3 { grid-template-columns: repeat(2,1fr); }
-
-    .grid-2 { grid-template-columns: 1fr; }
-  }
-  @media (max-width: 560px) {
-    .grid-3 { grid-template-columns: 1fr; }
-    .grid-4 { grid-template-columns: 1fr; }
-  }
 
   /* Package card */
   
 
-  .card-pad {
-    padding: 24px;
-  }
 
  
 
@@ -320,7 +257,7 @@ export function SchoolCard({
 
     return (
         <div
-            className="card cursor-pointer"
+            className="card h-fit cursor-pointer"
             onClick={() => onRequestQuote(program)}
         >
             <div className="card-media">
@@ -415,7 +352,14 @@ export function SchoolCard({
 
                 <div className="meta-row" />
 
-                <div className="row" style={{ marginTop: 14 }}>
+                <div
+                    className="row"
+                    style={{
+                        paddingTop: 16,
+                        display: 'grid',
+                        alignItems: 'center',
+                    }}
+                >
                     <button
                         className="btn btn-primary"
                         onClick={(e) => {
@@ -560,14 +504,15 @@ const DayVisitPackageCards = ({ packages }: DayVisitCardsProps) => {
     const { setSelectedDayVisitPackageItem, setShowDayVisitModal } =
         useSelectedPackage();
     return (
-        <div className="grid-4" style={{ marginTop: 16 }}>
+        <div className="grid-4" style={{ marginTop: 26 }}>
             {packages?.map((pkg) => {
                 const title = pkg.title?.toLowerCase() ?? '';
 
                 return (
                     <div
-                        className={`package-card h-fit`}
+                        className={`package-card h-full`}
                         key={pkg.id}
+                        style={{ display: 'flex', flexDirection: 'column' }}
                         onClick={() => {
                             setSelectedDayVisitPackageItem(pkg);
                             setShowDayVisitModal(true);
@@ -593,7 +538,14 @@ const DayVisitPackageCards = ({ packages }: DayVisitCardsProps) => {
                                 </span>
                             )}
                         </div>
-                        <div className="card-pad">
+                        <div
+                            className="card-pad"
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                flex: 1,
+                            }}
+                        >
                             <div className="h3" style={{ marginTop: 10 }}>
                                 {pkg.title}
                             </div>
@@ -638,13 +590,20 @@ const DayVisitPackageCards = ({ packages }: DayVisitCardsProps) => {
                                 </p>
                             )}
                             <div
-                                className="small"
+                                className="small h-auto"
                                 dangerouslySetInnerHTML={{
                                     __html: pkg.description || '',
                                 }}
                             ></div>
 
-                            <div className="row" style={{ marginTop: 16 }}>
+                            <div
+                                style={{
+                                    marginTop: 'auto',
+                                    paddingTop: 16,
+                                    display: 'grid',
+                                    alignItems: 'center',
+                                }}
+                            >
                                 <button
                                     className="btn btn-secondary"
                                     onClick={() => {
@@ -679,15 +638,19 @@ export function EventCard({
     return (
         <div
             key={pkg.id}
-            className="card cursor-pointer"
+            className="card h-full cursor-pointer"
+            style={{ display: 'flex', flexDirection: 'column' }}
             onClick={() => handleOpenEventBooking(pkg)}
         >
             <div className="card-media">
                 <img src={pkg.image} alt={pkg.title} loading="lazy" />
             </div>
-            <div className="card-pad">
+            <div
+                className="card-pad"
+                style={{ display: 'flex', flexDirection: 'column', flex: 1 }}
+            >
                 <span
-                    className={`badge badge-${
+                    className={`badge w-fit badge-${
                         pkg.badge_content?.includes('Day')
                             ? 'olive'
                             : pkg.badge_content?.includes('Popular')
@@ -700,23 +663,32 @@ export function EventCard({
                     {pkg.badge_content}
                 </span>
                 <div className="h3">{pkg.title}</div>
-                <div className="small" style={{ marginTop: 4 }}>
+                <div className="small pb-4" style={{ marginTop: 4 }}>
                     {pkg.subtitle}
                 </div>
-                <hr className="hr" />
+
                 <div
                     className="pkg-rich-content"
                     dangerouslySetInnerHTML={{
                         __html: pkg.description || '',
                     }}
                 ></div>
-                <div style={{ height: 12 }} />
-                <button
-                    className="btn btn-secondary"
-                    onClick={() => handleOpenEventBooking(pkg)}
+
+                <div
+                    style={{
+                        marginTop: 'auto',
+                        paddingTop: 16,
+                        display: 'grid',
+                        alignItems: 'center',
+                    }}
                 >
-                    {events[0]?.button_message || 'Request Proposal'}
-                </button>
+                    <button
+                        className="btn btn-secondary"
+                        onClick={() => handleOpenEventBooking(pkg)}
+                    >
+                        {events[0]?.button_message || 'Request Proposal'}
+                    </button>
+                </div>
             </div>
         </div>
     );
@@ -814,11 +786,12 @@ export default function LandingPage({
             <style>{styles}</style>
             <div className="">
                 <Hero heroSection={heroSection} offers={offers} />
+                <AboutsIntro abouts={abouts} />
             </div>
             <section className="section-sm">
                 <div className="container">
                     <div className="hero-grid">
-                        <section id="packages" className="section">
+                        <section id="packages" className="section-sm">
                             <div className="container">
                                 <div className="rich-text-content">
                                     <div
@@ -836,7 +809,7 @@ export default function LandingPage({
                                 />
                             </div>
                         </section>
-                        <section id="packages" className="section">
+                        <section id="packages" className="">
                             <div className="container">
                                 <h2 className="h2">
                                     {dayVisitPackages[0]?.title}
@@ -868,7 +841,7 @@ export default function LandingPage({
                 </div>
             </section>
 
-            <section className="section" style={{ paddingTop: 0 }}>
+            <section className="section-sm" style={{ paddingTop: 0 }}>
                 <div className="container">
                     <div className="">
                         <div className="strip-header">
@@ -937,7 +910,11 @@ export default function LandingPage({
                 </div>
             </section>
 
-            <section id="packages" className="section">
+            <section
+                id="packages"
+                className="section-sm"
+                style={{ paddingTop: 0 }}
+            >
                 <div className="container">
                     <div className="mb-3">
                         <h1 className="h1">
@@ -949,7 +926,7 @@ export default function LandingPage({
                         </p>
                     </div>
                     <h2 className="h2">Event packages</h2>
-                    <div className="grid-3">
+                    <div className="grid-3 mt-8">
                         {events[0]?.items?.map((pkg) => (
                             <EventCard pkg={pkg} events={events} />
                         ))}
@@ -957,7 +934,7 @@ export default function LandingPage({
                 </div>
             </section>
 
-            <section className="section" style={{ paddingTop: 0 }}>
+            <section className="section-sm" style={{ paddingTop: 0 }}>
                 <div className="container">
                     <div className="mb-8 flex flex-col">
                         <div className="h1">How to get here</div>
@@ -994,7 +971,6 @@ export default function LandingPage({
                     </div>
                 </div>
             </section>
-            <AboutsIntro abouts={abouts} />
         </>
     );
 }

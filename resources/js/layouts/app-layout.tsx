@@ -1,6 +1,5 @@
 import BookingEngine from '@/components/booking';
 import Footer from '@/components/footer';
-import Header from '@/components/header';
 import HeaderAndStories from '@/components/HeaderAndStories';
 import EventBookingModal from '@/components/new-components/RequestEventQuoteModal';
 import SchoolQuoteModal from '@/components/new-components/RequestSchoolQuoteModal';
@@ -145,7 +144,6 @@ const AppLayoutContent: React.FC<AppLayoutProps> = ({
                     <ToCProvider>
                         <div className="flex flex-col bg-white">
                             <HeaderAndStories>
-                                <Header />
                                 <Stories categories={categories} />
                             </HeaderAndStories>
                             <CartProvider>{children}</CartProvider>

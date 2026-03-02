@@ -1,6 +1,7 @@
-import { EventAddon, EventPage } from '@/types';
+import { EventAddon, EventPage, Package } from '@/types';
 import { useRef, useState } from 'react';
 import { EventCard } from './Landing';
+import { getTabType } from './SelectedPackageModal';
 
 interface ProposalForm {
     organization: string;
@@ -17,34 +18,9 @@ const EMAIL_ADDRESS = 'info@tafaria.com';
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
 
-  .card {
-    background: #fff; border: 1px solid rgba(184,146,75,0.18);
-    border-radius: 20px; overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-  }
-  .card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.1); }
-  .card-media { height: 180px; overflow: hidden; }
-  .card-media img { width:100%; height:100%; object-fit:cover; display:block; transition: transform 0.3s ease; }
-  .card:hover .card-media img { transform: scale(1.04); }
-  .card-pad    { padding: 18px; }
-  .card-pad-lg { padding: 28px; }
 
   .hr { border: none; border-top: 1px solid rgba(184,146,75,0.18); margin: 12px 0; }
 
-  .grid-3 { display: grid; gap: 20px; grid-template-columns: repeat(3,1fr); margin-top: 20px; }
-  .grid-4 { display: grid; gap: 20px; grid-template-columns: repeat(4,1fr); margin-top: 20px; }
-  .grid-2 { display: grid; gap: 24px; grid-template-columns: repeat(2,1fr); margin-top: 20px; }
-
-  @media (max-width: 900px) {
-    .grid-3 { grid-template-columns: repeat(2,1fr); }
-    .grid-4 { grid-template-columns: repeat(2,1fr); }
-    .grid-2 { grid-template-columns: 1fr; }
-  }
-  @media (max-width: 560px) {
-    .grid-3 { grid-template-columns: 1fr; }
-    .grid-4 { grid-template-columns: 1fr; }
-  }
 
   .strip {
     background: rgba(184,146,75,0.08);
@@ -140,9 +116,11 @@ const EmailIcon = () => (
 export default function EventsPage({
     events,
     eventAddons,
+    packages,
 }: {
     events: EventPage[];
     eventAddons: EventAddon[];
+    packages: Package[];
 }) {
     const proposalRef = useRef<HTMLElement>(null);
     const [toastMsg, setToastMsg] = useState('');
@@ -232,15 +210,58 @@ Please prepare a proposal for the above. Thank you! 🙏`;
                             </p>
                         </div>
                         <h2 className="h2">Event packages</h2>
-                        <div className="grid-3">
+                        <div className="grid-3 mt-5">
                             {events[0]?.items?.map((pkg) => (
                                 <EventCard pkg={pkg} events={events} />
                             ))}
                         </div>
                     </div>
                 </section>
-
-                {eventAddons.length > 0 &&
+                {packages.length > 0 &&
+                    packages?.map((pkg) => (
+                        <section className="section" style={{ paddingTop: 0 }}>
+                            <div className="h1"> Enhance your Experience</div>
+                            <div className="container">
+                                <h2 className="h2">
+                                    {getTabType(pkg) == 'experience'
+                                        ? 'Tafaria Tours'
+                                        : 'Tafaria Leisure Activities'}
+                                </h2>
+                                <p className="p">
+                                    {pkg.subtitle ||
+                                        'Enhance your event with unique add-on experiences.'}
+                                </p>
+                                <div className="grid-4 mt-12">
+                                    {pkg?.items?.map((item) => (
+                                        <div
+                                            key={item.id}
+                                            className="card h-full"
+                                        >
+                                            <div className="card-media">
+                                                <img
+                                                    src={item.image}
+                                                    alt={item.title}
+                                                    loading="lazy"
+                                                />
+                                            </div>
+                                            <div className="card-pad">
+                                                <div
+                                                    className="h4"
+                                                    style={{
+                                                        marginTop: 0,
+                                                        marginBottom: 4,
+                                                    }}
+                                                >
+                                                    {item.title}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </section>
+                    ))}
+                {/* {eventAddons.length > 0 &&
                     eventAddons?.map((eventAddon) => (
                         <section className="section" style={{ paddingTop: 0 }}>
                             <div className="container">
@@ -295,9 +316,9 @@ Please prepare a proposal for the above. Thank you! 🙏`;
                                 </div>
                             </div>
                         </section>
-                    ))}
+                    ))} */}
 
-                <section
+                {/* <section
                     id="proposal"
                     ref={proposalRef}
                     className="section"
@@ -485,7 +506,7 @@ Please prepare a proposal for the above. Thank you! 🙏`;
                             </div>
                         </div>
                     </div>
-                </section>
+                </section> */}
 
                 {toastMsg && <div className="toast">{toastMsg}</div>}
             </div>

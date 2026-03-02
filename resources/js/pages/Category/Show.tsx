@@ -361,6 +361,7 @@ export default function CategoryShow({
                                                 <>
                                                     <EventsPage
                                                         events={events}
+                                                        packages={packages}
                                                         eventAddons={
                                                             eventAddons
                                                         }

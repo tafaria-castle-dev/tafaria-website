@@ -6,7 +6,7 @@ const useScrollDirection = (): boolean => {
     const scrollUpDistance = useRef<number>(0);
 
     const NEAR_TOP_THRESHOLD = window?.innerWidth <= 768 ? 300 : 250;
-    const SCROLL_UP_REVEAL_DISTANCE = 1550;
+    const SCROLL_UP_REVEAL_DISTANCE = 250;
 
     useEffect(() => {
         let timeoutId: NodeJS.Timeout | undefined;

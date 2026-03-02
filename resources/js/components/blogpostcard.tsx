@@ -113,13 +113,17 @@ const BlogPostCard: React.FC<BlogCardProps> = ({
         }
         window.location.href = postUrl;
     };
-
+    <div></div>;
     return (
-        <div className="flex items-center bg-white">
-            <div className="p-3">
+        <div className="mb-5 flex items-center bg-white">
+            {' '}
+            <div className="container">
                 <div
                     ref={cardRef}
-                    className={`font-barlow-condensed relative mx-auto flex w-full cursor-pointer flex-col rounded-lg bg-white px-3 py-5 shadow-lg transition-all duration-300 hover:shadow-xl`}
+                    style={{
+                        boxShadow: '0 0 12px rgba(0, 0, 0, 0.15)',
+                    }}
+                    className={`font-barlow-condensed m-5 mx-auto mt-5 flex w-full cursor-pointer flex-col rounded-lg bg-white p-5 transition-shadow duration-300 hover:shadow-xl`}
                     onClick={handleCardClick}
                 >
                     <div className="mb-1 flex items-center justify-between">

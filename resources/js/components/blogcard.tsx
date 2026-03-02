@@ -42,11 +42,14 @@ const BlogCard: React.FC<BlogCardProps> = ({
     };
 
     return (
-        <Link href={postUrl} className="block">
+        <Link href={postUrl}>
             <div className="flex items-center bg-white">
-                <div className="p-4">
+                <div className="container mx-auto mt-8">
                     <div
-                        className={`font-barlow-condensed mx-auto flex w-full flex-col rounded-lg bg-white px-3 py-5 shadow-lg transition-shadow duration-300 hover:shadow-xl`}
+                        style={{
+                            boxShadow: '0 0 12px rgba(0, 0, 0, 0.15)',
+                        }}
+                        className={`font-barlow-condensed m-5 mx-auto mt-5 flex w-full flex-col rounded-lg bg-white p-5 transition-shadow duration-300 hover:shadow-xl`}
                     >
                         <h1 className="h1 ml-3 pb-1 text-[#902729] md:hidden lg:hidden">
                             {title}

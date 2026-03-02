@@ -17,11 +17,7 @@ function isVideo(image: Image): boolean {
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
 
-  .badge {
-    display: inline-block; padding: 4px 12px; border-radius: 999px;
-    font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
-    background: rgba(184,146,75,0.18); color: #7a5520; border: 1px solid rgba(184,146,75,0.4);
-  }
+
 
   .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; align-items:center;justify-content:center; }
   .chip {
@@ -52,19 +48,6 @@ const styles = `
   @media (max-width: 980px) { .gallery-grid  { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 560px) { .gallery-grid  { grid-template-columns: 1fr; } }
 
-.card {
-  
-  border: 1px solid rgba(184,146,75,0.18);
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-  width: fit-content;               
-  margin: 0 auto;                    
-  max-width: 100%; 
-  height:fit-content;                 
-}
-  .card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
 .thumb {
   position: relative;
   overflow: hidden;
@@ -113,7 +96,7 @@ const styles = `
     padding: 16px;
     text-align: center;
   }
-  .card:hover .hover-overlay { opacity: 1; }
+
   .hover-overlay h3 { color: #fff; font-weight: 700; font-family: 'Cinzel', serif; font-size: 0.95rem; margin-bottom: 6px; }
   .hover-overlay p { color: rgba(255,255,255,0.85); font-size: 0.8rem; margin-bottom: 12px; }
 
@@ -136,10 +119,7 @@ const styles = `
     border: 1px solid rgba(255,255,255,0.3); font-weight: 900; font-size: 14px;
   }
 
-.card-body {
-  padding: 16px;
-  text-align: center;            
-}
+
   .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 12px; }
 
   .btn-tertiary {

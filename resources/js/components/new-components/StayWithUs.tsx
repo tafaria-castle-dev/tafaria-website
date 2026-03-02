@@ -24,42 +24,11 @@ import { getTabType } from './SelectedPackageModal';
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
 
-  .badge {
-    display: inline-block; padding: 4px 12px; border-radius: 999px;
-    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
-  }
-  .badge-gold    { background: rgba(184,146,75,0.18); color: #7a5520; border: 1px solid rgba(184,146,75,0.4); }
-  .badge-neutral { background: rgba(90,62,43,0.1);   color: #5a3e2b; border: 1px solid rgba(90,62,43,0.2); }
-  .badge-olive   { background: rgba(100,120,60,0.12); color: #4a6030; border: 1px solid rgba(100,120,60,0.3); }
 
   .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
 
 
-  .card {
-     border:1px solid rgba(184,146,75,0.18);
-    border-radius:20px; overflow:hidden;
-    box-shadow:0 4px 20px rgba(0,0,0,0.06);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-  }
-  .card:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(0,0,0,0.1); }
-  .card-media { height: 180px; overflow: hidden; }
-  .card-media img { width:100%; height:100%; object-fit:cover; display:block; transition: transform 0.3s ease; }
-  .card:hover .card-media img { transform: scale(1.04); }
-  .card-pad { padding: 16px; }
 
-  .grid-3 { display:grid; gap:20px; grid-template-columns: repeat(3,1fr); margin-top:20px; }
-  .grid-2 { display:grid; gap:24px; grid-template-columns: repeat(2,1fr); margin-top:20px; }
-  .grid-4 { display:grid; gap:20px; grid-template-columns: repeat(4,1fr); margin-top:20px; }
-
-  @media (max-width: 900px) {
-    .grid-3 { grid-template-columns: repeat(2,1fr); }
-    .grid-2 { grid-template-columns: 1fr; }
-    .grid-4 { grid-template-columns: repeat(2,1fr); }
-  }
-  @media (max-width: 560px) {
-    .grid-3 { grid-template-columns: 1fr; }
-    .grid-4 { grid-template-columns: 1fr; }
-  }
 
   /* Tab switcher */
   .tabs { display:flex; gap:0; background:rgba(184,146,75,0.1); border:1px solid rgba(184,146,75,0.25); border-radius:16px; padding:4px; margin-bottom:32px; }

@@ -97,21 +97,20 @@ const Header: React.FC = () => {
                     <a href="tel:070015000" className="text-xs text-black">
                         0700151480
                     </a>
-                    {!isMobileView && (
-                        <a
-                            href="mailto:info@tafaria.com"
-                            className="text-xs text-black"
-                        >
-                            info@tafaria.com
-                        </a>
-                    )}
-                    <button
+                    {/* {!isMobileView && ( */}
+                    <a
+                        href="mailto:info@tafaria.com"
+                        className="text-xs text-black"
+                    >
+                        info@tafaria.com
+                    </a>
+                    {/* <button
                         onClick={() => setShowBookingModal(true)}
                         //onClick={() => (window.location.href = '/rates')}
                         className="flex items-center rounded-md bg-[#94723C] px-5 py-2 text-sm font-semibold text-white hover:bg-[#902729] sm:px-6 sm:py-2 sm:text-base"
                     >
                         Book
-                    </button>
+                    </button> */}
                     {cart.length > 0 && (
                         <button
                             onClick={() => setShowCart(true)}

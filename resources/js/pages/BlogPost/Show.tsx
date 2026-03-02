@@ -45,7 +45,10 @@ export default function BlogPost({
                 <div className="flex items-center bg-white shadow-md">
                     <div className="container mx-auto mt-8 p-4">
                         <div
-                            className={`font-barlow-condensed m-5 mx-auto mt-5 flex w-full flex-col rounded-lg bg-white p-5 shadow-lg transition-shadow duration-300 hover:shadow-xl`}
+                            style={{
+                                boxShadow: '0 0 12px rgba(0, 0, 0, 0.15)',
+                            }}
+                            className={`font-barlow-condensed m-5 mx-auto mt-5 flex w-full flex-col rounded-lg bg-white p-5 transition-shadow duration-300 hover:shadow-xl`}
                         >
                             <h1 className="h1 mt-4 ml-3 text-[#902729]">
                                 {post.title}
