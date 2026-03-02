@@ -112,7 +112,9 @@ export default function RackRates() {
         };
         fetchData();
     }, []);
-
+    useEffect(() => {
+        setActiveTab(packages[0]);
+    }, [packages]);
     useEffect(() => {
         return () => {
             if (timeoutRef.current) clearTimeout(timeoutRef.current);
