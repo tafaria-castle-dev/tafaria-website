@@ -610,7 +610,6 @@ li[data-list='ordered'] {
 .pkg-rich-content ol li {
     font-family: 'Inter', sans-serif;
     font-size: 1rem;
-    color: #3a2a1a;
     display: flex;
     align-items: flex-start;
     gap: 8px;
@@ -637,7 +636,6 @@ li[data-list='ordered'] {
 .pkg-rich-content p {
     font-family: 'Inter', sans-serif;
     font-size: 0.92rem;
-    color: #7a5520;
 
     line-height: 1.55;
     margin: 0;

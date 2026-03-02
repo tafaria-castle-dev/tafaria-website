@@ -8,7 +8,7 @@ const HeaderAndStories: React.FC<{ children: React.ReactNode }> = ({
     return (
         <div
             id="header-and-stories"
-            className={`sticky top-0 z-10 w-full transition-transform duration-300 ease-in-out ${isScrollingUp ? 'translate-y-0' : '-translate-y-full'} `}
+            className={`sticky top-0 z-50 w-full transition-transform duration-300 ease-in-out ${isScrollingUp ? 'translate-y-0' : '-translate-y-full'} `}
         >
             {children}
         </div>

@@ -224,6 +224,7 @@ function Badge({
     return <span className={cls}>{children}</span>;
 }
 const DESCRIPTION_CHAR_LIMIT = 220;
+
 export function ReadMoreText({
     text,
     limit = 180,
@@ -236,30 +237,70 @@ export function ReadMoreText({
 
     if (!text) return null;
 
-    const shouldTruncate = isMobile && text.length > limit;
+    const plainText = text.replace(/<[^>]*>/g, '');
+    const shouldTruncate = isMobile && plainText.length > limit;
+    const processedHtml = text
+        .replace(/<h1([^>]*)>/gi, '<h1 class="h1"$1>')
+        .replace(/<h2([^>]*)>/gi, '<h2 class="h2"$1>')
+        .replace(/<h3([^>]*)>/gi, '<h3 class="h3"$1>');
+    const buttonStyle = {
+        background: 'none',
+        border: 'none',
+        padding: '0 0 0 6px',
+        cursor: 'pointer',
+        color: '#b8924b',
+        fontWeight: 600,
+        fontSize: '0.85rem',
+    };
+
+    if (shouldTruncate && !expanded) {
+        return (
+            <motion.div
+                className="p"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.2 }}
+            >
+                {plainText.slice(0, limit).trimEnd() + '…'}
+                <button onClick={() => setExpanded(true)} style={buttonStyle}>
+                    Read more
+                </button>
+            </motion.div>
+        );
+    }
 
     return (
-        <p className="p">
-            {shouldTruncate && !expanded
-                ? text.slice(0, limit).trimEnd() + '…'
-                : text}
-            {shouldTruncate && (
-                <button
-                    onClick={() => setExpanded((p) => !p)}
-                    style={{
-                        background: 'none',
-                        border: 'none',
-                        padding: '0 0 0 6px',
-                        cursor: 'pointer',
-                        color: '#b8924b',
-                        fontWeight: 600,
-                        fontSize: '0.85rem',
+        <div className="p">
+            <AnimatePresence initial={false}>
+                <motion.div
+                    key="full-content"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                    style={{ overflow: 'hidden' }}
+                    dangerouslySetInnerHTML={{
+                        __html: DOMPurify.sanitize(processedHtml),
                     }}
+                />
+            </AnimatePresence>
+
+            {shouldTruncate && expanded && (
+                <motion.button
+                    onClick={() => setExpanded(false)}
+                    style={{
+                        ...buttonStyle,
+                        padding: '4px 0 0',
+                        display: 'block',
+                    }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.2 }}
                 >
-                    {expanded ? 'Show less' : 'Read more'}
-                </button>
+                    Show less
+                </motion.button>
             )}
-        </p>
+        </div>
     );
 }
 export function SchoolCard({
