@@ -574,6 +574,7 @@ li[data-list='ordered'] {
 .card-body {
     padding: 11px 16px;
     text-align: center;
+    background-color: white;
 }
 .pkg-includes-title {
     font-family: 'Inter', sans-serif;
@@ -594,7 +595,6 @@ li[data-list='ordered'] {
 
     .pkg-rich-content ul li,
     .pkg-rich-content ol li {
-        text-align: left;
         line-height: 1.4;
 
         break-inside: avoid !important;
@@ -616,6 +616,7 @@ li[data-list='ordered'] {
     font-family: 'Inter', sans-serif;
     font-size: 1rem;
     display: flex;
+    text-align: left;
     align-items: flex-start;
     gap: 8px;
     line-height: 1.1;

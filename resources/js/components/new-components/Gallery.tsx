@@ -335,7 +335,7 @@ function MediaCard({ item, onOpen }: { item: Image; onOpen: () => void }) {
 
     return (
         <div
-            className="card"
+            className="group relative mx-2 my-3 transform overflow-hidden rounded-xl bg-white pb-0 shadow-lg transition-transform hover:scale-105"
             tabIndex={0}
             onClick={onOpen}
             onKeyDown={(e) => {
@@ -345,7 +345,7 @@ function MediaCard({ item, onOpen }: { item: Image; onOpen: () => void }) {
                 }
             }}
         >
-            <div className="thumb">
+            <div className="masonry-item">
                 {video ? (
                     <video
                         src={item.image_path}
@@ -363,7 +363,6 @@ function MediaCard({ item, onOpen }: { item: Image; onOpen: () => void }) {
                         height={item.height ?? undefined}
                     />
                 )}
-                <div className="thumb-overlay" />
                 <div
                     className="hover-overlay"
                     onClick={(e) => e.stopPropagation()}
@@ -450,7 +449,7 @@ export default function ImageGallery({
     return (
         <>
             <style>{styles}</style>
-            <div className="container">
+            <div className="">
                 <section className="py-0">
                     <div className="container">
                         <h1 className="h1">See Us In Pictures</h1>
@@ -489,14 +488,14 @@ export default function ImageGallery({
                     </div>
                 </section>
 
-                <section className="section-sm" style={{ paddingTop: 0 }}>
-                    <div className="container">
+                <section className="section-sm" style={{ paddingTop: 30 }}>
+                    <div className="">
                         {filtered.length === 0 ? (
                             <p className="small" style={{ padding: '40px 0' }}>
                                 No items found for this filter.
                             </p>
                         ) : (
-                            <div className="gallery-grid">
+                            <div className="masonry mx-5">
                                 {displayed.map((img, i) => (
                                     <MediaCard
                                         key={img.id}

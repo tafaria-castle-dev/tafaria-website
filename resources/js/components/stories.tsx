@@ -60,18 +60,10 @@ const Stories: React.FC<StoriesProps> = ({ categories }) => {
         (a, b) => (a.priority ?? 0) - (b.priority ?? 0),
     );
 
-    const activeCategory = url.split('/')[1] || 'Default Category';
-
+    const rawSlug = url.split('/')[1];
+    const activeCategory = !rawSlug ? 'our-story' : rawSlug;
     return (
         <div className="relative bg-black">
-            <div
-                className="h-[3px] w-full"
-                style={{
-                    background:
-                        'linear-gradient(to bottom, #9c7833, #9c7833, #9e8851, #d3b362)',
-                }}
-            />
-
             <div className="header relative py-2">
                 <div className="relative flex w-full items-stretch justify-center">
                     <AnimatePresence>
@@ -83,7 +75,7 @@ const Stories: React.FC<StoriesProps> = ({ categories }) => {
                                 exit={{ opacity: 0, x: -8 }}
                                 transition={{ duration: 0.2 }}
                                 onClick={() => scrollTo('left')}
-                                className="absolute top-1/2 left-2 z-10 flex -translate-y-1/2 items-center justify-center rounded-full bg-[#9f4446] p-3 hover:bg-[#b35557]"
+                                className="absolute top-1/2 left-2 z-22 flex -translate-y-1/2 items-center justify-center rounded-full bg-[#9f4446] p-3 hover:bg-[#b35557]"
                                 aria-label="Scroll Left"
                             >
                                 <FaChevronLeft className="text-xl text-white" />
@@ -107,54 +99,68 @@ const Stories: React.FC<StoriesProps> = ({ categories }) => {
                                         ease: 'easeOut',
                                     }}
                                 >
-                                    <Link
-                                        href={`/${encodeURIComponent(img.slug)}`}
-                                        className="flex-shrink-0"
-                                    >
-                                        <div className="flex min-w-[90px] flex-col items-center space-y-2 py-3 sm:min-w-[110px]">
-                                            <motion.div
-                                                animate={{
-                                                    scale:
+                                    {(() => {
+                                        const inner = (
+                                            <div className="flex min-w-[90px] flex-col items-center space-y-2 py-3 sm:min-w-[110px]">
+                                                <motion.div
+                                                    animate={{
+                                                        scale:
+                                                            activeCategory ===
+                                                            img.slug
+                                                                ? 1.1
+                                                                : 1,
+                                                    }}
+                                                    whileHover={{ scale: 1.06 }}
+                                                    whileTap={{ scale: 0.96 }}
+                                                    transition={{
+                                                        type: 'spring',
+                                                        stiffness: 320,
+                                                        damping: 20,
+                                                    }}
+                                                    className="relative h-18 w-18 sm:h-22 sm:w-22"
+                                                >
+                                                    <img
+                                                        src="/assets/gold-ring.png"
+                                                        alt="Ring"
+                                                        className="pointer-events-none absolute top-0 left-0 z-10 h-full w-full"
+                                                    />
+                                                    <div className="absolute inset-[4px] z-0 sm:inset-[6px]">
+                                                        <img
+                                                            className="h-full w-full rounded-full object-cover"
+                                                            src={
+                                                                img.image_path ||
+                                                                ''
+                                                            }
+                                                            alt={img.name}
+                                                        />
+                                                    </div>
+                                                </motion.div>
+                                                <p
+                                                    className={`w-full truncate text-center text-sm font-medium ${
                                                         activeCategory ===
                                                         img.slug
-                                                            ? 1.1
-                                                            : 1,
-                                                }}
-                                                whileHover={{ scale: 1.06 }}
-                                                whileTap={{ scale: 0.96 }}
-                                                transition={{
-                                                    type: 'spring',
-                                                    stiffness: 320,
-                                                    damping: 20,
-                                                }}
-                                                className="relative h-20 w-20 sm:h-24 sm:w-24"
+                                                            ? 'text-[#c1913c]'
+                                                            : 'text-black'
+                                                    }`}
+                                                >
+                                                    {img.name}
+                                                </p>
+                                            </div>
+                                        );
+
+                                        return activeCategory === img.slug ? (
+                                            <div className="flex-shrink-0 cursor-default">
+                                                {inner}
+                                            </div>
+                                        ) : (
+                                            <Link
+                                                href={`/${encodeURIComponent(img.slug)}`}
+                                                className="flex-shrink-0"
                                             >
-                                                <img
-                                                    src="/assets/gold-ring.png"
-                                                    alt="Ring"
-                                                    className="pointer-events-none absolute top-0 left-0 z-10 h-full w-full"
-                                                />
-                                                <div className="absolute inset-[4px] z-0 sm:inset-[6px]">
-                                                    <img
-                                                        className="h-full w-full rounded-full object-cover"
-                                                        src={
-                                                            img.image_path || ''
-                                                        }
-                                                        alt={img.name}
-                                                    />
-                                                </div>
-                                            </motion.div>
-                                            <p
-                                                className={`w-full truncate text-center text-sm font-medium ${
-                                                    activeCategory === img.slug
-                                                        ? 'text-[#c1913c]'
-                                                        : 'text-black'
-                                                }`}
-                                            >
-                                                {img.name}
-                                            </p>
-                                        </div>
-                                    </Link>
+                                                {inner}
+                                            </Link>
+                                        );
+                                    })()}
                                 </motion.div>
                             ))}
 
@@ -182,7 +188,7 @@ const Stories: React.FC<StoriesProps> = ({ categories }) => {
                                 exit={{ opacity: 0, x: 8 }}
                                 transition={{ duration: 0.2 }}
                                 onClick={() => scrollTo('right')}
-                                className="absolute top-1/2 right-2 z-10 flex -translate-y-1/2 items-center justify-center rounded-full bg-[#9f4446] p-3 hover:bg-[#b35557]"
+                                className="absolute top-1/2 right-2 z-22 flex -translate-y-1/2 items-center justify-center rounded-full bg-[#9f4446] p-3 hover:bg-[#b35557]"
                                 aria-label="Scroll Right"
                             >
                                 <FaChevronRight className="text-xl text-white" />

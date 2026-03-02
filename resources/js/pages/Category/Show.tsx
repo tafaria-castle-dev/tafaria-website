@@ -225,8 +225,13 @@ export default function CategoryShow({
     useEffect(() => {
         if (slug === 'rates') {
             router.visit('/rates');
+        } else if (slug === 'our-story') {
+            router.visit('/');
         }
     }, [slug]);
+    if (slug === 'rates' || slug === 'our-story') {
+        return null;
+    }
     const introPost = category.description
         ? {
               slug: '',
