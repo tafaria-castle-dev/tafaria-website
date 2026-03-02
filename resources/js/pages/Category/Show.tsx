@@ -226,7 +226,7 @@ export default function CategoryShow({
         if (slug === 'rates') {
             router.visit('/rates');
         } else if (slug === 'our-story') {
-            router.visit('/');
+            router.visit('/our-story');
         }
     }, [slug]);
     if (slug === 'rates' || slug === 'our-story') {

@@ -5,11 +5,11 @@ import { About } from '@/types';
 import DOMPurify from 'dompurify';
 import { Suspense, useEffect, useState } from 'react';
 
-interface AboutsIntroProps {
+interface AboutsAboutTafariaProps {
     abouts: About[];
 }
 
-const AboutsIntro: React.FC<AboutsIntroProps> = ({ abouts }) => {
+const AboutTafaria: React.FC<AboutsAboutTafariaProps> = ({ abouts }) => {
     const [expanded, setExpanded] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
     const MAX_LENGTH = 200;
@@ -30,13 +30,7 @@ const AboutsIntro: React.FC<AboutsIntroProps> = ({ abouts }) => {
             .replace(/<h1([^>]*)>/gi, '<h1 class="h1"$1>')
             .replace(/<h2([^>]*)>/gi, '<h3 class="h3"$1>');
     };
-    const about = abouts.find(
-        (item) =>
-            item.name?.toLowerCase().includes('story') ||
-            item.name?.toLowerCase().includes('our') ||
-            item.title?.toLowerCase().includes('story') ||
-            item.title?.toLowerCase().includes('our'),
-    );
+    const about = abouts[1];
     const content = about?.content;
 
     const shouldTruncate = isMobile && content && content?.length > MAX_LENGTH;
@@ -55,7 +49,7 @@ const AboutsIntro: React.FC<AboutsIntroProps> = ({ abouts }) => {
                 </div>
             }
         >
-            <div className="mt-6 flex justify-center">
+            <div className="flex justify-center">
                 <div className="mx-auto w-full max-w-3xl px-4 py-4 text-center">
                     <div className="mb-6 flex flex-col items-center gap-3">
                         {about?.title && (
@@ -97,14 +91,10 @@ const AboutsIntro: React.FC<AboutsIntroProps> = ({ abouts }) => {
                             )}
                         </div>
                     </div>
-
-                    <p className="font-parisienne text-3xl text-[#94723C] italic">
-                        George Tafaria
-                    </p>
                 </div>
             </div>
         </Suspense>
     );
 };
 
-export default AboutsIntro;
+export default AboutTafaria;

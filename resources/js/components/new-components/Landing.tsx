@@ -20,6 +20,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import AboutsIntro from '../aboutsintro';
 import Hero from '../hero';
+import AboutTafaria from './AboutTafaria';
 const styles = `
 
 
@@ -791,7 +792,7 @@ export default function LandingPage({
             <section className="section-sm">
                 <div className="container">
                     <div className="hero-grid">
-                        <section id="packages" className="section-sm">
+                        <section id="packages" className="">
                             <div className="container">
                                 <div className="rich-text-content">
                                     <div
@@ -963,7 +964,7 @@ export default function LandingPage({
                             title="Map to Tafaria"
                             src="https://www.google.com/maps?q=Tafaria%20Castle%20Laikipia&output=embed"
                             width="100%"
-                            height="360"
+                            height="420"
                             style={{ border: 0, display: 'block' }}
                             loading="lazy"
                             referrerPolicy="no-referrer-when-downgrade"
@@ -971,6 +972,7 @@ export default function LandingPage({
                     </div>
                 </div>
             </section>
+            <AboutTafaria abouts={abouts} />
         </>
     );
 }

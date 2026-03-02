@@ -135,7 +135,7 @@ export default function GoDreamPage({
                     <div className="container">
                         <div className="strip-header">
                             <div>
-                                <h2 className="h2">
+                                <h2 className="h1">
                                     {schoolPrograms[0]?.title}
                                 </h2>
                                 <ReadMoreText

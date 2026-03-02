@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\CategoryController;
 Route::get('/', [HomeController::class, 'index']);
+Route::get('/our-story', [HomeController::class, 'index']);
 Route::get('/rates', function () {
     return Inertia::render(component: 'Rates');
 })->name('rates');
