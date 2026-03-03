@@ -15,6 +15,7 @@ import {
     Package,
     Schemas,
     SchoolProgram,
+    Video,
 } from '@/types';
 import React from 'react';
 
@@ -22,6 +23,7 @@ interface HomeProps {
     abouts: About[];
     categories: Category[];
     images: Image[];
+    videos: Video[];
     offers: Offer[];
     heroSection: HeroSection[];
     schoolPrograms: SchoolProgram[];
@@ -44,6 +46,7 @@ const Home: React.FC<HomeProps> = ({
     offers,
     events,
     dayVisitPackages,
+    videos,
 }) => {
     const isLoading = useInertiaLoading();
     if (isLoading) {
@@ -62,7 +65,11 @@ const Home: React.FC<HomeProps> = ({
                 abouts={abouts}
                 categories={categories}
             />
-            <TabComponent images={images} categories={categories} />
+            <TabComponent
+                images={images}
+                categories={categories}
+                videos={videos}
+            />
         </>
     );
 };

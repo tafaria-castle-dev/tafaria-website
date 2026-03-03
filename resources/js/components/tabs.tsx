@@ -2,9 +2,9 @@
 import { useDropdown } from '@/hooks/DropdownContext';
 import useScrollDirection from '@/hooks/hook/useScrollDirection';
 import { useNavigation } from '@/hooks/NavigationContext';
-import { Category, Image } from '@/types';
+import { Category, Image, Video } from '@/types';
 import { useEffect, useRef, useState } from 'react';
-import ImageGallery from './new-components/Gallery';
+import ImageAndVideoGallery from './new-components/Gallery';
 
 const barlowCondensedStyle = {
     fontFamily: '"Barlow Condensed", sans-serif',
@@ -13,8 +13,13 @@ const barlowCondensedStyle = {
 interface TabComponentProps {
     images: Image[];
     categories: Category[];
+    videos: Video[];
 }
-const TabComponent: React.FC<TabComponentProps> = ({ images, categories }) => {
+const TabComponent: React.FC<TabComponentProps> = ({
+    images,
+    categories,
+    videos,
+}) => {
     const [activeTab, setActiveTab] = useState('Images');
     const [isSticky, setIsSticky] = useState(false);
     const stickyRef = useRef<HTMLDivElement>(null);
@@ -57,7 +62,11 @@ const TabComponent: React.FC<TabComponentProps> = ({ images, categories }) => {
 
     return (
         <div className="mt-3">
-            <ImageGallery images={images} categories={categories} />
+            <ImageAndVideoGallery
+                images={images}
+                categories={categories}
+                videos={videos}
+            />
         </div>
     );
 };

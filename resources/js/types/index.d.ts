@@ -234,6 +234,7 @@ export interface Video {
     description?: string | null;
     video_path;
     slug: string;
+    created_at: Date;
 }
 
 export interface Gallery {
