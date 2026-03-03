@@ -1,34 +1,8 @@
+import { Category, Image, Video } from '@/types';
 import { AnimatePresence, motion, Variants } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { FiShare2 } from 'react-icons/fi';
 import { useInView } from 'react-intersection-observer';
-
-interface Category {
-    name: string;
-    priority?: number;
-}
-
-interface Image {
-    id: string;
-    title: string;
-    description?: string | null;
-    image_path: string;
-    slug: string;
-    extension?: string;
-    width?: number;
-    height?: number;
-    priority?: number;
-    category?: Category;
-}
-
-interface Video {
-    id: string;
-    title: string;
-    description?: string | null;
-    video_path: string;
-    slug: string;
-    priority?: number;
-}
 
 interface ImageGalleryProps {
     images: Image[];
@@ -469,13 +443,6 @@ export default function ImageAndVideoGallery({
         (a, b) => (a.priority ?? 0) - (b.priority ?? 0),
     );
 
-    const sortedVideos = [...videos].sort((a, b) => {
-        const prioA = a.priority ?? 9999;
-        const prioB = b.priority ?? 9999;
-        if (prioA !== prioB) return prioA - prioB;
-        return a.title.localeCompare(b.title);
-    });
-
     const filteredImages =
         activeFilter === 'all'
             ? sortedImages
@@ -484,8 +451,8 @@ export default function ImageAndVideoGallery({
     const displayedImages = filteredImages.slice(0, page * PAGE_SIZE);
     const hasMoreImages = displayedImages.length < filteredImages.length;
 
-    const displayedVideos = sortedVideos.slice(0, page * PAGE_SIZE);
-    const hasMoreVideos = displayedVideos.length < sortedVideos.length;
+    const displayedVideos = videos.slice(0, page * PAGE_SIZE);
+    const hasMoreVideos = displayedVideos.length < videos.length;
 
     const { ref: sentinelRef } = useInView({
         threshold: 0.8,
@@ -510,19 +477,17 @@ export default function ImageAndVideoGallery({
 
     const prevItem = () => {
         if (lbIndex === null) return;
-        const total =
-            tab === 'images' ? filteredImages.length : sortedVideos.length;
+        const total = tab === 'images' ? filteredImages.length : videos.length;
         setLbIndex((prev) => (prev! - 1 + total) % total);
     };
 
     const nextItem = () => {
         if (lbIndex === null) return;
-        const total =
-            tab === 'images' ? filteredImages.length : sortedVideos.length;
+        const total = tab === 'images' ? filteredImages.length : videos.length;
         setLbIndex((prev) => (prev! + 1) % total);
     };
 
-    const items = tab === 'images' ? filteredImages : sortedVideos;
+    const items = tab === 'images' ? filteredImages : videos;
     const displayed = tab === 'images' ? displayedImages : displayedVideos;
 
     const sortedCategories = [...categories].sort(
