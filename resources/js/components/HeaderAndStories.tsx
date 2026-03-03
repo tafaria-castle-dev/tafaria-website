@@ -1,4 +1,3 @@
-'use client';
 import useScrollDirection from '@/hooks/hook/useScrollDirection';
 
 const HeaderAndStories: React.FC<{ children: React.ReactNode }> = ({

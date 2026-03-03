@@ -1,4 +1,3 @@
-'use client';
 import { useToC } from '@/hooks/ToCContext';
 import { Category } from '@/types';
 import { Link } from '@inertiajs/react';

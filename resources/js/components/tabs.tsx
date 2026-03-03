@@ -1,4 +1,3 @@
-'use client';
 import { useDropdown } from '@/hooks/DropdownContext';
 import useScrollDirection from '@/hooks/hook/useScrollDirection';
 import { useNavigation } from '@/hooks/NavigationContext';

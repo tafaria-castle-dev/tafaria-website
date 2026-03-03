@@ -1,4 +1,3 @@
-'use client';
 import { ImageGift } from '@/types';
 import React, { createContext, ReactNode, useState } from 'react';
 

@@ -1,5 +1,3 @@
-'use client';
-
 import { DatePickerModal } from '@/components/DatePickerModal';
 import { useSelectedPackage } from '@/hooks/SelectedPackageContext';
 import axios from 'axios';

@@ -61,7 +61,7 @@ const Carousels: React.FC<CarouselsProps> = ({
     const { showBookingModal, setShowBookingModal } = useBooking();
     const [userPaused, setUserPaused] = useState(false);
     const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
-
+    const logoUrl = '/logo-white.png';
     useEffect(() => {
         const handleResize = () => {
             setIsMobile(window.innerWidth < 768);
@@ -184,6 +184,20 @@ const Carousels: React.FC<CarouselsProps> = ({
                                                 />
                                             </div>
                                         </div>
+                                        {logoUrl && (
+                                            <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-start pl-6 sm:pl-10">
+                                                <img
+                                                    src={logoUrl}
+                                                    alt="Logo"
+                                                    style={{
+                                                        width: isMobile
+                                                            ? '170px'
+                                                            : '350px',
+                                                        height: 'auto',
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
                                         {showControls &&
                                             index === activeIndex && (
                                                 <div className="absolute inset-0 flex cursor-pointer items-center justify-center">
@@ -199,12 +213,31 @@ const Carousels: React.FC<CarouselsProps> = ({
                                             )}
                                     </div>
                                 ) : (
-                                    <img
-                                        src={media.url}
-                                        alt={media.title}
-                                        className="h-full w-full object-cover"
-                                        loading={index === 0 ? 'eager' : 'lazy'}
-                                    />
+                                    <div className="relative">
+                                        <img
+                                            src={media.url}
+                                            alt={media.title}
+                                            className="h-full w-full object-cover"
+                                            loading={
+                                                index === 0 ? 'eager' : 'lazy'
+                                            }
+                                        />
+
+                                        {logoUrl && (
+                                            <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-start pl-6 sm:pl-10">
+                                                <img
+                                                    src={logoUrl}
+                                                    alt="Logo"
+                                                    style={{
+                                                        width: isMobile
+                                                            ? '170px'
+                                                            : '350px',
+                                                        height: 'auto',
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
                                 )}
                             </div>
 

@@ -1,5 +1,3 @@
-'use client';
-
 import { getRoomRate } from '@/lib/rateUtils';
 import {
     BoardType,

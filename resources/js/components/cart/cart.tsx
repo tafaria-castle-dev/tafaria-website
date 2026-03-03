@@ -1,5 +1,5 @@
 // app/components/Cart.tsx
-'use client';
+
 import { useCart } from '@/hooks/hook/UseCart';
 import { ImageGift } from '@/types';
 import React, { useEffect, useState } from 'react';
