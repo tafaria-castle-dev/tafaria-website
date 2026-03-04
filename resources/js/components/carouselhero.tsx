@@ -61,7 +61,7 @@ const Carousels: React.FC<CarouselsProps> = ({
     const { showBookingModal, setShowBookingModal } = useBooking();
     const [userPaused, setUserPaused] = useState(false);
     const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
-    const logoUrl = '/logo.png';
+    const logoUrl = '/logo-white.png';
     useEffect(() => {
         const handleResize = () => {
             setIsMobile(window.innerWidth < 768);
