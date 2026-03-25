@@ -28,6 +28,10 @@ interface SelectedPackageContextType {
     setShowEventBookingModal: (v: boolean) => void;
     selectedEventItem: EventItem | null;
     setSelectedEventItem: (item: EventItem | null) => void;
+    showArtsBookingModal: boolean;
+    setShowArtsBookingModal: (v: boolean) => void;
+    selectedArtsItem: EventItem | null;
+    setSelectedArtsItem: (item: EventItem | null) => void;
 }
 
 const SelectedPackageContext = createContext<
@@ -51,6 +55,10 @@ export const SelectedPackageProvider: React.FC<{ children: ReactNode }> = ({
     const [showEventBookingModal, setShowEventBookingModal] = useState(false);
     const [selectedEventItem, setSelectedEventItem] =
         useState<EventItem | null>(null);
+    const [showArtsBookingModal, setShowArtsBookingModal] = useState(false);
+    const [selectedArtsItem, setSelectedArtsItem] = useState<EventItem | null>(
+        null,
+    );
 
     return (
         <SelectedPackageContext.Provider
@@ -71,6 +79,10 @@ export const SelectedPackageProvider: React.FC<{ children: ReactNode }> = ({
                 setShowEventBookingModal,
                 selectedEventItem,
                 setSelectedEventItem,
+                showArtsBookingModal,
+                setShowArtsBookingModal,
+                selectedArtsItem,
+                setSelectedArtsItem,
             }}
         >
             {children}

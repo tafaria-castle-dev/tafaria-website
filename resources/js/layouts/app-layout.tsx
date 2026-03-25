@@ -1,6 +1,7 @@
 import BookingEngine from '@/components/booking';
 import Footer from '@/components/footer';
 import HeaderAndStories from '@/components/HeaderAndStories';
+import ArtsBookingModal from '@/components/new-components/ArtsTourBookingModal';
 import EventBookingModal from '@/components/new-components/RequestEventQuoteModal';
 import SchoolQuoteModal from '@/components/new-components/RequestSchoolQuoteModal';
 import SelectedDayVisitPackageModal from '@/components/new-components/SelectedDayVisitPackageModal';
@@ -45,6 +46,7 @@ const AppLayoutContent: React.FC<AppLayoutProps> = ({
         showDayVisitModal,
         showSchoolQuoteModal,
         showEventBookingModal,
+        showArtsBookingModal,
     } = useSelectedPackage();
     const { component } = usePage();
     const isRestaurantMenu = component === 'restaurant-menu';
@@ -180,6 +182,7 @@ const AppLayoutContent: React.FC<AppLayoutProps> = ({
             {showSelectedPackageModal && <SelectedPackageModal />}
             {showDayVisitModal && <SelectedDayVisitPackageModal />}
             {showSchoolQuoteModal && <SchoolQuoteModal />}
+            {showArtsBookingModal && <ArtsBookingModal />}
             {showEventBookingModal && <EventBookingModal />}
 
             {showCart && (

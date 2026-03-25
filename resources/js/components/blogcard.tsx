@@ -1,3 +1,4 @@
+import { useSelectedPackage } from '@/hooks/SelectedPackageContext';
 import { Image, Video } from '@/types';
 import { Link } from '@inertiajs/react';
 import React from 'react';
@@ -14,6 +15,7 @@ interface BlogCardProps {
     title: string;
     created_at: string;
     content: string;
+    showBookButton?: boolean;
 }
 
 const BlogCard: React.FC<BlogCardProps> = ({
@@ -24,6 +26,7 @@ const BlogCard: React.FC<BlogCardProps> = ({
     content,
     index,
     videos,
+    showBookButton = false,
 }) => {
     const phoneNumber = '+254708877244';
     const message = `I would like to visit ${title}`;
@@ -40,7 +43,7 @@ const BlogCard: React.FC<BlogCardProps> = ({
     const handleBookClick = () => {
         window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
     };
-
+    const { setShowArtsBookingModal } = useSelectedPackage();
     return (
         <Link href={postUrl}>
             <div className="flex items-center bg-white">
@@ -102,6 +105,18 @@ const BlogCard: React.FC<BlogCardProps> = ({
                                         __html: content,
                                     }}
                                 ></div>
+                                {showBookButton && (
+                                    <div className="mt-6 flex justify-center">
+                                        <button
+                                            onClick={() =>
+                                                setShowArtsBookingModal(true)
+                                            }
+                                            className="rounded-lg bg-[#902729] px-8 py-3 font-semibold text-white transition-all hover:bg-[#7a2121] active:scale-95"
+                                        >
+                                            Book the Applied Arts Tour
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

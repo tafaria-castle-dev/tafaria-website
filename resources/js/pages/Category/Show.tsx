@@ -456,6 +456,10 @@ export default function CategoryShow({
                                                     content={item.content}
                                                     index={index}
                                                     videos={videos}
+                                                    showBookButton={
+                                                        slug === 'arts' &&
+                                                        index === 0
+                                                    }
                                                 />
                                             )}
                                         </div>
