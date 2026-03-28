@@ -12,6 +12,9 @@ Route::get('/our-story', [HomeController::class, 'index']);
 Route::get('/rates', function () {
     return Inertia::render(component: 'Rates');
 })->name('rates');
+Route::get('/qr-code-generator', function () {
+    return Inertia::render(component: 'CustomQRGenerator');
+})->name('CustomQRGenerator');
 Route::get('/image', [ImageController::class, 'show'])->name('image.show');
 Route::get('/robots.txt', [RobotsController::class, 'index']);
 Route::get('/sitemap.xml', [SitemapController::class, 'index']);

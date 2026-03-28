@@ -155,6 +155,7 @@ const Stories: React.FC<StoriesProps> = ({ categories }) => {
                                         ) : (
                                             <Link
                                                 href={`/${encodeURIComponent(img.slug)}`}
+                                                prefetch
                                                 className="flex-shrink-0"
                                             >
                                                 {inner}
