@@ -1,6 +1,8 @@
+import { useRatesBooking } from '@/hooks/RatesCartContext';
 import { Category } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { ShoppingCart } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import ContactInfo from './ContactInfo';
@@ -59,7 +61,7 @@ const Stories: React.FC<StoriesProps> = ({ categories }) => {
     const sortedCategories = [...categories].sort(
         (a, b) => (a.priority ?? 0) - (b.priority ?? 0),
     );
-
+    const { setShowCart, cart } = useRatesBooking();
     const rawSlug = url.split('/')[1];
     const activeCategory = !rawSlug ? 'our-story' : rawSlug;
     return (
@@ -176,6 +178,31 @@ const Stories: React.FC<StoriesProps> = ({ categories }) => {
                                 className="flex shrink-0 items-center border-l border-white/10 px-4"
                             >
                                 <ContactInfo />
+                            </motion.div>
+                            <motion.div
+                                initial={{ opacity: 0, x: 16 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{
+                                    duration: 0.4,
+                                    delay: 0.2,
+                                    ease: 'easeOut',
+                                }}
+                                className="flex shrink-0 items-center border-l border-white/10 px-4"
+                            >
+                                {cart.length > 0 && (
+                                    <button
+                                        onClick={() => setShowCart(true)}
+                                        className={`relative flex items-center rounded-md px-5 py-2 text-sm font-semibold text-black sm:px-6 sm:py-2 sm:text-base`}
+                                    >
+                                        <div className="relative flex items-center">
+                                            <h4>Cart</h4>
+                                            <ShoppingCart className="mr-2 h-5 w-5" />
+                                            <span className="absolute -top-2 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-[#902729] text-xs font-bold text-white">
+                                                {cart.length}
+                                            </span>
+                                        </div>
+                                    </button>
+                                )}
                             </motion.div>
                         </div>
                     </div>
