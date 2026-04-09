@@ -36,7 +36,8 @@ const styles = `
     background: #fffdf9;
     border-radius: 28px 28px 0 0;
     width: 96vw;
-    max-height: 96vh;
+    max-height: 85vh;
+    margin: 0 auto;
     overflow-y: auto;
     box-shadow: 0 -8px 48px rgba(0,0,0,0.18);
     display: flex; flex-direction: column;

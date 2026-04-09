@@ -550,7 +550,7 @@ const DayVisitPackageCards = ({ packages }: DayVisitCardsProps) => {
                             <div className="h3" style={{ marginTop: 10 }}>
                                 {pkg.title}
                             </div>
-                            <div
+                            {/* <div
                                 style={{
                                     marginBottom: 12,
                                     alignItems: 'center',
@@ -589,7 +589,7 @@ const DayVisitPackageCards = ({ packages }: DayVisitCardsProps) => {
                                     + KES {fmtPrice(pkg.price_per_extra_pax)}{' '}
                                     per extra person
                                 </p>
-                            )}
+                            )} */}
                             <div
                                 className="small h-auto"
                                 dangerouslySetInnerHTML={{
